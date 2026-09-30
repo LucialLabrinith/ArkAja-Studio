@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- ArkAja Studio: Interlocking AA Monogram -->
+  <g transform="translate(6, 6) scale(0.88)">
+    <!-- First 'A' (Left, Ivory/Champagne) -->
+    <path d="M 32 15 L 14 78 H 23 L 28 60 H 46 L 51 78 H 60 L 42 15 H 32 Z M 37 28 L 43.5 52 H 30.5 L 37 28 Z" 
+          fill="#F3F1EC" />
+    
+    <!-- Second 'A' (Interlocking Right, Restrained Champagne Gold #D8C7A5) -->
+    <path d="M 58 15 L 40 78 H 49 L 54 60 H 72 L 77 78 H 86 L 68 15 H 58 Z M 63 28 L 69.5 52 H 56.5 L 63 28 Z" 
+          fill="#D8C7A5" fill-opacity="0.95" />
+    
+    <!-- Editorial Interlocking Weave Overlap Accent -->
+    <path d="M 43.5 44 L 46 52 H 40.5 L 42 47 Z" fill="#F3F1EC" />
+    <path d="M 47.5 56 L 51 68 L 47 68 Z" fill="#D8C7A5" opacity="0.9" />
+  </g>
+</svg>

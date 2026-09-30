@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgP1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FBF8F3" />
+      <stop offset="100%" stop-color="#F3ECE0" />
+    </linearGradient>
+    <linearGradient id="skinToneP1" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#DDA680" />
+      <stop offset="45%" stop-color="#C58C62" />
+      <stop offset="100%" stop-color="#9E6844" />
+    </linearGradient>
+    <radialGradient id="dewyGlowP1" cx="45%" cy="35%" r="40%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#FFEEDD" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#C58C62" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="amberSerum" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F2A445" />
+      <stop offset="40%" stop-color="#C67623" />
+      <stop offset="100%" stop-color="#7B3E0A" />
+    </linearGradient>
+    <linearGradient id="goldCollar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFE8B5" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#9C7A20" />
+    </linearGradient>
+    <filter id="shadowP1" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#554433" flood-opacity="0.16" />
+    </filter>
+  </defs>
+
+  <!-- Canvas Page Background -->
+  <rect width="900" height="1200" fill="url(#bgP1)" />
+
+  <!-- Top Hero Title -->
+  <text x="450" y="165" font-family="'Cormorant Garamond', Georgia, serif" font-size="64" font-weight="700" letter-spacing="0.12em" fill="#423429" text-anchor="middle">
+    THE GLOW EDIT
+  </text>
+
+  <!-- Main Visual Stage (Indian model portrait + Lumière Hydra-Glow Serum) -->
+  <g transform="translate(100, 210)" filter="url(#shadowP1)">
+    <!-- Photo Frame Backdrop -->
+    <rect width="700" height="470" rx="4" fill="#E8DFD3" />
+
+    <!-- Ambient Studio Lights Bokeh -->
+    <circle cx="150" cy="380" r="45" fill="#FFE8B5" fill-opacity="0.45" filter="blur(8px)" />
+    <circle cx="560" cy="360" r="55" fill="#FFE8B5" fill-opacity="0.35" filter="blur(10px)" />
+    <circle cx="620" cy="220" r="35" fill="#FFE8B5" fill-opacity="0.3" filter="blur(6px)" />
+
+    <!-- Portrait of Indian Woman Model with Glowing Skin -->
+    <g transform="translate(130, 20)">
+      <!-- Sleek Hair Updo / Bun -->
+      <path d="M 120 40 C 60 40, 20 100, 20 180 C 20 220, 35 250, 45 280 L 215 280 C 225 250, 240 220, 240 180 C 240 100, 200 40, 120 40 Z" fill="#1C1410" />
+      <circle cx="55" cy="180" r="28" fill="#17100D" />
+
+      <!-- Face Silhouette -->
+      <path d="M 65 140 C 65 90, 110 70, 150 70 C 190 70, 215 100, 215 150 C 215 220, 185 270, 145 285 C 105 270, 75 220, 65 140 Z" fill="url(#skinToneP1)" />
+      <!-- Radiant Dewy Highlight on Cheekbone & Forehead -->
+      <ellipse cx="160" cy="155" rx="35" ry="55" fill="url(#dewyGlowP1)" />
+      <ellipse cx="140" cy="95" rx="30" ry="18" fill="url(#dewyGlowP1)" />
+      <ellipse cx="145" cy="245" rx="14" ry="10" fill="url(#dewyGlowP1)" />
+
+      <!-- Eye, Nose, Lip Features -->
+      <path d="M 115 130 Q 135 122 155 132" stroke="#25160E" stroke-width="3" fill="none" stroke-linecap="round" />
+      <path d="M 175 135 Q 192 128 205 137" stroke="#25160E" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <!-- Closed serene lash lines -->
+      <path d="M 122 142 Q 135 148 148 142" stroke="#25160E" stroke-width="2" fill="none" />
+      <path d="M 178 145 Q 190 150 200 145" stroke="#25160E" stroke-width="2" fill="none" />
+      <!-- Lips with Gloss Highlight -->
+      <path d="M 130 220 Q 148 214 165 220 Q 148 238 130 220 Z" fill="#994D4A" />
+      <ellipse cx="148" cy="222" rx="12" ry="3" fill="#FFFFFF" fill-opacity="0.6" />
+
+      <!-- White Silk Robe / Camisole Drape -->
+      <path d="M 10 320 C 60 270, 110 275, 140 285 C 170 275, 220 270, 270 320 L 290 450 L -10 450 Z" fill="#FAF8F5" />
+      <path d="M 140 285 L 140 450" stroke="#E2DDD5" stroke-width="1.5" />
+      <!-- Delicate Neck Contour -->
+      <path d="M 125 270 L 125 305 M 160 270 L 160 305" stroke="#9E6844" stroke-width="1.5" stroke-opacity="0.3" />
+    </g>
+
+    <!-- Serum Dropper Bottle (LUMIÈRE HYDRA-GLOW SERUM) -->
+    <g transform="translate(470, 90)">
+      <!-- Cast Shadow -->
+      <ellipse cx="60" cy="335" rx="55" ry="16" fill="#6A5A4A" fill-opacity="0.35" filter="blur(4px)" />
+
+      <!-- White Rubber Dropper Bulb -->
+      <path d="M 45 10 Q 60 -5 75 10 L 75 48 L 45 48 Z" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1" />
+      <!-- Gold Metallic Collar & Neck Ring -->
+      <rect x="38" y="48" width="44" height="22" rx="2" fill="url(#goldCollar)" stroke="#A07C22" stroke-width="0.5" />
+      <rect x="42" y="70" width="36" height="8" fill="#1C1814" />
+
+      <!-- Amber Glass Bottle Body -->
+      <rect x="18" y="78" width="84" height="235" rx="12" fill="url(#amberSerum)" stroke="#8A4810" stroke-width="1" />
+      <!-- Glass Specular Highlight Streak -->
+      <rect x="24" y="86" width="10" height="215" rx="5" fill="#FFFFFF" fill-opacity="0.45" />
+      <rect x="88" y="86" width="5" height="215" rx="2.5" fill="#FFFFFF" fill-opacity="0.2" />
+
+      <!-- Clean Luxe Brand Label -->
+      <rect x="24" y="140" width="72" height="120" rx="2" fill="#FAF8F5" stroke="#ECE7DE" stroke-width="0.5" />
+      <text x="60" y="172" font-family="'Cormorant Garamond', Georgia, serif" font-size="13" font-weight="700" letter-spacing="0.14em" fill="#181410" text-anchor="middle">
+        LUMIÈRE
+      </text>
+      <line x1="38" y1="182" x2="82" y2="182" stroke="#D4AF37" stroke-width="0.75" />
+      <text x="60" y="206" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="600" letter-spacing="0.1em" fill="#3D3630" text-anchor="middle">
+        HYDRA-GLOW SERUM
+      </text>
+      <text x="60" y="222" font-family="'Plus Jakarta Sans', sans-serif" font-size="6" letter-spacing="0.15em" fill="#8C847B" text-anchor="middle">
+        30ml / 1 fl. oz
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Promotional Information Section -->
+  <g transform="translate(450, 750)" text-anchor="middle">
+    <!-- Treatment Package Subtitle -->
+    <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="34" font-weight="600" letter-spacing="0.02em" fill="#241E19">
+      Hydrafacial + LED Therapy + Face Massage
+    </text>
+
+    <!-- Pricing Offer -->
+    <g transform="translate(0, 55)">
+      <!-- Strikethrough Original Price -->
+      <text x="-65" y="0" font-family="'Plus Jakarta Sans', sans-serif" font-size="32" font-weight="400" fill="#8C8277" text-decoration="line-through">
+        ₹3,499
+      </text>
+      <line x1="-120" y1="-8" x2="-10" y2="-8" stroke="#8C8277" stroke-width="2" />
+      <!-- Discounted Promotional Price -->
+      <text x="60" y="0" font-family="'Plus Jakarta Sans', sans-serif" font-size="34" font-weight="700" fill="#1C1814">
+        ₹2,499
+      </text>
+    </g>
+
+    <!-- Urgency Subhead -->
+    <text y="105" font-family="'Cormorant Garamond', Georgia, serif" font-size="26" font-style="italic" fill="#5A4E44">
+      Limited appointments
+    </text>
+
+    <!-- Book Now CTA Button -->
+    <g transform="translate(-110, 140)">
+      <rect width="220" height="52" rx="4" fill="#B49767" />
+      <text x="110" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" letter-spacing="0.22em" fill="#FAF8F5" text-anchor="middle">
+        BOOK NOW
+      </text>
+    </g>
+  </g>
+
+  <!-- Subtle Studio Production Stamp -->
+  <text x="450" y="1140" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" letter-spacing="0.28em" fill="#9C9286" text-anchor="middle">
+    LUMIÈRE BEAUTY · CAMPAIGN ASSET 01 · ARKAJA STUDIO
+  </text>
+</svg>

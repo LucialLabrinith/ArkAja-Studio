@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="zardoziVelvet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A181C" />
+      <stop offset="50%" stop-color="#300F12" />
+      <stop offset="100%" stop-color="#1A0709" />
+    </linearGradient>
+    <linearGradient id="goldZariP11" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFE8B5" />
+      <stop offset="45%" stop-color="#D4AF37" />
+      <stop offset="85%" stop-color="#B28C28" />
+      <stop offset="100%" stop-color="#735815" />
+    </linearGradient>
+    <linearGradient id="pinkSilkP11" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E13552" />
+      <stop offset="45%" stop-color="#BE183A" />
+      <stop offset="100%" stop-color="#830D23" />
+    </linearGradient>
+    <linearGradient id="tealSilkP11" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#156658" />
+      <stop offset="45%" stop-color="#0D4B40" />
+      <stop offset="100%" stop-color="#062E27" />
+    </linearGradient>
+    <filter id="cardShadowP11" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Deep Crimson Velvet Canvas with Rich Gold Zardozi Embroidery Details -->
+  <rect width="900" height="1200" fill="url(#zardoziVelvet)" />
+
+  <!-- Intricate Regal Gold Zardozi Borders around page edges -->
+  <rect x="35" y="35" width="830" height="1130" fill="none" stroke="url(#goldZariP11)" stroke-width="2.5" stroke-opacity="0.6" />
+  <rect x="48" y="48" width="804" height="1104" fill="none" stroke="url(#goldZariP11)" stroke-width="1" stroke-dasharray="8,4" stroke-opacity="0.4" />
+  <!-- Corner Floral Flourishes -->
+  <circle cx="48" cy="48" r="8" fill="url(#goldZariP11)" />
+  <circle cx="852" cy="48" r="8" fill="url(#goldZariP11)" />
+  <circle cx="48" cy="1152" r="8" fill="url(#goldZariP11)" />
+  <circle cx="852" cy="1152" r="8" fill="url(#goldZariP11)" />
+
+  <!-- Top Left Section Label: "SAREE COLLECTIONS" -->
+  <text x="140" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" letter-spacing="0.25em" fill="#D4AF37">
+    SAREE COLLECTIONS
+  </text>
+
+  <!-- Regal Italic Serif Headline: "Live Royal, Wear Royal." -->
+  <g transform="translate(140, 220)">
+    <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="64" font-weight="800" font-style="italic" letter-spacing="0.02em" fill="#FAF8F5">
+      Live Royal,
+    </text>
+    <text y="64" font-family="'Cormorant Garamond', Georgia, serif" font-size="64" font-weight="800" font-style="italic" letter-spacing="0.02em" fill="#D4AF37">
+      Wear Royal.
+    </text>
+  </g>
+
+  <!-- ---------------------------------------------------- -->
+  <!-- TWO EDITORIAL PHOTO FRAMES SIDE-BY-SIDE -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(140, 360)" filter="url(#cardShadowP11)">
+    <!-- LEFT PHOTO: Folded Luxurious Kanjivaram Silk Saree + Marigold Flowers -->
+    <g transform="translate(0, 0)">
+      <!-- Frame Border -->
+      <rect width="280" height="420" rx="3" fill="#1C1310" stroke="url(#goldZariP11)" stroke-width="2" />
+
+      <!-- Wooden Tray Platform -->
+      <polygon points="20,120 260,120 270,390 10,390" fill="#3D291C" />
+
+      <!-- Beautiful Folded Kanjivaram Silk Saree in Royal Crimson Pink -->
+      <!-- Saree Fold Layer 1 (Base) -->
+      <polygon points="35,160 245,150 250,330 40,340" fill="url(#pinkSilkP11)" />
+      <!-- Heavy Gold Zari Brocade Pallu Fold on Top -->
+      <polygon points="55,180 230,170 235,310 60,320" fill="url(#goldZariP11)" />
+      <!-- Zari Geometric Chevron Weave Pattern -->
+      <path d="M 70 210 L 95 195 L 120 210 L 145 195 L 170 210 L 195 195 L 220 210" stroke="#75480D" stroke-width="2" fill="none" />
+      <path d="M 70 240 L 95 225 L 120 240 L 145 225 L 170 240 L 195 225 L 220 240" stroke="#75480D" stroke-width="2" fill="none" />
+      <path d="M 70 270 L 95 255 L 120 270 L 145 255 L 170 270 L 195 255 L 220 270" stroke="#75480D" stroke-width="2" fill="none" />
+
+      <!-- Brass Bowl of Fresh Yellow Marigold Flowers (Puja / Festivity) -->
+      <g transform="translate(190, 310)">
+        <ellipse cx="30" cy="35" rx="32" ry="16" fill="#D4AF37" stroke="#9E7E24" stroke-width="1.5" />
+        <circle cx="20" cy="28" r="10" fill="#FBBF24" />
+        <circle cx="36" cy="25" r="9" fill="#F59E0B" />
+        <circle cx="28" cy="35" r="9" fill="#D97706" />
+        <circle cx="44" cy="32" r="8" fill="#FBBF24" />
+      </g>
+    </g>
+
+    <!-- RIGHT PHOTO: Regal Model in Teal-Green Saree at Palace Doorway -->
+    <g transform="translate(320, 0)">
+      <!-- Frame Border -->
+      <rect width="280" height="420" rx="3" fill="#141E1C" stroke="url(#goldZariP11)" stroke-width="2" />
+
+      <!-- Antique Carved Wooden Palace Doorway & Stone Pillars -->
+      <rect x="15" y="15" width="250" height="390" fill="#171F1D" />
+      <!-- Archway Outline -->
+      <path d="M 30 390 L 30 140 C 30 50, 250 50, 250 140 L 250 390 Z" fill="none" stroke="#685542" stroke-width="4" />
+      <!-- Carved Wooden Door Panels -->
+      <rect x="40" y="80" width="95" height="310" fill="#2E2117" stroke="#4A3423" stroke-width="2" />
+      <rect x="145" y="80" width="95" height="310" fill="#2E2117" stroke="#4A3423" stroke-width="2" />
+
+      <!-- Regal Indian Woman Draped in Teal-Green & Gold Saree -->
+      <g transform="translate(90, 80)">
+        <!-- Head & Hair (Traditional Royal Updo) -->
+        <circle cx="45" cy="40" r="18" fill="#120E0C" />
+        <circle cx="45" cy="18" r="12" fill="#0A0807" />
+        <!-- Gold Maang Tikka & Kundan Choker -->
+        <line x1="45" y1="18" x2="45" y2="38" stroke="url(#goldZariP11)" stroke-width="1" />
+        <ellipse cx="45" cy="65" rx="14" ry="5" fill="url(#goldZariP11)" />
+        <circle cx="30" cy="48" r="3.5" fill="url(#goldZariP11)" />
+        <circle cx="60" cy="48" r="3.5" fill="url(#goldZariP11)" />
+
+        <!-- Deep Teal & Gold Saree Drape -->
+        <path d="M 25 75 C 38 68, 62 68, 75 75 L 105 310 L 0 310 Z" fill="url(#tealSilkP11)" />
+        <!-- Shimmering Gold Zari Pleats & Pallu Border -->
+        <path d="M 30 80 Q 60 170 95 305" stroke="url(#goldZariP11)" stroke-width="9" fill="none" />
+        <line x1="48" y1="90" x2="35" y2="310" stroke="#052620" stroke-width="2" />
+        <line x1="62" y1="90" x2="65" y2="310" stroke="#052620" stroke-width="2" />
+
+        <!-- Gold Bangles on Wrists -->
+        <rect x="22" y="160" width="10" height="15" fill="url(#goldZariP11)" />
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Brand Value Props: "SUSTAINABLE LIFESTYLE" and "FAIR TRADE" -->
+  <g transform="translate(140, 850)">
+    <text x="50" y="0" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" letter-spacing="0.22em" fill="#FAF8F5">
+      SUSTAINABLE LIFESTYLE
+    </text>
+    <text x="440" y="0" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" letter-spacing="0.22em" fill="#FAF8F5">
+      FAIR TRADE
+    </text>
+  </g>
+
+  <!-- Studio Brand Signature -->
+  <text x="450" y="1130" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" letter-spacing="0.28em" fill="#D4AF37" text-anchor="middle">
+    ETHNIC FASHION EDIT · HERITAGE CAMPAIGN 02 · ARKAJA STUDIO
+  </text>
+</svg>

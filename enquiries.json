@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ARK-MUJXSUBV",
+    "createdAt": "2026-09-27T14:51:50.539Z",
+    "fullName": "Aria Mehta",
+    "brandName": "Aria Skincare",
+    "email": "aria@example.com",
+    "country": "India",
+    "businessCategory": "Beauty",
+    "neededServices": [
+      "Social Content"
+    ],
+    "preferredPackage": "Signature",
+    "deliverableCounts": {
+      "posts": 8,
+      "stories": 4
+    },
+    "timeline": "48 hours",
+    "budget": "₹5,000–₹10,000",
+    "projectDetails": "Testing luxury campaign brief"
+  }
+]

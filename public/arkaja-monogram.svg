@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- ArkAja Studio Official Monogram: Easel-Style Geometric AA -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DFCA95" />
+      <stop offset="50%" stop-color="#C5A869" />
+      <stop offset="100%" stop-color="#A68949" />
+    </linearGradient>
+    <linearGradient id="goldLight" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EEDFB3" />
+      <stop offset="100%" stop-color="#C5A869" />
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(10, 8) scale(0.8)">
+    <!-- Top Central Apex Peg -->
+    <path d="M 44 8 H 56 V 20 H 44 Z" fill="url(#goldGradient)" />
+
+    <!-- Left Main Upright Leg -->
+    <path d="M 46 16 L 22 84 H 32 L 53 22 Z" fill="url(#goldGradient)" />
+
+    <!-- Right Main Upright Leg -->
+    <path d="M 54 16 L 78 84 H 68 L 47 22 Z" fill="url(#goldLight)" />
+
+    <!-- Inverted Chevron / Interlocking V -->
+    <!-- Left downward wing -->
+    <path d="M 16 32 L 50 72 L 45 76 L 11 36 Z" fill="url(#goldLight)" />
+    <!-- Right downward wing -->
+    <path d="M 84 32 L 50 72 L 55 76 L 89 36 Z" fill="url(#goldGradient)" />
+
+    <!-- Upper Horizontal Crossbar -->
+    <path d="M 28 38 H 72 V 43 H 28 Z" fill="url(#goldGradient)" />
+
+    <!-- Lower Horizontal Shelf Bar -->
+    <path d="M 22 60 H 78 V 65 H 22 Z" fill="url(#goldLight)" />
+
+    <!-- Center Intersecting Keystone -->
+    <polygon points="50,68 46,74 54,74" fill="#EEDFB3" />
+  </g>
+</svg>

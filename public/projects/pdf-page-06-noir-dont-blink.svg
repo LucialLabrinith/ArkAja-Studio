@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="baristaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A2D23" />
+      <stop offset="50%" stop-color="#241B15" />
+      <stop offset="100%" stop-color="#140E0A" />
+    </linearGradient>
+    <linearGradient id="woodBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C28747" />
+      <stop offset="40%" stop-color="#9C6228" />
+      <stop offset="100%" stop-color="#6B3F14" />
+    </linearGradient>
+    <linearGradient id="espressoShot" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3D1D09" />
+      <stop offset="50%" stop-color="#613112" />
+      <stop offset="100%" stop-color="#251004" />
+    </linearGradient>
+    <filter id="distressShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.85" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="1200" fill="url(#baristaBg)" />
+
+  <!-- Cafe Counter & Espresso Machine Bokeh in Background -->
+  <circle cx="500" cy="380" r="60" fill="#E2A662" fill-opacity="0.25" filter="blur(20px)" />
+  <circle cx="680" cy="480" r="45" fill="#FFE0B2" fill-opacity="0.2" filter="blur(16px)" />
+  <!-- Stainless Espresso Grinder Silhouette in Background -->
+  <rect x="460" y="320" width="55" height="120" rx="4" fill="#1C1815" stroke="#3A322C" stroke-width="2" />
+  <ellipse cx="487" cy="320" rx="30" ry="12" fill="#2E2620" />
+
+  <!-- Wooden Espresso Bar Counter -->
+  <polygon points="0,820 900,760 900,1200 0,1200" fill="url(#woodBar)" />
+  <line x1="0" y1="840" x2="900" y2="780" stroke="#E5B275" stroke-opacity="0.3" stroke-width="2" />
+  <line x1="0" y1="920" x2="900" y2="860" stroke="#54300E" stroke-opacity="0.4" stroke-width="3" />
+
+  <!-- Barista Arm & Hand Pouring Espresso -->
+  <g transform="translate(110, 160)">
+    <!-- Arm in Dark Long Sleeve -->
+    <path d="M -110 0 Q -20 80 50 160 Q 80 200 130 220" stroke="#1F1B18" stroke-width="70" stroke-linecap="round" fill="none" />
+    <!-- Bare Wrist & Hand with Rings -->
+    <path d="M 120 215 Q 160 250 210 270" stroke="#CD966E" stroke-width="36" stroke-linecap="round" fill="none" />
+    <!-- Delicate Silver/Gold Rings on Fingers -->
+    <ellipse cx="160" cy="245" rx="5" ry="14" fill="#D4AF37" stroke="#9E7E24" stroke-width="1" />
+    <ellipse cx="180" cy="255" rx="5" ry="13" fill="#D4AF37" stroke="#9E7E24" stroke-width="1" />
+
+    <!-- Ceramic Pouring Pitcher (Small Rustic Cream/Earth Pitcher) -->
+    <g transform="translate(200, 240) rotate(42)">
+      <path d="M 0 0 L 80 0 L 70 85 L 10 85 Z" fill="#E8E2D8" stroke="#CDC5B5" stroke-width="1.5" />
+      <path d="M -10 15 L 0 0 L 0 30 Z" fill="#D4CABE" />
+      <!-- Dark Espresso Stream Flowing from Spout -->
+      <path d="M -8 18 Q 15 110 32 250" stroke="url(#espressoShot)" stroke-width="10" stroke-linecap="round" fill="none" />
+      <path d="M -6 18 Q 15 110 32 250" stroke="#A85A1E" stroke-width="3" fill="none" />
+    </g>
+  </g>
+
+  <!-- Tall Ribbed Glass on Coaster & Linen Strip -->
+  <g transform="translate(340, 560)">
+    <!-- Coaster -->
+    <ellipse cx="110" cy="360" rx="115" ry="32" fill="#1C1815" stroke="#3A322A" stroke-width="1.5" />
+    <!-- Linen Napkin under glass -->
+    <polygon points="20,380 200,340 240,410 40,430" fill="#E5DFD5" stroke="#CCC5BA" stroke-width="1" />
+
+    <!-- Tall Ribbed Glass Body with Plunging Espresso Reaction -->
+    <path d="M 45 40 L 60 340 Q 110 355 160 340 L 175 40 Z" fill="#FAF6EE" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.8" />
+
+    <!-- Milk & Ice Cubes Layer Inside Glass -->
+    <path d="M 50 140 L 60 338 Q 110 352 160 338 L 170 140 Z" fill="#FAF7F2" />
+    <!-- Floating Translucent Ice Cubes -->
+    <rect x="75" y="180" width="35" height="35" rx="6" fill="#FFFFFF" fill-opacity="0.6" stroke="#FFFFFF" stroke-width="1" />
+    <rect x="110" y="230" width="38" height="38" rx="6" fill="#FFFFFF" fill-opacity="0.5" stroke="#FFFFFF" stroke-width="1" />
+    <rect x="70" y="270" width="40" height="35" rx="6" fill="#FFFFFF" fill-opacity="0.6" stroke="#FFFFFF" stroke-width="1" />
+
+    <!-- Espresso Plunge Swirls into Milk -->
+    <path d="M 90 70 Q 110 160 85 240 Q 75 280 100 320" stroke="#5E2C09" stroke-width="18" stroke-linecap="round" fill="none" />
+    <path d="M 120 70 Q 105 150 135 220 Q 145 270 120 310" stroke="#753C16" stroke-width="14" stroke-linecap="round" fill="none" />
+    <path d="M 105 80 Q 130 180 110 260" stroke="#C28747" stroke-width="8" stroke-linecap="round" fill="none" />
+
+    <!-- Vertical Fluted Glass Ribs -->
+    <line x1="68" y1="45" x2="80" y2="335" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2.5" />
+    <line x1="88" y1="45" x2="98" y2="338" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="2" />
+    <line x1="110" y1="45" x2="114" y2="340" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="1.5" />
+    <line x1="132" y1="45" x2="130" y2="338" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="2" />
+    <line x1="152" y1="45" x2="148" y2="335" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2.5" />
+
+    <!-- Thick Vanilla Cloud Foam Pillowy Mound on Top -->
+    <path d="M 40 50 Q 75 10 110 15 Q 145 10 180 50 Q 110 65 40 50 Z" fill="#FFFFFF" />
+    <!-- Espresso Pour Crater in Center of Foam -->
+    <ellipse cx="108" cy="40" rx="18" ry="10" fill="#4A2207" />
+    <ellipse cx="108" cy="40" rx="12" ry="6" fill="#804112" />
+  </g>
+
+  <!-- Big Bold Distressed Stencil Headline: "DON'T BLINK." -->
+  <g transform="translate(450, 240)" text-anchor="middle" filter="url(#distressShadow)">
+    <text y="0" font-family="'Plus Jakarta Sans', Impact, sans-serif" font-size="110" font-weight="900" letter-spacing="0.04em" fill="#FFFFFF">
+      DON’T
+    </text>
+    <text y="105" font-family="'Plus Jakarta Sans', Impact, sans-serif" font-size="110" font-weight="900" letter-spacing="0.04em" fill="#FFFFFF">
+      BLINK.
+    </text>
+  </g>
+
+  <!-- Bottom Script & Engagement Question -->
+  <g transform="translate(450, 1060)" text-anchor="middle" filter="url(#distressShadow)">
+    <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="54" font-weight="700" font-style="italic" letter-spacing="0.02em" fill="#FFFFFF">
+      Vanilla Cloud Latte
+    </text>
+    <text y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="600" letter-spacing="0.08em" fill="#FAF8F5">
+      Would you try it?
+    </text>
+  </g>
+</svg>

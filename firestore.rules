@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 1. User Profiles
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() <= 256;
+      allow delete: if false;
+
+      // User's private project drafts
+      match /drafts/{draftId} {
+        allow get, list: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.userId == userId
+          && isValidId(draftId);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // 2. Client Project Enquiries
+    match /enquiries/{enquiryId} {
+      allow create: if isValidId(enquiryId)
+        && request.resource.data.enquiryId is string
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 2
+        && request.resource.data.fullName.size() <= 150
+        && request.resource.data.brandName is string
+        && request.resource.data.brandName.size() >= 1
+        && request.resource.data.brandName.size() <= 150
+        && request.resource.data.email is string
+        && request.resource.data.email.size() >= 5
+        && request.resource.data.email.size() <= 200
+        && request.resource.data.projectDetails is string
+        && request.resource.data.projectDetails.size() >= 1
+        && request.resource.data.projectDetails.size() <= 10000;
+        
+      allow get: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.email == request.auth.token.email
+      );
+
+      allow list: if isAuthenticated();
+
+      allow update, delete: if false;
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

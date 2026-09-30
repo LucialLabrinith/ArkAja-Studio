@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cafeWall" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A3428" />
+      <stop offset="50%" stop-color="#2D1E16" />
+      <stop offset="100%" stop-color="#18110D" />
+    </linearGradient>
+    <linearGradient id="marbleTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#28332E" />
+      <stop offset="50%" stop-color="#17221C" />
+      <stop offset="100%" stop-color="#0E1712" />
+    </linearGradient>
+    <linearGradient id="latteLayer" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="28%" stop-color="#FDFBF7" />
+      <stop offset="42%" stop-color="#C28747" />
+      <stop offset="70%" stop-color="#5C3114" />
+      <stop offset="100%" stop-color="#381D0A" />
+    </linearGradient>
+    <linearGradient id="croissantCrust" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EAB975" />
+      <stop offset="45%" stop-color="#C27A29" />
+      <stop offset="85%" stop-color="#80410B" />
+      <stop offset="100%" stop-color="#4D2203" />
+    </linearGradient>
+    <filter id="textShadowP4" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+  </defs>
+
+  <!-- Full Photographic Scene Canvas -->
+  <rect width="900" height="1200" fill="#120D0A" />
+
+  <!-- Window & Brick Cafe Interior Backdrop -->
+  <rect x="0" y="0" width="900" height="520" fill="url(#cafeWall)" />
+  <!-- Window Framing on Left -->
+  <rect x="0" y="0" width="220" height="520" fill="#2C3539" stroke="#1A2024" stroke-width="4" />
+  <rect x="15" y="15" width="190" height="490" fill="#B0C4DE" fill-opacity="0.25" />
+  <!-- Sunlit Daybreak Reflection through Window -->
+  <polygon points="0,60 380,240 220,520 0,520" fill="#FFF5E5" fill-opacity="0.15" />
+
+  <!-- Potted Terracotta Plant in Background Window Sill -->
+  <g transform="translate(620, 280)">
+    <polygon points="10,60 40,60 45,100 5,100" fill="#C86A45" stroke="#9C4724" stroke-width="1.5" />
+    <!-- Round Green Leaves (Pilea / Money Plant) -->
+    <circle cx="25" cy="40" r="16" fill="#3D6A42" />
+    <circle cx="5" cy="30" r="14" fill="#4E8554" />
+    <circle cx="45" cy="25" r="15" fill="#4E8554" />
+    <circle cx="25" cy="10" r="12" fill="#5E9E65" />
+    <line x1="25" y1="55" x2="25" y2="10" stroke="#254228" stroke-width="2" />
+  </g>
+
+  <!-- Dark Green Marble Cafe Table Surface -->
+  <polygon points="0,500 900,450 900,1200 0,1200" fill="url(#marbleTop)" />
+  <!-- White & Gold Marble Veining -->
+  <path d="M 50 600 Q 180 580 320 640 Q 520 720 780 620" stroke="#5C7A6D" stroke-width="2" stroke-opacity="0.4" fill="none" />
+  <path d="M 120 780 Q 280 820 460 760 Q 640 700 850 780" stroke="#7A9A8A" stroke-width="1.5" stroke-opacity="0.3" fill="none" />
+  <path d="M 220 950 Q 420 890 680 960" stroke="#5C7A6D" stroke-width="1.5" stroke-opacity="0.25" fill="none" />
+
+  <!-- Pastry Plates on Table -->
+  <!-- Left Plate (Almond Croissant Half) -->
+  <g transform="translate(180, 520)">
+    <ellipse cx="60" cy="50" rx="90" ry="45" fill="#EAE4D8" stroke="#CDC5B5" stroke-width="1.5" />
+    <!-- Baked Pastry -->
+    <path d="M 15 45 C 20 25, 60 15, 95 30 C 115 40, 110 65, 80 70 C 40 75, 10 65, 15 45 Z" fill="url(#croissantCrust)" />
+    <!-- Flaked Almond Slices on Pastry -->
+    <ellipse cx="45" cy="38" rx="8" ry="4" fill="#FBF3E3" />
+    <ellipse cx="70" cy="35" rx="7" ry="3.5" fill="#FBF3E3" />
+    <ellipse cx="85" cy="48" rx="6" ry="3" fill="#FBF3E3" />
+  </g>
+
+  <!-- Right Plate (Golden Baked Croissant) -->
+  <g transform="translate(640, 530)">
+    <ellipse cx="60" cy="50" rx="95" ry="48" fill="#EAE4D8" stroke="#CDC5B5" stroke-width="1.5" />
+    <path d="M 10 50 C 15 20, 65 10, 105 25 C 125 35, 120 65, 85 75 C 45 80, 5 70, 10 50 Z" fill="url(#croissantCrust)" />
+    <ellipse cx="50" cy="40" rx="8" ry="4" fill="#FBF3E3" />
+    <ellipse cx="78" cy="38" rx="7" ry="3.5" fill="#FBF3E3" />
+  </g>
+
+  <!-- Centerpiece: Tall Ribbed Glass Iced Vanilla Cloud Latte -->
+  <g transform="translate(330, 420)">
+    <!-- Coaster / Dark Ceramic Saucer -->
+    <ellipse cx="120" cy="390" rx="145" ry="45" fill="#1C1815" stroke="#38312B" stroke-width="2" />
+    <ellipse cx="120" cy="388" rx="130" ry="38" fill="#14110E" />
+
+    <!-- Glass Shadow on Saucer -->
+    <ellipse cx="120" cy="380" rx="85" ry="25" fill="#000000" fill-opacity="0.6" />
+
+    <!-- Tall Ribbed Glass Body with Layered Drink -->
+    <path d="M 55 50 L 70 370 Q 120 385 170 370 L 185 50 Z" fill="url(#latteLayer)" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.6" />
+
+    <!-- Vertical Ribbed Glass Fluting Lines -->
+    <line x1="75" y1="55" x2="88" y2="365" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2.5" />
+    <line x1="95" y1="55" x2="104" y2="368" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2" />
+    <line x1="115" y1="55" x2="120" y2="370" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1.5" />
+    <line x1="135" y1="55" x2="136" y2="368" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2" />
+    <line x1="155" y1="55" x2="152" y2="365" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2.5" />
+
+    <!-- Thick Vanilla Cloud Cold Foam Top (Puffy White Mound) -->
+    <path d="M 50 60 Q 80 20 120 22 Q 160 20 190 60 Q 120 75 50 60 Z" fill="#FFFFFF" />
+    <ellipse cx="120" cy="45" rx="66" ry="20" fill="#FAF8F5" />
+    <!-- Cinnamon / Nutmeg Dusting on Foam -->
+    <circle cx="105" cy="40" r="2" fill="#753C16" />
+    <circle cx="120" cy="35" r="1.5" fill="#753C16" />
+    <circle cx="132" cy="44" r="2.2" fill="#753C16" />
+    <circle cx="145" cy="38" r="1.8" fill="#753C16" />
+    <circle cx="115" cy="48" r="2" fill="#753C16" />
+
+    <!-- Sleek Metal Drinking Straw -->
+    <line x1="100" y1="-70" x2="135" y2="350" stroke="#E2E8F0" stroke-width="7" stroke-linecap="round" />
+    <line x1="98" y1="-70" x2="133" y2="350" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Linen Napkin & Antique Brass Spoon on Right -->
+  <g transform="translate(520, 680)">
+    <!-- Folded Linen Napkin -->
+    <polygon points="20,80 160,30 220,130 80,180" fill="#E8E3DA" stroke="#D1CAC0" stroke-width="1" />
+    <!-- Antique Brass Long Spoon Resting on Napkin -->
+    <g transform="translate(60, 40) rotate(-35)">
+      <!-- Oval Spoon Bowl -->
+      <ellipse cx="120" cy="10" rx="35" ry="22" fill="#D4AF37" stroke="#A6831F" stroke-width="1" />
+      <ellipse cx="120" cy="10" rx="28" ry="16" fill="#BF9726" />
+      <!-- Handle -->
+      <rect x="0" y="7" width="100" height="6" rx="3" fill="#D4AF37" stroke="#A6831F" stroke-width="0.8" />
+    </g>
+  </g>
+
+  <!-- Top Hero Display Typography Overlay -->
+  <g transform="translate(450, 160)" text-anchor="middle" filter="url(#textShadowP4)">
+    <text y="0" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="76" font-weight="900" letter-spacing="-0.02em" fill="#FFFFFF">
+      YOUR 4PM
+    </text>
+    <text y="80" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="76" font-weight="900" letter-spacing="-0.02em" fill="#FFFFFF">
+      DESERVES THIS.
+    </text>
+
+    <!-- Subtitle in Signature Serif Italic -->
+    <g transform="translate(0, 140)">
+      <text font-family="'Cormorant Garamond', Georgia, serif" font-size="28" font-style="italic" letter-spacing="0.04em" fill="#F4EDE4">
+        Vanilla Cloud Latte | Available this week
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand Mark -->
+  <text x="450" y="1150" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" letter-spacing="0.25em" fill="#FAF8F5" fill-opacity="0.6" text-anchor="middle">
+    NOIR &amp; BEAN · SPECIALTY COFFEE · ARKAJA STUDIO
+  </text>
+</svg>

@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents an authenticated ArkAja Studio client user profile.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase Auth user ID." },
+        "email": { "type": "string", "format": "email", "description": "User email address." },
+        "displayName": { "type": "string", "description": "Client full name or display name." },
+        "photoURL": { "type": "string", "description": "Profile photo URL." },
+        "createdAt": { "type": "string", "description": "ISO timestamp of account creation." },
+        "lastLoginAt": { "type": "string", "description": "ISO timestamp of most recent login." }
+      },
+      "required": ["uid", "email"]
+    },
+    "Enquiry": {
+      "title": "Enquiry",
+      "description": "Client project enquiry or commission brief submitted to ArkAja Studio.",
+      "type": "object",
+      "properties": {
+        "enquiryId": { "type": "string", "description": "Unique reference ID for the enquiry." },
+        "userId": { "type": "string", "description": "Owner user ID if submitted by signed in client, or guest." },
+        "userEmail": { "type": "string", "description": "Email address of the client." },
+        "fullName": { "type": "string", "description": "Full name of the contact person." },
+        "brandName": { "type": "string", "description": "Brand or business name." },
+        "email": { "type": "string", "format": "email", "description": "Contact email." },
+        "country": { "type": "string", "description": "Client operating country." },
+        "phone": { "type": "string", "description": "Phone or WhatsApp contact." },
+        "businessCategory": { "type": "string", "description": "Industry or niche." },
+        "neededServices": { "type": "array", "description": "List of selected creative services." },
+        "preferredPackage": { "type": "string", "description": "Starter, Signature, or Custom." },
+        "timeline": { "type": "string", "description": "Project launch timeline." },
+        "budget": { "type": "string", "description": "Target investment budget range." },
+        "projectDetails": { "type": "string", "description": "Comprehensive brief details." },
+        "status": { "type": "string", "description": "Review status: pending, reviewed, accepted." },
+        "createdAt": { "type": "string", "description": "ISO timestamp of submission." }
+      },
+      "required": ["enquiryId", "fullName", "brandName", "email", "projectDetails", "createdAt"]
+    },
+    "ProjectDraft": {
+      "title": "ProjectDraft",
+      "description": "Saved project scope draft created with the custom builder.",
+      "type": "object",
+      "properties": {
+        "draftId": { "type": "string", "description": "Unique draft identifier." },
+        "userId": { "type": "string", "description": "Owner Firebase UID." },
+        "brandName": { "type": "string", "description": "Client brand name draft." },
+        "category": { "type": "string", "description": "Primary brand category." },
+        "timeline": { "type": "string", "description": "Draft timeline." },
+        "budget": { "type": "string", "description": "Draft budget." },
+        "updatedAt": { "type": "string", "description": "ISO timestamp of last update." }
+      },
+      "required": ["draftId", "userId", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile document keyed by Firebase Auth UID."
+    },
+    "/enquiries/{enquiryId}": {
+      "schema": "Enquiry",
+      "description": "Client enquiries collection submitted to the studio."
+    },
+    "/users/{userId}/drafts/{draftId}": {
+      "schema": "ProjectDraft",
+      "description": "Client saved project scope drafts."
+    }
+  }
+}

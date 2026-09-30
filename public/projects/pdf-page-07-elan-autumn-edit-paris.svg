@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="parisSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8DFD5" />
+      <stop offset="50%" stop-color="#D9CBC0" />
+      <stop offset="100%" stop-color="#B8A79B" />
+    </linearGradient>
+    <linearGradient id="charcoalCoat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#383A40" />
+      <stop offset="45%" stop-color="#24262B" />
+      <stop offset="100%" stop-color="#141518" />
+    </linearGradient>
+    <linearGradient id="cafeAwning" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="50%" stop-color="#B45309" />
+      <stop offset="100%" stop-color="#92400E" />
+    </linearGradient>
+    <linearGradient id="cobblestones" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#55514E" />
+      <stop offset="50%" stop-color="#363330" />
+      <stop offset="100%" stop-color="#1C1A19" />
+    </linearGradient>
+    <filter id="parisGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="1200" fill="#1C1A19" />
+
+  <!-- Parisian Street Architecture Backdrop -->
+  <!-- Haussmannian Buildings Background -->
+  <polygon points="0,0 900,0 900,750 0,750" fill="url(#parisSky)" />
+  <!-- Classical French Mansard Windows & Stone Facades -->
+  <g fill="#A89A8E" stroke="#7A6D63" stroke-width="1.5">
+    <polygon points="0,150 350,220 350,750 0,750" fill="#C2B5A8" />
+    <!-- Left Balconies -->
+    <line x1="40" y1="360" x2="260" y2="385" stroke="#332B25" stroke-width="4" />
+    <line x1="50" y1="480" x2="280" y2="505" stroke="#332B25" stroke-width="4" />
+
+    <!-- Right Haussmannian Facade -->
+    <polygon points="550,220 900,150 900,750 550,750" fill="#C2B5A8" />
+    <line x1="640" y1="385" x2="860" y2="360" stroke="#332B25" stroke-width="4" />
+    <line x1="620" y1="505" x2="850" y2="480" stroke="#332B25" stroke-width="4" />
+  </g>
+
+  <!-- Autumn Parisian Trees with Golden Orange Foliage -->
+  <g fill="#D97706" fill-opacity="0.85">
+    <ellipse cx="220" cy="300" rx="90" ry="70" />
+    <ellipse cx="160" cy="340" rx="75" ry="55" fill="#B45309" />
+    <ellipse cx="740" cy="320" rx="85" ry="65" />
+    <ellipse cx="780" cy="360" rx="70" ry="50" fill="#B45309" />
+  </g>
+
+  <!-- Rue Saint-Paul Blue Enamel Street Sign on Right Building -->
+  <g transform="translate(710, 220)">
+    <rect width="90" height="42" rx="4" fill="#1E3A8A" stroke="#FFFFFF" stroke-width="2" />
+    <text x="45" y="20" font-family="'Plus Jakarta Sans', sans-serif" font-size="7" font-weight="700" letter-spacing="0.1em" fill="#FFFFFF" text-anchor="middle">
+      RUE
+    </text>
+    <text x="45" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" letter-spacing="0.12em" fill="#FFFFFF" text-anchor="middle">
+      SAINT-PAUL
+    </text>
+  </g>
+
+  <!-- Glowing Parisian Bistro: "CAFÉ DU SOLEIL" on Right -->
+  <g transform="translate(560, 310)">
+    <!-- Glowing Orange Awning -->
+    <polygon points="0,70 280,30 300,130 0,160" fill="url(#cafeAwning)" />
+    <!-- Bistro Sign Lettering -->
+    <text x="140" y="125" font-family="'Cormorant Garamond', serif" font-size="20" font-weight="700" letter-spacing="0.12em" fill="#FAF8F5" text-anchor="middle">
+      CAFÉ DU SOLEIL
+    </text>
+    <!-- Warm Glowing Lamps under awning -->
+    <circle cx="50" cy="180" r="18" fill="#FDE047" fill-opacity="0.6" filter="blur(8px)" />
+    <circle cx="160" cy="170" r="18" fill="#FDE047" fill-opacity="0.6" filter="blur(8px)" />
+    <!-- Bistro Tables & Chairs along sidewalk -->
+    <ellipse cx="60" cy="240" rx="25" ry="12" fill="#E2E8F0" />
+    <ellipse cx="140" cy="235" rx="25" ry="12" fill="#E2E8F0" />
+  </g>
+
+  <!-- Wet Cobblestone Street Perspective (Rue de Paris) -->
+  <polygon points="0,720 900,720 900,1200 0,1200" fill="url(#cobblestones)" />
+  <!-- Cobblestone Pavers Grid Lines -->
+  <g stroke="#6B645E" stroke-opacity="0.3" stroke-width="1.5" fill="none">
+    <line x1="450" y1="720" x2="100" y2="1200" />
+    <line x1="450" y1="720" x2="280" y2="1200" />
+    <line x1="450" y1="720" x2="480" y2="1200" />
+    <line x1="450" y1="720" x2="680" y2="1200" />
+    <line x1="450" y1="720" x2="850" y2="1200" />
+    <!-- Horizontal Cobblestone Arches -->
+    <path d="M 120 800 Q 450 780 780 800" />
+    <path d="M 80 870 Q 450 840 820 870" />
+    <path d="M 40 950 Q 450 910 860 950" />
+    <path d="M 0 1040 Q 450 990 900 1040" />
+  </g>
+  <!-- Fallen Golden Autumn Leaves scattered on stones -->
+  <ellipse cx="280" cy="850" rx="8" ry="4" fill="#D97706" />
+  <ellipse cx="320" cy="920" rx="10" ry="5" fill="#B45309" />
+  <ellipse cx="600" cy="880" rx="9" ry="4" fill="#D97706" />
+  <ellipse cx="640" cy="940" rx="11" ry="5" fill="#CA8A04" />
+  <ellipse cx="240" cy="980" rx="12" ry="5" fill="#D97706" />
+
+  <!-- Centerpiece: Fashion Model in Motion Striding Forward -->
+  <g transform="translate(320, 260)">
+    <!-- Cast Shadow on Wet Cobblestones -->
+    <ellipse cx="140" cy="670" rx="160" ry="24" fill="#000000" fill-opacity="0.65" filter="blur(6px)" />
+
+    <!-- Head & Dark Wavy Hair -->
+    <path d="M 115 65 C 115 15, 175 15, 175 65 C 175 105, 170 145, 145 155 C 120 145, 115 105, 115 65 Z" fill="#1A1513" />
+    <!-- Face Silhouette & Sophisticated Makeup -->
+    <path d="M 128 85 C 128 45, 165 45, 165 85 C 165 120, 158 135, 146 142 C 135 135, 128 120, 128 85 Z" fill="#D4A373" />
+    <!-- Bold Eyes & Red/Berry Lip -->
+    <ellipse cx="138" cy="80" rx="4" ry="2.5" fill="#1C140E" />
+    <ellipse cx="156" cy="80" rx="4" ry="2.5" fill="#1C140E" />
+    <path d="M 142 115 Q 148 122 154 115" stroke="#881337" stroke-width="2" fill="none" />
+
+    <!-- Black Cashmere Turtleneck Knit -->
+    <rect x="135" y="135" width="24" height="30" fill="#0B0C0E" />
+
+    <!-- Tailored Long Charcoal Wool Overcoat in Motion -->
+    <!-- Broad Structured Shoulders & Notched Lapels -->
+    <path d="M 70 160 C 100 150, 190 150, 220 160 L 255 450 L 260 580 L 30 580 L 40 450 Z" fill="url(#charcoalCoat)" stroke="#4A4E58" stroke-width="1.5" />
+    <!-- Peak Lapels & Double-Breasted Buttons -->
+    <path d="M 105 160 L 145 310 L 80 230 Z" fill="#1E2026" />
+    <path d="M 185 160 L 145 310 L 210 230 Z" fill="#2B2E36" />
+    <circle cx="135" cy="340" r="5" fill="#0B0C0E" stroke="#555B66" stroke-width="1" />
+    <circle cx="160" cy="340" r="5" fill="#0B0C0E" stroke="#555B66" stroke-width="1" />
+    <circle cx="135" cy="400" r="5" fill="#0B0C0E" stroke="#555B66" stroke-width="1" />
+    <circle cx="160" cy="400" r="5" fill="#0B0C0E" stroke="#555B66" stroke-width="1" />
+
+    <!-- Wide-Leg Pleated Tailored Trousers in Walking Stride -->
+    <!-- Front Forward Leg -->
+    <path d="M 130 570 L 175 740 L 245 740 L 195 570 Z" fill="#121316" stroke="#25272D" stroke-width="1" />
+    <!-- Rear Leg Trailing -->
+    <path d="M 100 570 L 40 720 L 95 720 L 130 570 Z" fill="#0A0B0D" stroke="#25272D" stroke-width="1" />
+
+    <!-- Pointed Black Leather Ankle Boots -->
+    <polygon points="175,735 240,735 260,760 170,760" fill="#050507" />
+    <polygon points="40,715 90,715 85,745 25,745" fill="#050507" />
+
+    <!-- Structured Luxury Black Leather Handbag in Right Hand -->
+    <g transform="translate(20, 390)">
+      <!-- Leather Handle -->
+      <path d="M 15 25 Q 40 -15 65 25" stroke="#121316" stroke-width="5" fill="none" />
+      <!-- Trapezoid Structured Bag Body -->
+      <polygon points="0,25 80,25 90,95 -10,95" fill="#141619" stroke="#333742" stroke-width="1.5" />
+      <!-- Gold Lock / Clasp Accent -->
+      <rect x="35" y="42" width="10" height="12" rx="2" fill="#D4AF37" />
+    </g>
+  </g>
+
+  <!-- Editorial Top Typography: "THE AUTUMN EDIT" -->
+  <g transform="translate(450, 180)" text-anchor="middle" filter="url(#parisGlow)">
+    <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="64" font-weight="700" letter-spacing="0.12em" fill="#FAF8F5">
+      THE AUTUMN EDIT
+    </text>
+    <text y="42" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="500" letter-spacing="0.32em" fill="#FAF8F5">
+      COLLECTION 02 / 2026
+    </text>
+  </g>
+
+  <!-- Bottom CTA: "SHOP THE COLLECTION →" -->
+  <g transform="translate(450, 1080)" text-anchor="middle" filter="url(#parisGlow)">
+    <text y="0" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" letter-spacing="0.25em" fill="#FAF8F5">
+      SHOP THE COLLECTION →
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="brocadeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D9CBB8" />
+      <stop offset="50%" stop-color="#C2B29D" />
+      <stop offset="100%" stop-color="#A89680" />
+    </linearGradient>
+    <linearGradient id="goldZariP10" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFE8B5" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#A07C20" />
+    </linearGradient>
+    <linearGradient id="coralSilk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E25547" />
+      <stop offset="50%" stop-color="#C93B2D" />
+      <stop offset="100%" stop-color="#9C2418" />
+    </linearGradient>
+    <linearGradient id="emeraldSilkP10" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#156B52" />
+      <stop offset="50%" stop-color="#0E4F3C" />
+      <stop offset="100%" stop-color="#063326" />
+    </linearGradient>
+    <filter id="stampShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="1200" fill="#FAF6EE" />
+
+  <!-- Intricate Silk Brocade Fabric Backdrop -->
+  <g transform="translate(100, 100)">
+    <rect width="700" height="1000" fill="url(#brocadeBg)" stroke="#8C7A65" stroke-width="2" />
+    <!-- Golden Brocade Floral & Paisley Weave Pattern Overlay -->
+    <g stroke="#9C8B76" stroke-width="1.5" stroke-opacity="0.5" fill="none">
+      <!-- Paisley motifs in background -->
+      <path d="M 60 120 C 60 80, 110 70, 120 100 C 130 130, 90 150, 70 180" />
+      <path d="M 220 100 C 220 60, 270 50, 280 80 C 290 110, 250 130, 230 160" />
+      <path d="M 520 120 C 520 80, 570 70, 580 100 C 590 130, 550 150, 530 180" />
+      <path d="M 80 820 C 80 780, 130 770, 140 800 C 150 830, 110 850, 90 880" />
+      <path d="M 580 820 C 580 780, 630 770, 640 800 C 650 830, 610 850, 590 880" />
+    </g>
+    <!-- Zari Pallu Border Trims at Top and Bottom of Saree Fabric -->
+    <rect x="0" y="0" width="700" height="45" fill="#8C3532" stroke="#5E2220" stroke-width="1" />
+    <rect x="0" y="955" width="700" height="45" fill="#8C3532" stroke="#5E2220" stroke-width="1" />
+  </g>
+
+  <!-- Top Signature Script in Royal Blue: "The Clothes of V. P." -->
+  <text x="210" y="195" font-family="'Brush Script MT', 'Dancing Script', cursive, serif" font-size="52" font-weight="700" fill="#1E3A8A">
+    The Clothes of V. P.
+  </text>
+
+  <!-- Left Vertical Typography: "INDIAN SAREES" -->
+  <g transform="translate(195, 450) rotate(-90)">
+    <text font-family="'Cormorant Garamond', Georgia, serif" font-size="34" font-weight="700" letter-spacing="0.22em" fill="#FAF8F5" text-anchor="middle">
+      INDIAN SAREES
+    </text>
+  </g>
+
+  <!-- Right Vertical Typography: "THE TRADEMARK OF INDIA" -->
+  <g transform="translate(705, 550) rotate(90)">
+    <text font-family="'Cormorant Garamond', Georgia, serif" font-size="32" font-weight="700" letter-spacing="0.18em" fill="#FAF8F5" text-anchor="middle">
+      THE TRADEMARK
+    </text>
+    <text y="38" font-family="'Cormorant Garamond', Georgia, serif" font-size="32" font-weight="700" letter-spacing="0.18em" fill="#FAF8F5" text-anchor="middle">
+      OF INDIA
+    </text>
+  </g>
+
+  <!-- Centerpiece: Scalloped Postage Stamp Frame with Heritage Silk Saree Portrait -->
+  <g transform="translate(290, 290)" filter="url(#stampShadow)">
+    <!-- White Postage Stamp Border with Scalloped Edge -->
+    <rect width="320" height="440" rx="3" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="2" />
+    <!-- Perforated Stamp Holes on Edge -->
+    <g fill="#A89680">
+      <circle cx="0" cy="40" r="4" /><circle cx="0" cy="80" r="4" /><circle cx="0" cy="120" r="4" /><circle cx="0" cy="160" r="4" /><circle cx="0" cy="200" r="4" /><circle cx="0" cy="240" r="4" /><circle cx="0" cy="280" r="4" /><circle cx="0" cy="320" r="4" /><circle cx="0" cy="360" r="4" /><circle cx="0" cy="400" r="4" />
+      <circle cx="320" cy="40" r="4" /><circle cx="320" cy="80" r="4" /><circle cx="320" cy="120" r="4" /><circle cx="320" cy="160" r="4" /><circle cx="320" cy="200" r="4" /><circle cx="320" cy="240" r="4" /><circle cx="320" cy="280" r="4" /><circle cx="320" cy="320" r="4" /><circle cx="320" cy="360" r="4" /><circle cx="320" cy="400" r="4" />
+      <circle cx="40" cy="0" r="4" /><circle cx="80" cy="0" r="4" /><circle cx="120" cy="0" r="4" /><circle cx="160" cy="0" r="4" /><circle cx="200" cy="0" r="4" /><circle cx="240" cy="0" r="4" /><circle cx="280" cy="0" r="4" />
+      <circle cx="40" cy="440" r="4" /><circle cx="80" cy="440" r="4" /><circle cx="120" cy="440" r="4" /><circle cx="160" cy="440" r="4" /><circle cx="200" cy="440" r="4" /><circle cx="240" cy="440" r="4" /><circle cx="280" cy="440" r="4" />
+    </g>
+
+    <!-- Inner Saree Photograph Stage -->
+    <rect x="18" y="18" width="284" height="404" rx="2" fill="#2E241E" />
+
+    <!-- Royal Haveli Palace Garden Background -->
+    <polygon points="18,18 302,18 302,180 18,180" fill="#4B6B52" />
+    <circle cx="80" cy="80" r="45" fill="#3D5A43" />
+    <circle cx="240" cy="70" r="55" fill="#3D5A43" />
+
+    <!-- Two Regal Indian Women in Traditional Sarees Seated Together -->
+    <!-- Woman 1 (Left): Coral-Red Banarasi Saree -->
+    <g transform="translate(45, 60)">
+      <!-- Head / Hair Bun with Gajra Jasmine Flowers -->
+      <circle cx="50" cy="50" r="22" fill="#17120F" />
+      <path d="M 30 50 Q 50 25 70 50" stroke="#FAF8F5" stroke-width="4" stroke-dasharray="3,3" fill="none" />
+      <!-- Face -->
+      <rect x="42" y="55" width="16" height="28" fill="#C58C62" />
+      <!-- Gold Kundan Choker & Jhumkas -->
+      <ellipse cx="50" cy="80" rx="14" ry="5" fill="url(#goldZariP10)" />
+      <circle cx="34" cy="58" r="4" fill="url(#goldZariP10)" />
+      <!-- Coral Red Silk Saree Drape -->
+      <path d="M 20 85 C 35 75, 75 75, 90 85 L 120 320 L 0 320 Z" fill="url(#coralSilk)" />
+      <!-- Heavy Gold Zari Border on Pallu -->
+      <path d="M 25 90 Q 70 170 115 315" stroke="url(#goldZariP10)" stroke-width="12" fill="none" />
+      <path d="M 25 90 Q 70 170 115 315" stroke="#8C2518" stroke-width="1.5" stroke-dasharray="4,2" fill="none" />
+      <!-- Gold Bangles on Arm -->
+      <rect x="80" y="180" width="12" height="18" fill="url(#goldZariP10)" />
+    </g>
+
+    <!-- Woman 2 (Right): Emerald Green Silk Saree Seated Elegantly -->
+    <g transform="translate(135, 95)">
+      <!-- Head / Hair -->
+      <circle cx="55" cy="45" r="20" fill="#17120F" />
+      <ellipse cx="55" cy="72" rx="14" ry="5" fill="url(#goldZariP10)" />
+      <!-- Emerald Green Saree Drape -->
+      <path d="M 25 80 C 40 70, 80 70, 95 80 L 130 280 L 10 280 Z" fill="url(#emeraldSilkP10)" />
+      <!-- Gold Zari Pallu Border -->
+      <path d="M 30 85 Q 65 160 100 280" stroke="url(#goldZariP10)" stroke-width="10" fill="none" />
+      <path d="M 30 85 Q 65 160 100 280" stroke="#063326" stroke-width="1.5" stroke-dasharray="3,2" fill="none" />
+      <!-- Gold Bangles -->
+      <rect x="25" y="165" width="10" height="16" fill="url(#goldZariP10)" />
+    </g>
+  </g>
+
+  <!-- Bottom Magenta / Pink Script: "The BIRLA SAREES" -->
+  <text x="210" y="860" font-family="'Brush Script MT', 'Dancing Script', cursive, serif" font-size="52" font-weight="700" fill="#BE185D">
+    The BIRLA SAREES
+  </text>
+</svg>

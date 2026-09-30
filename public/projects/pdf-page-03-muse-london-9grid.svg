@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="museP3Bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FAF9F5" />
+    </linearGradient>
+    <linearGradient id="amberP3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E29F4C" />
+      <stop offset="40%" stop-color="#BA7220" />
+      <stop offset="100%" stop-color="#733F0D" />
+    </linearGradient>
+    <linearGradient id="skinP3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2DFD0" />
+      <stop offset="50%" stop-color="#E4C8B5" />
+      <stop offset="100%" stop-color="#CFA891" />
+    </linearGradient>
+    <linearGradient id="stoneLedge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EFECE6" />
+      <stop offset="100%" stop-color="#DCD6CB" />
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="1200" fill="url(#museP3Bg)" />
+
+  <!-- Instagram Profile Header -->
+  <g transform="translate(100, 110)">
+    <!-- Circular Brand Avatar / Monogram -->
+    <circle cx="50" cy="50" r="45" fill="#FAF8F5" stroke="#E2DDD5" stroke-width="1.5" />
+    <text x="50" y="56" font-family="'Cormorant Garamond', Georgia, serif" font-size="20" font-weight="700" letter-spacing="0.1em" fill="#1C1814" text-anchor="middle">
+      MUSE
+    </text>
+    <text x="50" y="68" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" letter-spacing="0.15em" fill="#8C847B" text-anchor="middle">
+      BEAUTY LONDON
+    </text>
+
+    <!-- Header Details -->
+    <g transform="translate(130, 20)">
+      <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="28" font-weight="600" letter-spacing="0.08em" fill="#1C1814">
+        MUSE BEAUTY LONDON
+      </text>
+      <text y="24" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500" letter-spacing="0.15em" fill="#6A6258">
+        CONCEPT PROJECT BY ARKAJA STUDIO — @MUSEBEAUTYLDN
+      </text>
+      <text y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="300" fill="#3D3730">
+        Curated Skincare for a Luminous Glow.
+      </text>
+      <text y="70" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="300" fill="#3D3730">
+        British Elegance. Minimalist Luxury.
+      </text>
+      <text y="92" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" letter-spacing="0.1em" fill="#1C1814">
+        MUSE // London
+      </text>
+    </g>
+  </g>
+
+  <!-- Divider Line -->
+  <line x1="100" y1="265" x2="800" y2="265" stroke="#E5E0D8" stroke-width="1" />
+
+  <!-- ---------------------------------------------------- -->
+  <!-- 9-GRID INSTAGRAM FEED (3x3 Square Grid) -->
+  <!-- ---------------------------------------------------- -->
+  <g transform="translate(100, 285)">
+    <!-- GRID ROW 1 -->
+    <!-- 1. Top Left: Model Close-up ("MUSE GLOW") -->
+    <g transform="translate(0, 0)">
+      <rect width="220" height="220" fill="#E8DCD1" />
+      <!-- Face profile -->
+      <path d="M 40 40 C 70 20, 160 30, 180 90 C 200 150, 170 200, 120 220 L 20 220 Z" fill="url(#skinP3)" />
+      <ellipse cx="140" cy="110" rx="35" ry="50" fill="#FFFFFF" fill-opacity="0.35" />
+      <text x="110" y="115" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="600" letter-spacing="0.18em" fill="#FAF8F5" text-anchor="middle">
+        MUSE
+      </text>
+      <text x="110" y="175" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" letter-spacing="0.25em" fill="#FAF8F5" text-anchor="middle">
+        GLOW
+      </text>
+    </g>
+
+    <!-- 2. Top Center: 3 Standing Amber Dropper Bottles -->
+    <g transform="translate(240, 0)">
+      <rect width="220" height="220" fill="#EAE5DC" />
+      <!-- Bottle 1 (Left) -->
+      <g transform="translate(40, 50)">
+        <rect x="12" y="25" width="20" height="70" rx="3" fill="url(#amberP3)" />
+        <rect x="16" y="12" width="12" height="13" fill="#D4AF37" />
+        <path d="M 18 0 Q 22 -6 26 0 L 26 12 L 18 12 Z" fill="#1C1814" />
+        <rect x="14" y="42" width="16" height="32" fill="#FAF8F5" />
+        <text x="22" y="55" font-size="4" font-family="'Plus Jakarta Sans'" text-anchor="middle" fill="#000">MUSE</text>
+      </g>
+      <!-- Bottle 2 (Center) -->
+      <g transform="translate(85, 35)">
+        <rect x="15" y="30" width="24" height="90" rx="4" fill="url(#amberP3)" />
+        <rect x="20" y="15" width="14" height="15" fill="#D4AF37" />
+        <path d="M 22 2 Q 27 -6 32 2 L 32 15 L 22 15 Z" fill="#1C1814" />
+        <rect x="18" y="50" width="18" height="42" fill="#FAF8F5" />
+        <text x="27" y="65" font-size="5" font-family="'Plus Jakarta Sans'" text-anchor="middle" fill="#000">MUSE</text>
+      </g>
+      <!-- Bottle 3 (Right) -->
+      <g transform="translate(135, 45)">
+        <rect x="12" y="25" width="22" height="75" rx="3" fill="url(#amberP3)" />
+        <rect x="17" y="12" width="12" height="13" fill="#D4AF37" />
+        <path d="M 19 0 Q 23 -6 27 0 L 27 12 L 19 12 Z" fill="#1C1814" />
+        <rect x="14" y="40" width="18" height="35" fill="#FAF8F5" />
+        <text x="23" y="52" font-size="4.5" font-family="'Plus Jakarta Sans'" text-anchor="middle" fill="#000">MUSE</text>
+      </g>
+    </g>
+
+    <!-- 3. Top Right: Hands Holding Amber Jar ("THE GLOW EDIT") -->
+    <g transform="translate(480, 0)">
+      <rect width="220" height="220" fill="#D3BEAC" />
+      <!-- Amber Jar -->
+      <g transform="translate(85, 110)">
+        <rect x="0" y="20" width="55" height="45" rx="4" fill="url(#amberP3)" />
+        <rect x="-3" y="5" width="61" height="16" rx="2" fill="#1C1814" />
+        <rect x="5" y="30" width="45" height="22" rx="1" fill="#FAF8F5" />
+      </g>
+      <text x="110" y="70" font-family="'Cormorant Garamond', serif" font-size="24" font-weight="700" letter-spacing="0.1em" fill="#FAF8F5" text-anchor="middle">
+        THE
+      </text>
+      <text x="110" y="94" font-family="'Cormorant Garamond', serif" font-size="24" font-weight="700" letter-spacing="0.1em" fill="#FAF8F5" text-anchor="middle">
+        GLOW
+      </text>
+      <text x="110" y="118" font-family="'Cormorant Garamond', serif" font-size="24" font-weight="700" letter-spacing="0.1em" fill="#FAF8F5" text-anchor="middle">
+        EDIT
+      </text>
+    </g>
+
+    <!-- GRID ROW 2 -->
+    <!-- 4. Mid Left: Notebook Flatlay ("THE GLOW EDIT") + Dried Flower -->
+    <g transform="translate(0, 235)">
+      <rect width="220" height="220" fill="#E8E2D8" />
+      <!-- Open Journal Book -->
+      <rect x="25" y="30" width="115" height="155" rx="3" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1" />
+      <text x="82" y="78" font-family="'Cormorant Garamond', serif" font-size="14" font-weight="600" letter-spacing="0.08em" fill="#1C1814" text-anchor="middle">
+        THE
+      </text>
+      <text x="82" y="96" font-family="'Cormorant Garamond', serif" font-size="14" font-weight="600" letter-spacing="0.08em" fill="#1C1814" text-anchor="middle">
+        GLOW
+      </text>
+      <text x="82" y="114" font-family="'Cormorant Garamond', serif" font-size="14" font-weight="600" letter-spacing="0.08em" fill="#1C1814" text-anchor="middle">
+        EDIT
+      </text>
+      <!-- Dried Floral Stem -->
+      <path d="M 120 40 Q 150 90 190 170" stroke="#7A6855" stroke-width="1.5" fill="none" />
+      <circle cx="125" cy="45" r="3" fill="#D3B89E" />
+      <circle cx="140" cy="70" r="3" fill="#D3B89E" />
+      <circle cx="160" cy="110" r="3" fill="#D3B89E" />
+      <!-- Mini Dropper Bottle beside book -->
+      <rect x="150" y="100" width="18" height="50" rx="3" fill="url(#amberP3)" />
+      <path d="M 155 88 Q 159 82 163 88 L 163 100 L 155 100 Z" fill="#1C1814" />
+    </g>
+
+    <!-- 5. Mid Center: Serene Face with Soft Daylight ("MUSE") -->
+    <g transform="translate(240, 235)">
+      <rect width="220" height="220" fill="#DFD2C4" />
+      <path d="M 30 50 C 60 10, 170 10, 190 70 C 210 130, 180 200, 140 220 L 20 220 Z" fill="url(#skinP3)" />
+      <ellipse cx="120" cy="90" rx="45" ry="25" fill="#FFFFFF" fill-opacity="0.3" />
+      <!-- Serene closed eyes -->
+      <path d="M 80 105 Q 105 115 125 105" stroke="#3D291D" stroke-width="2" fill="none" />
+      <!-- Nose bridge & lip -->
+      <path d="M 100 100 L 105 140 Q 120 150 115 160" stroke="#3D291D" stroke-width="1" stroke-opacity="0.5" fill="none" />
+      <path d="M 95 165 Q 115 160 135 165" stroke="#8C4444" stroke-width="2" fill="none" />
+      <text x="110" y="200" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="600" letter-spacing="0.18em" fill="#FAF8F5" text-anchor="middle">
+        MUSE
+      </text>
+    </g>
+
+    <!-- 6. Mid Right: Travertine Stone Ledge + Bottles & Jars ("MUSE") -->
+    <g transform="translate(480, 235)">
+      <rect width="220" height="220" fill="#EFEBE4" />
+      <!-- Stone Shelf Ledge -->
+      <rect x="0" y="125" width="220" height="95" fill="url(#stoneLedge)" />
+      <line x1="0" y1="125" x2="220" y2="125" stroke="#C8BFB2" stroke-width="1" />
+
+      <!-- Amber Dropper Bottle -->
+      <rect x="35" y="70" width="24" height="60" rx="3" fill="url(#amberP3)" />
+      <path d="M 42 55 Q 47 48 52 55 L 52 70 L 42 70 Z" fill="#1C1814" />
+      <rect x="38" y="85" width="18" height="28" fill="#FAF8F5" />
+      <!-- White Cosmetic Cream Jar 1 -->
+      <rect x="80" y="95" width="45" height="32" rx="3" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1" />
+      <rect x="78" y="85" width="49" height="12" rx="1.5" fill="#1C1814" />
+      <!-- Amber Cream Jar 2 -->
+      <rect x="145" y="95" width="45" height="32" rx="3" fill="url(#amberP3)" />
+      <rect x="143" y="85" width="49" height="12" rx="1.5" fill="#1C1814" />
+
+      <text x="110" y="175" font-family="'Cormorant Garamond', serif" font-size="20" font-weight="600" letter-spacing="0.16em" fill="#1C1814" text-anchor="middle">
+        MUSE
+      </text>
+      <text x="110" y="190" font-family="'Plus Jakarta Sans', sans-serif" font-size="6" letter-spacing="0.15em" fill="#756C60" text-anchor="middle">
+        BEAUTY LONDON
+      </text>
+    </g>
+
+    <!-- GRID ROW 3 -->
+    <!-- 7. Bottom Left: Macro Dewy Cheek Highlight ("MUSE The Ritual") -->
+    <g transform="translate(0, 470)">
+      <rect width="220" height="220" fill="#D8BEAB" />
+      <ellipse cx="110" cy="110" rx="90" ry="85" fill="#EED4C2" />
+      <ellipse cx="90" cy="80" rx="55" ry="35" fill="#FFFFFF" fill-opacity="0.6" filter="blur(6px)" />
+      <!-- Skin Dew Drops -->
+      <circle cx="85" cy="70" r="3" fill="#FFFFFF" />
+      <circle cx="105" cy="85" r="2.5" fill="#FFFFFF" />
+      <circle cx="70" cy="95" r="2" fill="#FFFFFF" />
+
+      <text x="110" y="145" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="600" letter-spacing="0.18em" fill="#FAF8F5" text-anchor="middle">
+        MUSE
+      </text>
+      <text x="110" y="180" font-family="'Cormorant Garamond', serif" font-size="14" font-style="italic" fill="#FAF8F5" text-anchor="middle">
+        The Ritual
+      </text>
+    </g>
+
+    <!-- 8. Bottom Center: 3 Bottles on White Pedestal -->
+    <g transform="translate(240, 470)">
+      <rect width="220" height="220" fill="#EAE7E1" />
+      <rect x="25" y="140" width="170" height="80" fill="#FAF8F5" stroke="#E0DAD0" stroke-width="1" />
+      <!-- Bottle 1 (Clear frosted glass) -->
+      <rect x="45" y="80" width="22" height="65" rx="3" fill="#FFFFFF" stroke="#DDD7CC" stroke-width="1" />
+      <path d="M 51 68 Q 56 62 61 68 L 61 80 L 51 80 Z" fill="#1C1814" />
+      <!-- Bottle 2 (Rich amber dropper) -->
+      <rect x="95" y="70" width="26" height="75" rx="4" fill="url(#amberP3)" />
+      <path d="M 102 55 Q 108 48 114 55 L 114 70 L 102 70 Z" fill="#1C1814" />
+      <!-- Bottle 3 (Amber pump) -->
+      <rect x="145" y="85" width="24" height="60" rx="3" fill="url(#amberP3)" />
+      <rect x="151" y="72" width="12" height="14" fill="#D4AF37" />
+    </g>
+
+    <!-- 9. Bottom Right: Pipette Dispensing Serum Nectar Drop ("MUSE") -->
+    <g transform="translate(480, 470)">
+      <rect width="220" height="220" fill="#E5DDD0" />
+      <!-- Petri Dish / Watch Glass Surface -->
+      <ellipse cx="110" cy="130" rx="90" ry="75" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1.5" />
+      <ellipse cx="110" cy="130" rx="75" ry="60" fill="#F0E8DC" fill-opacity="0.6" />
+
+      <!-- Golden Honey Serum Pool -->
+      <ellipse cx="110" cy="130" rx="45" ry="32" fill="#E59E44" fill-opacity="0.75" />
+      <circle cx="102" cy="122" r="5" fill="#FFFFFF" fill-opacity="0.8" />
+
+      <!-- Glass Pipette Tip Angled -->
+      <path d="M 180 20 L 125 105 L 115 100 L 170 15 Z" fill="#FFFFFF" fill-opacity="0.75" stroke="#C4B9AA" stroke-width="1" />
+      <path d="M 175 22 L 128 100" stroke="#E59E44" stroke-width="3" />
+      <!-- Golden Droplet Suspended -->
+      <circle cx="116" cy="112" r="6" fill="#E59E44" />
+      <circle cx="114" cy="110" r="2" fill="#FFFFFF" />
+
+      <text x="110" y="185" font-family="'Cormorant Garamond', serif" font-size="28" font-weight="600" letter-spacing="0.18em" fill="#1C1814" text-anchor="middle">
+        MUSE
+      </text>
+    </g>
+  </g>
+
+  <!-- Bottom Brand Signature -->
+  <text x="450" y="1140" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" letter-spacing="0.25em" fill="#A89E90" text-anchor="middle">
+    MUSE BEAUTY LONDON · INSTAGRAM FEED DOSSIER · ARKAJA STUDIO
+  </text>
+</svg>

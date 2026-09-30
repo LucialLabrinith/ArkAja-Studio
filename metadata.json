@@ -1,0 +1,7 @@
+{
+  "name": "ArkAja Studio",
+  "description": "Creative content for brands with something to say. AI-assisted creative production, human-led art direction.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

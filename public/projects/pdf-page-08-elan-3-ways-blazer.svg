@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="studioWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E5DDD2" />
+      <stop offset="60%" stop-color="#D8CEC1" />
+      <stop offset="100%" stop-color="#C2B7A8" />
+    </linearGradient>
+    <linearGradient id="concreteFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C5B9AA" />
+      <stop offset="100%" stop-color="#9E9284" />
+    </linearGradient>
+    <linearGradient id="blackBlazer" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D3036" />
+      <stop offset="40%" stop-color="#1B1C20" />
+      <stop offset="100%" stop-color="#0E0F12" />
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="1200" fill="#E5DDD2" />
+
+  <!-- Studio Walls & Concrete Floor Horizon -->
+  <polygon points="0,0 900,0 900,780 0,780" fill="url(#studioWall)" />
+  <polygon points="0,780 900,780 900,1200 0,1200" fill="url(#concreteFloor)" />
+  <line x1="0" y1="780" x2="900" y2="780" stroke="#AFA394" stroke-width="1.5" />
+
+  <!-- Studio Prop Left: Plinth Pedestal with Ceramic Vase & Art Books -->
+  <g transform="translate(100, 480)">
+    <!-- Tall Concrete Pedestal Plinth -->
+    <rect x="0" y="80" width="80" height="280" fill="#CDC3B4" stroke="#B8AC9D" stroke-width="1" />
+    <polygon points="0,80 30,60 110,60 80,80" fill="#E0D7CA" />
+    <polygon points="80,80 110,60 110,340 80,360" fill="#A89D8E" />
+
+    <!-- Ceramic Sculptural Bowl / Vase on Plinth -->
+    <g transform="translate(15, 0)">
+      <ellipse cx="40" cy="50" rx="35" ry="12" fill="#EAE5DC" stroke="#CDC5B5" stroke-width="1.5" />
+      <path d="M 5 50 Q 40 85 75 50 Z" fill="#E0D7CA" stroke="#CDC5B5" stroke-width="1.5" />
+    </g>
+
+    <!-- Stack of Minimalist Art Books on Floor beside Plinth -->
+    <g transform="translate(105, 300)">
+      <rect x="0" y="0" width="80" height="16" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1" />
+      <rect x="-5" y="16" width="90" height="18" fill="#1C1814" />
+      <rect x="-2" y="34" width="85" height="15" fill="#FAF8F5" stroke="#DDD7CC" stroke-width="1" />
+      <rect x="-8" y="49" width="95" height="20" fill="#9C8B7B" />
+      <!-- Ceramic Jug / Vase on top of books -->
+      <path d="M 30 -25 C 20 -15, 20 0, 50 0 C 80 0, 80 -15, 70 -25 Z" fill="#EAE5DC" stroke="#C5BEB0" stroke-width="1" />
+    </g>
+  </g>
+
+  <!-- Studio Prop Right: Black Industrial Steel Clothing Rack in Background -->
+  <g transform="translate(680, 360)">
+    <!-- Steel Frame -->
+    <line x1="0" y1="0" x2="160" y2="0" stroke="#1A1816" stroke-width="5" stroke-linecap="round" />
+    <line x1="160" y1="0" x2="160" y2="440" stroke="#1A1816" stroke-width="5" />
+    <line x1="130" y1="440" x2="190" y2="440" stroke="#1A1816" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Neutral Garments Hanging on Rack -->
+    <!-- Cream Silk Trench -->
+    <g transform="translate(20, 15)">
+      <path d="M 0 0 L 30 0 L 40 320 L -10 320 Z" fill="#FAF8F5" stroke="#E2DDD5" stroke-width="1" />
+    </g>
+    <!-- Camel Blazer -->
+    <g transform="translate(50, 15)">
+      <path d="M 0 0 L 35 0 L 42 240 L -7 240 Z" fill="#CBB296" stroke="#B09678" stroke-width="1" />
+    </g>
+    <!-- Taupe Coat -->
+    <g transform="translate(85, 15)">
+      <path d="M 0 0 L 30 0 L 38 290 L -8 290 Z" fill="#8F8375" stroke="#756A5D" stroke-width="1" />
+    </g>
+    <!-- Ivory Shirt -->
+    <g transform="translate(115, 15)">
+      <path d="M 0 0 L 28 0 L 34 210 L -6 210 Z" fill="#F5F2EB" stroke="#DDD8CC" stroke-width="1" />
+    </g>
+  </g>
+
+  <!-- Editorial Brand & Headline Header -->
+  <!-- Top Left: "ÉLAN" -->
+  <text x="140" y="140" font-family="'Cormorant Garamond', Georgia, serif" font-size="38" font-weight="700" letter-spacing="0.14em" fill="#1C1814">
+    ÉLAN
+  </text>
+
+  <!-- Main Headline: "3 WAYS TO STYLE ONE BLAZER" -->
+  <g transform="translate(140, 220)">
+    <text y="0" font-family="'Cormorant Garamond', Georgia, serif" font-size="58" font-weight="800" letter-spacing="0.04em" fill="#1C1814">
+      3 WAYS TO STYLE
+    </text>
+    <text y="60" font-family="'Cormorant Garamond', Georgia, serif" font-size="58" font-weight="800" letter-spacing="0.04em" fill="#1C1814">
+      ONE BLAZER
+    </text>
+    <!-- Subhead with Occasions -->
+    <text y="105" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" letter-spacing="0.12em" fill="#3D3730">
+      01 Office • 02 Dinner • 03 Weekend
+    </text>
+  </g>
+
+  <!-- Centerpiece: Studio Fashion Model -->
+  <g transform="translate(480, 250)">
+    <!-- Soft Ambient Floor Shadow -->
+    <ellipse cx="110" cy="620" rx="140" ry="22" fill="#4A4137" fill-opacity="0.4" filter="blur(6px)" />
+
+    <!-- Head & Sleek Bun Hair -->
+    <path d="M 85 50 C 85 10, 145 10, 145 50 C 145 90, 140 120, 115 130 C 90 120, 85 90, 85 50 Z" fill="#1C1410" />
+    <circle cx="115" cy="18" r="15" fill="#140E0B" />
+    <!-- Sculptural Gold Hoop Earring -->
+    <circle cx="82" cy="75" r="7" fill="none" stroke="#D4AF37" stroke-width="2" />
+
+    <!-- Face Silhouette -->
+    <path d="M 92 65 C 92 35, 135 35, 135 65 C 135 100, 128 115, 115 120 C 102 115, 92 100, 92 65 Z" fill="#DFA982" />
+    <ellipse cx="102" cy="65" rx="3.5" ry="2" fill="#1C1410" />
+    <ellipse cx="122" cy="65" rx="3.5" ry="2" fill="#1C1410" />
+    <!-- Lips -->
+    <path d="M 108 96 Q 115 92 122 96" stroke="#994D4A" stroke-width="2" fill="none" />
+
+    <!-- Satin V-Neck Camisole -->
+    <polygon points="102,130 115,160 128,130" fill="#2E241E" />
+    <!-- Delicate Gold Pendant Necklace -->
+    <line x1="110" y1="125" x2="115" y2="145" stroke="#D4AF37" stroke-width="1" />
+    <circle cx="115" cy="146" r="2.5" fill="#D4AF37" />
+
+    <!-- Oversized Tailored Black Blazer -->
+    <!-- Sharp Structured Shoulders -->
+    <path d="M 25 140 C 65 130, 160 130, 205 140 L 220 280 L 195 440 L 35 440 L 10 280 Z" fill="url(#blackBlazer)" stroke="#4A4E58" stroke-width="1.5" />
+    <!-- Deep Peak Lapels -->
+    <path d="M 68 140 L 115 280 L 40 210 Z" fill="#141518" />
+    <path d="M 162 140 L 115 280 L 190 210 Z" fill="#25272E" />
+    <!-- Horn Button & Flap Pockets -->
+    <circle cx="115" cy="300" r="5" fill="#0E0F12" stroke="#484C55" stroke-width="1" />
+    <rect x="25" y="340" width="55" height="10" rx="1.5" fill="#141518" stroke="#3A3D46" stroke-width="1" />
+    <rect x="150" y="340" width="55" height="10" rx="1.5" fill="#141518" stroke="#3A3D46" stroke-width="1" />
+
+    <!-- Slim Tailored Cigarette Trousers -->
+    <!-- Left Leg -->
+    <path d="M 80 430 L 70 600 L 110 600 L 115 430 Z" fill="#1A1C20" stroke="#333740" stroke-width="1" />
+    <!-- Right Leg -->
+    <path d="M 115 430 L 125 600 L 165 600 L 150 430 Z" fill="#131417" stroke="#333740" stroke-width="1" />
+    <!-- Front Press Crease Lines -->
+    <line x1="90" y1="440" x2="90" y2="595" stroke="#3E424D" stroke-width="1" />
+    <line x1="145" y1="440" x2="145" y2="595" stroke="#3E424D" stroke-width="1" />
+
+    <!-- Pointed Leather Ankle Boots -->
+    <polygon points="68,595 110,595 118,630 60,630" fill="#0A0B0D" />
+    <polygon points="125,595 168,595 174,630 118,630" fill="#0A0B0D" />
+
+    <!-- Small Black Leather Handbag in Hand -->
+    <g transform="translate(195, 360)">
+      <path d="M 12 15 Q 26 -6 40 15" stroke="#0E0F12" stroke-width="3" fill="none" />
+      <rect x="0" y="15" width="52" height="42" rx="3" fill="#121316" stroke="#2F333D" stroke-width="1" />
+      <rect x="23" y="26" width="6" height="8" rx="1" fill="#D4AF37" />
+    </g>
+  </g>
+
+  <!-- Sparkle Accent Icon (Bottom Right) -->
+  <g transform="translate(720, 880)" fill="#FAF8F5" fill-opacity="0.6">
+    <path d="M 0 -14 Q 0 0 14 0 Q 0 0 0 14 Q 0 0 -14 0 Q 0 0 0 -14 Z" />
+  </g>
+</svg>

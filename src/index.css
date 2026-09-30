@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  --color-charcoal-950: #0b0c0e;
+  --color-charcoal-900: #121418;
+  --color-charcoal-800: #1a1d23;
+  --color-charcoal-700: #262a33;
+  --color-charcoal-600: #353b47;
+
+  --color-ivory-50: #FCFBF9;
+  --color-ivory-100: #FAF8F5;
+  --color-ivory-200: #F3F1EC;
+  --color-ivory-300: #E7E3D8;
+  
+  --color-stone-muted: #8E929A;
+  --color-stone-light: #B4B7BF;
+  
+  --color-gold-champagne: #D8C7A5;
+  --color-gold-muted: #C5B38F;
+  --color-gold-dark: #A58B55;
+}
+
+/* Custom editorial styles */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #FAF8F5;
+    color: #14171A;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.combo body,
+  html.light body {
+    background-color: #FFFFFF;
+    color: #14171A;
+  }
+
+  html.dark body {
+    background-color: #0b0c0e;
+    color: #F3F1EC;
+  }
+
+  h1, h2, h3, .font-editorial {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF8F5;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: #0b0c0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4CEBF;
+  border-radius: 3px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #262a33;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B5AD9C;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #353b47;
+}
+
+/* ======================================================== */
+/* Studio Asset Protection: No image dragging, copying, save */
+/* ======================================================== */
+img, picture, video, canvas, [data-protected-asset="true"] {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
+
+/* Prevent printing & print-to-PDF screenshots with Blank Screen + Message */
+@media print {
+  html, body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+  body > * {
+    display: none !important;
+  }
+  body::after {
+    content: "SCREENSHOT PREVENTION ACTIVATED\A\A Capturing and recording proprietary concepts from ArkAja Studio is restricted.\A\A ARKAJA STUDIO · ASSET PROTECTION";
+    white-space: pre-wrap;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-family: monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+    color: #D8C7A5 !important;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000000 !important;
+  }
+}
+

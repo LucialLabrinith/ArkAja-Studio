@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" fill="none">
+  <!-- ArkAja Studio Official Monogram + Wordmark (Light Mode) -->
+  <g transform="translate(4, 4) scale(0.65)">
+    <!-- First 'A' in Midnight Charcoal -->
+    <path d="M 34 10 L 12 78 H 22 L 28 58 H 50 L 56 78 H 66 L 44 10 H 34 Z M 39 24 L 46.5 50 H 31.5 L 39 24 Z" 
+          fill="#14171A" />
+    <!-- Second 'A' Interlocking in Bronze Gold -->
+    <path d="M 60 10 L 38 78 H 48 L 54 58 H 76 L 82 78 H 92 L 70 10 H 60 Z M 65 24 L 72.5 50 H 57.5 L 65 24 Z" 
+          fill="#A58B55" />
+    <!-- Interlock cross-weave accent -->
+    <path d="M 46.5 42 L 50 50 H 42 L 44 44 Z" fill="#14171A" />
+  </g>
+  <!-- Wordmark -->
+  <text x="76" y="34" font-family="'Cormorant Garamond', Georgia, serif" font-size="24" font-weight="600" letter-spacing="0.24em" fill="#14171A">
+    ARKAJA
+  </text>
+  <text x="77" y="49" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="500" letter-spacing="0.42em" fill="#A58B55">
+    STUDIO
+  </text>
+</svg>

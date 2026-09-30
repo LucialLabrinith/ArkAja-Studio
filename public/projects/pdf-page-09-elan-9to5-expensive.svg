@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="concretePlaza" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8F969E" />
+      <stop offset="40%" stop-color="#6E767E" />
+      <stop offset="100%" stop-color="#4B535B" />
+    </linearGradient>
+    <linearGradient id="powerSuit" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A3E45" />
+      <stop offset="40%" stop-color="#282B30" />
+      <stop offset="100%" stop-color="#16181B" />
+    </linearGradient>
+    <filter id="boldTextDrop" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.85" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="1200" fill="#2E3339" />
+
+  <!-- Modern Brutalist Concrete Architecture & Glass Atrium Backdrop -->
+  <!-- Left Glass High-Rise Facade -->
+  <polygon points="0,0 320,0 280,820 0,820" fill="#3D454E" stroke="#252A30" stroke-width="2" />
+  <!-- Glass Window Mullions -->
+  <g stroke="#56606C" stroke-width="1.5" stroke-opacity="0.6">
+    <line x1="60" y1="0" x2="50" y2="820" />
+    <line x1="130" y1="0" x2="115" y2="820" />
+    <line x1="200" y1="0" x2="180" y2="820" />
+    <line x1="270" y1="0" x2="245" y2="820" />
+    <!-- Horizontal Mullions -->
+    <line x1="0" y1="180" x2="310" y2="180" />
+    <line x1="0" y1="360" x2="295" y2="360" />
+    <line x1="0" y1="540" x2="285" y2="540" />
+    <line x1="0" y1="720" x2="280" y2="720" />
+  </g>
+
+  <!-- Center Plaza Corridor & Distant Pedestrians in Bokeh -->
+  <polygon points="320,0 600,0 600,820 280,820" fill="#757D87" />
+  <circle cx="580" cy="530" r="10" fill="#2D3238" />
+  <rect x="576" y="540" width="8" height="28" fill="#2D3238" />
+  <circle cx="610" cy="540" r="8" fill="#3D444C" />
+  <rect x="607" y="548" width="6" height="22" fill="#3D444C" />
+
+  <!-- Right Brutalist Concrete Pillar & Wall -->
+  <polygon points="600,0 900,0 900,820 600,820" fill="#5A616B" stroke="#373D44" stroke-width="2" />
+  <!-- Concrete Tie-Holes / Formwork Texture -->
+  <circle cx="660" cy="140" r="5" fill="#3E444C" />
+  <circle cx="820" cy="140" r="5" fill="#3E444C" />
+  <circle cx="660" cy="380" r="5" fill="#3E444C" />
+  <circle cx="820" cy="380" r="5" fill="#3E444C" />
+  <circle cx="660" cy="620" r="5" fill="#3E444C" />
+  <circle cx="820" cy="620" r="5" fill="#3E444C" />
+
+  <!-- Concrete Plaza Pavement Ground in Perspective -->
+  <polygon points="0,820 900,820 900,1200 0,1200" fill="url(#concretePlaza)" />
+  <!-- Expansion Joint Lines -->
+  <line x1="0" y1="820" x2="220" y2="1200" stroke="#3E444C" stroke-width="2" />
+  <line x1="450" y1="820" x2="480" y2="1200" stroke="#3E444C" stroke-width="2" />
+  <line x1="750" y1="820" x2="820" y2="1200" stroke="#3E444C" stroke-width="2" />
+  <line x1="0" y1="960" x2="900" y2="960" stroke="#3E444C" stroke-width="2" />
+
+  <!-- Centerpiece: Confident Businesswoman in High-Motion Stride -->
+  <g transform="translate(250, 300)">
+    <!-- Motion Ground Shadow -->
+    <ellipse cx="160" cy="630" rx="190" ry="24" fill="#1A1C20" fill-opacity="0.6" filter="blur(6px)" />
+
+    <!-- Head & Sleek Parisian Bob / Lob Hairstyle -->
+    <path d="M 120 50 C 120 15, 175 15, 175 50 C 175 90, 165 125, 145 135 C 125 125, 120 90, 120 50 Z" fill="#14110F" />
+    <circle cx="168" cy="75" r="5" fill="none" stroke="#D4AF37" stroke-width="2" />
+
+    <!-- Sharp Face Silhouette -->
+    <path d="M 125 65 C 125 35, 162 35, 162 65 C 162 95, 155 110, 142 118 C 130 110, 125 95, 125 65 Z" fill="#D8A47E" />
+    <ellipse cx="134" cy="65" rx="3.5" ry="2" fill="#14110F" />
+    <ellipse cx="152" cy="65" rx="3.5" ry="2" fill="#14110F" />
+    <path d="M 136 94 Q 144 98 152 94" stroke="#881337" stroke-width="2" fill="none" />
+
+    <!-- Black Cashmere High-Neck Turtleneck -->
+    <rect x="132" y="115" width="22" height="25" fill="#0C0D0F" />
+
+    <!-- Sharply Tailored Power Blazer in Charcoal Wool suiting -->
+    <path d="M 75 135 C 105 125, 185 125, 215 135 L 235 260 L 220 390 L 80 390 L 55 260 Z" fill="url(#powerSuit)" stroke="#4A4E57" stroke-width="1.5" />
+    <!-- Peak Lapels & Deep Center Plunge -->
+    <path d="M 105 135 L 145 270 L 68 200 Z" fill="#1C1E23" />
+    <path d="M 185 135 L 145 270 L 210 200 Z" fill="#2E313A" />
+    <circle cx="145" cy="290" r="4.5" fill="#0C0D0F" stroke="#484C55" stroke-width="1" />
+    <rect x="70" y="315" width="45" height="8" rx="1" fill="#1C1E23" stroke="#3A3D46" stroke-width="1" />
+    <rect x="175" y="315" width="45" height="8" rx="1" fill="#1C1E23" stroke="#3A3D46" stroke-width="1" />
+
+    <!-- Gold Luxury Watch on Wrist -->
+    <g transform="translate(200, 240)">
+      <rect x="0" y="10" width="16" height="20" rx="3" fill="#D4AF37" stroke="#9E7E24" stroke-width="0.8" />
+      <circle cx="8" cy="20" r="5" fill="#FAF8F5" />
+    </g>
+
+    <!-- Tailored Charcoal Trousers in Forward Walking Stride -->
+    <!-- Front Forward Leg Striding to the Right -->
+    <path d="M 140 380 L 235 570 L 290 570 L 195 380 Z" fill="#1D1F24" stroke="#333740" stroke-width="1" />
+    <!-- Trailing Rear Leg -->
+    <path d="M 120 380 L 45 560 L 95 560 L 140 380 Z" fill="#121316" stroke="#333740" stroke-width="1" />
+    <!-- Sharp Front Press Crease -->
+    <line x1="165" y1="390" x2="265" y2="565" stroke="#464A54" stroke-width="1.2" />
+
+    <!-- Pointed Stiletto Pumps with Gold Buckle Accent -->
+    <!-- Forward Foot (Right) -->
+    <polygon points="230,565 285,565 305,585 240,585" fill="#08090A" />
+    <!-- Gold Buckle Accent on Toe -->
+    <rect x="290" y="570" width="8" height="6" rx="1" fill="#D4AF37" />
+    <!-- Thin Stiletto Heel -->
+    <line x1="242" y1="585" x2="242" y2="615" stroke="#08090A" stroke-width="3.5" />
+
+    <!-- Rear Foot (Left) -->
+    <polygon points="45,555 95,555 105,575 40,575" fill="#08090A" />
+    <line x1="95" y1="575" x2="95" y2="605" stroke="#08090A" stroke-width="3" />
+
+    <!-- Structured Luxury Black Leather Handbag (Prada Style Tote) in Left Hand -->
+    <g transform="translate(195, 270)">
+      <!-- Rolled Leather Double Handles -->
+      <path d="M 15 25 Q 40 -15 65 25" stroke="#121316" stroke-width="6" fill="none" />
+      <!-- Structured Trapezoid Body with Gilded Triangle Brand Plaque -->
+      <polygon points="0,25 80,25 92,105 -12,105" fill="#121417" stroke="#2F333D" stroke-width="1.5" />
+      <!-- Triangle Gold Logo Plaque -->
+      <polygon points="40,42 47,54 33,54" fill="#D4AF37" stroke="#000000" stroke-width="0.5" />
+      <!-- Hanging Leather Key Tag / Clochette -->
+      <line x1="25" y1="25" x2="25" y2="60" stroke="#121316" stroke-width="2" />
+      <polygon points="20,60 30,60 28,72 22,72" fill="#121316" stroke="#D4AF37" stroke-width="0.5" />
+    </g>
+  </g>
+
+  <!-- Editorial Top Headline: "THE 9–5 LOOK BUT MAKE IT EXPENSIVE." -->
+  <g transform="translate(450, 200)" text-anchor="middle" filter="url(#boldTextDrop)">
+    <text y="0" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="64" font-weight="900" letter-spacing="-0.02em" fill="#FFFFFF">
+      THE 9–5 LOOK
+    </text>
+    <text y="70" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="64" font-weight="900" letter-spacing="-0.02em" fill="#FFFFFF">
+      BUT MAKE IT
+    </text>
+    <text y="140" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="64" font-weight="900" letter-spacing="-0.02em" fill="#FFFFFF">
+      EXPENSIVE.
+    </text>
+  </g>
+
+  <!-- Sparkle Accent Icon in Bottom Corner -->
+  <g transform="translate(580, 830)" fill="#FAF8F5" fill-opacity="0.6">
+    <path d="M 0 -14 Q 0 0 14 0 Q 0 0 0 14 Q 0 0 -14 0 Q 0 0 0 -14 Z" />
+  </g>
+</svg>
