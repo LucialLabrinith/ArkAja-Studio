@@ -57,6 +57,16 @@ export const StudioConcierge: React.FC<StudioConciergeProps> = ({
     }
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleSend = async (messageText?: string) => {
     const textToSend = (messageText || input).trim();
     if (!textToSend || isLoading) return;

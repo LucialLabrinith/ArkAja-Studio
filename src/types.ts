@@ -36,6 +36,7 @@ export interface PricingPackage {
   name: string;
   priceInr: string;
   priceUsd: string;
+  priceEur: string;
   priceGbp: string;
   subtitle: string;
   features: string[];

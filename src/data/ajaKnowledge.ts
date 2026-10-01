@@ -220,9 +220,11 @@ export function getAjaContextualResponse(userInput: string): string {
   ) {
     return (
       "We support smooth, transparent payments powered by Razorpay:\n\n" +
-      "• **Instant Checkout**: Direct links for Starter (₹2,499) and Signature (₹4,999) packages.\n" +
-      "• **Methods Accepted**: UPI, Google Pay, Credit/Debit cards, Net Banking, and International Cards (USD/GBP/EUR).\n" +
-      "• **Invoices**: Official GST/Studio receipt issued with every project commission."
+      "• **Starter Package**: ₹2,499 INR (~$30 USD / €28 EUR)\n" +
+      "• **Signature Package**: ₹4,999 INR (~$60 USD / €55 EUR)\n" +
+      "• **Custom Campaign**: As per requirement (no fixed price; custom quoted based on your exact deliverables & timeline).\n" +
+      "• **Currencies & Methods**: INR (₹), USD ($), EUR (€), and GBP (£) via UPI, Cards, Net Banking, and International Cards.\n" +
+      "• **Invoices**: Official studio transaction receipt issued with every project commission."
     );
   }
 

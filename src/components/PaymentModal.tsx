@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PricingPackage } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { Logo } from './Logo';
-import { X, ShieldCheck, ExternalLink, ArrowRight, AlertCircle } from 'lucide-react';
+import {
+  X,
+  ShieldCheck,
+  CheckCircle2,
+  Lock,
+  Loader2,
+  ArrowRight,
+  AlertCircle,
+  Copy,
+  Check,
+  Globe,
+  Sliders,
+} from 'lucide-react';
 
 interface PaymentModalProps {
   pkg: PricingPackage | null;
@@ -13,9 +26,19 @@ interface PaymentModalProps {
     hasStarterPayment?: boolean;
     hasSignaturePayment?: boolean;
     hasCustomPayment?: boolean;
+    razorpayKeyId?: string;
+    isRazorpayConfigured?: boolean;
   };
   onClose: () => void;
   onProceedToEnquiry: (packageName: string) => void;
+}
+
+interface PaymentReceipt {
+  paymentId: string;
+  orderId: string;
+  amount: number;
+  date: string;
+  packageName: string;
 }
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -25,33 +48,207 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onProceedToEnquiry,
 }) => {
   const { isDark } = useTheme();
+  const { user } = useAuth();
+
+  const [clientName, setClientName] = useState(user?.displayName || '');
+  const [clientEmail, setClientEmail] = useState(user?.email || '');
+  const [clientPhone, setClientPhone] = useState('');
+  const [customInrAmount, setCustomInrAmount] = useState<number>(5000);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [paymentReceipt, setPaymentReceipt] = useState<PaymentReceipt | null>(null);
+  const [copiedId, setCopiedId] = useState(false);
+
+  // Sync auth user details if available
+  useEffect(() => {
+    if (user) {
+      if (!clientName && user.displayName) setClientName(user.displayName);
+      if (!clientEmail && user.email) setClientEmail(user.email);
+    }
+  }, [user]);
+
+  // Dynamically load Razorpay SDK if not present
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !(window as any).Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // Keyboard shortcut: Esc to close if not actively processing payment
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isProcessing) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isProcessing, onClose]);
 
   if (!pkg) return null;
 
-  const getPaymentUrl = () => {
-    if (pkg.id === 'starter') return config.starterUrl;
-    if (pkg.id === 'signature') return config.signatureUrl;
-    if (pkg.id === 'custom') return config.customUrl;
-    return '';
+  const isCustomPackage = pkg.id === 'custom';
+
+  const getActiveAmountInr = (): number => {
+    if (pkg.id === 'starter') return 2499;
+    if (pkg.id === 'signature') return 4999;
+    return Math.max(100, customInrAmount || 5000);
   };
 
-  const paymentUrl = getPaymentUrl()?.trim();
-  const hasConfiguredUrl = Boolean(paymentUrl);
+  const amountInr = getActiveAmountInr();
+  const amountUsd = Math.round(amountInr / 83.5);
+  const amountEur = Math.round(amountInr / 91.0);
 
-  const getButtonText = () => {
-    if (pkg.id === 'starter') return 'PAY ₹2,499';
-    if (pkg.id === 'signature') return 'PAY ₹4,999';
-    return 'REQUEST A QUOTE';
+  const handleCopyPaymentId = () => {
+    if (paymentReceipt?.paymentId) {
+      navigator.clipboard.writeText(paymentReceipt.paymentId);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    }
   };
 
-  const handlePayClick = () => {
-    if (hasConfiguredUrl && paymentUrl) {
-      window.location.href = paymentUrl;
-      onClose();
-    } else {
-      // Fallback: Proceed to enquiry with package pre-selected
-      onProceedToEnquiry(pkg.name);
-      onClose();
+  const handlePayViaRazorpay = async () => {
+    setErrorMessage(null);
+
+    // Validation
+    if (!clientName.trim()) {
+      setErrorMessage('Please enter your full name for the project receipt.');
+      return;
+    }
+    if (!clientEmail.trim() || !clientEmail.includes('@')) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+    if (isCustomPackage && (!customInrAmount || customInrAmount < 100)) {
+      setErrorMessage('Please enter a valid quoted project amount (minimum ₹100).');
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // 1. Create Order via server-side API (which connects to Razorpay Orders API)
+      const orderRes = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          packageId: pkg.id,
+          packageName: pkg.name,
+          clientName: clientName.trim(),
+          clientEmail: clientEmail.trim(),
+          clientPhone: clientPhone.trim() || '+91 9999999999',
+          customAmount: isCustomPackage ? amountInr : undefined,
+        }),
+      });
+
+      if (!orderRes.ok) {
+        const errData = await orderRes.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Failed to initialize payment gateway.');
+      }
+
+      const orderData = await orderRes.json();
+
+      if (!orderData.orderId || !orderData.keyId) {
+        throw new Error('Invalid order response received from payment server.');
+      }
+
+      // Check if Razorpay SDK is ready
+      if (!(window as any).Razorpay) {
+        throw new Error('Razorpay secure checkout SDK is loading. Please try again in a moment.');
+      }
+
+      // 2. Open official Razorpay Checkout Modal
+      const rzpOptions = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency || 'INR',
+        name: 'ArkAja Studio',
+        description: isCustomPackage
+          ? `Custom Project Quoted Scope (₹${amountInr.toLocaleString('en-IN')})`
+          : `${pkg.name} Package Creative Production`,
+        image: '/arkaja-monogram.svg',
+        order_id: orderData.orderId,
+        handler: async function (response: any) {
+          try {
+            // 3. Verify Payment Signature via server-side API
+            const verifyRes = await fetch('/api/razorpay/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                packageId: pkg.id,
+                packageName: isCustomPackage ? `Custom Campaign (₹${amountInr})` : pkg.name,
+                clientName: clientName.trim(),
+                clientEmail: clientEmail.trim(),
+                clientPhone: clientPhone.trim(),
+                amount: amountInr,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyData.success) {
+              setPaymentReceipt({
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                amount: amountInr,
+                packageName: isCustomPackage ? 'Custom Campaign' : pkg.name,
+                date: new Date().toLocaleString('en-IN', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }),
+              });
+            } else {
+              setErrorMessage(
+                verifyData.error || 'Payment verification failed. Please contact studio support.'
+              );
+            }
+          } catch (err: any) {
+            console.error('Verification error:', err);
+            setErrorMessage('Payment received, but receipt recording timed out. Please contact studio support.');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: clientName.trim(),
+          email: clientEmail.trim(),
+          contact: clientPhone.trim() || '9999999999',
+        },
+        notes: {
+          packageId: pkg.id,
+          packageName: pkg.name,
+          studio: 'ArkAja Studio Atelier',
+          amountInr: String(amountInr),
+          amountUsd: String(amountUsd),
+          amountEur: String(amountEur),
+        },
+        theme: {
+          color: '#0B0C0E',
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+          },
+        },
+      };
+
+      const razorpayInstance = new (window as any).Razorpay(rzpOptions);
+      razorpayInstance.on('payment.failed', function (resp: any) {
+        setIsProcessing(false);
+        setErrorMessage(resp.error?.description || 'Payment was declined or cancelled.');
+      });
+
+      razorpayInstance.open();
+    } catch (err: any) {
+      console.error('Razorpay initialization error:', err);
+      setIsProcessing(false);
+      setErrorMessage(err?.message || 'Error launching Razorpay checkout.');
     }
   };
 
@@ -62,7 +259,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       aria-modal="true"
     >
       <div
-        className={`max-w-lg w-full p-6 sm:p-8 relative shadow-2xl border transition-colors animate-in fade-in zoom-in-95 ${
+        className={`max-w-lg w-full p-6 sm:p-8 relative shadow-2xl border transition-colors animate-in fade-in zoom-in-95 max-h-[92vh] overflow-y-auto ${
           isDark
             ? 'bg-[#121418] border-[#24272D] text-[#F3F1EC]'
             : 'bg-[#FFFFFF] border-[#E2DDD5] text-[#14171A]'
@@ -78,115 +275,330 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Modal Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Logo variant="full" size="sm" />
-            <span className="opacity-30">|</span>
-            <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono block">
-              RAZORPAY CHECKOUT
-            </span>
-          </div>
-          <h3 className="font-serif text-2xl sm:text-3xl font-normal">
-            {pkg.name} Package
-          </h3>
-          <div className="flex items-baseline gap-2 mt-2">
-            <span className="font-mono text-2xl font-medium">
-              {pkg.priceInr}
-            </span>
-            <span
-              className={`text-xs font-light ${
-                isDark ? 'text-[#8E929A]' : 'text-[#7A808C]'
+        {/* ============================================================== */}
+        {/* VIEW 1: PAYMENT SUCCESS RECEIPT CONFIRMATION                   */}
+        {/* ============================================================== */}
+        {paymentReceipt ? (
+          <div>
+            {/* Header with success check */}
+            <div className="text-center pb-6 border-b border-inherit mb-6">
+              <div className="w-14 h-14 mx-auto mb-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <div className="text-[10px] tracking-[0.25em] font-mono uppercase text-[#D8C7A5] mb-1">
+                TRANSACTION CONFIRMED · RAZORPAY
+              </div>
+              <h3 className="font-serif text-3xl font-normal">
+                Slot Reserved
+              </h3>
+              <p
+                className={`text-xs mt-1 ${
+                  isDark ? 'text-[#8E929A]' : 'text-[#7A808C]'
+                }`}
+              >
+                Thank you, {clientName}. Your project deposit has been confirmed.
+              </p>
+            </div>
+
+            {/* Receipt Summary Card */}
+            <div
+              className={`p-4 border mb-6 text-xs space-y-2.5 font-mono ${
+                isDark
+                  ? 'bg-[#171a20] border-[#24272D] text-[#B4B7BF]'
+                  : 'bg-[#FAF8F5] border-[#E8E3DA] text-[#555A64]'
               }`}
             >
-              ({pkg.priceUsd} / {pkg.priceGbp})
-            </span>
-            <span className="text-[10px] text-[#D8C7A5] uppercase tracking-wider ml-auto font-mono">
-              One-Time Project
-            </span>
-          </div>
-        </div>
-
-        {/* Package Highlights */}
-        <div
-          className={`border p-4 mb-6 text-xs space-y-2 ${
-            isDark
-              ? 'bg-[#171a20] border-[#24272D] text-[#B4B7BF]'
-              : 'bg-[#FAF8F5] border-[#E8E3DA] text-[#555A64]'
-          }`}
-        >
-          {pkg.features.map((feat, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[#D8C7A5] rounded-full shrink-0" />
-              <span>{feat}</span>
+              <div className="flex items-center justify-between pb-2 border-b border-inherit">
+                <span className="opacity-60 text-[11px]">PACKAGE</span>
+                <span className="font-semibold text-[#D8C7A5]">{paymentReceipt.packageName}</span>
+              </div>
+              <div className="flex items-center justify-between pb-2 border-b border-inherit">
+                <span className="opacity-60 text-[11px]">AMOUNT PAID</span>
+                <div className="text-right">
+                  <div className="text-base font-medium">₹{paymentReceipt.amount.toLocaleString('en-IN')} INR</div>
+                  <div className="text-[10px] opacity-60">approx. ${Math.round(paymentReceipt.amount / 83.5)} USD / €{Math.round(paymentReceipt.amount / 91)} EUR</div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pb-2 border-b border-inherit">
+                <span className="opacity-60 text-[11px]">PAYMENT ID</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-emerald-400">
+                    {paymentReceipt.paymentId}
+                  </span>
+                  <button
+                    onClick={handleCopyPaymentId}
+                    className="p-1 hover:text-[#D8C7A5] transition-colors"
+                    title="Copy Payment ID"
+                  >
+                    {copiedId ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="opacity-60 text-[11px]">DATE & TIME</span>
+                <span className="text-[11px]">{paymentReceipt.date}</span>
+              </div>
             </div>
-          ))}
-          <div className="pt-2 border-t border-inherit text-[11px] text-[#D8C7A5] font-mono">
-            Turnaround: {pkg.delivery}
-          </div>
-        </div>
 
-        {/* Security & Payment Link State */}
-        {hasConfiguredUrl ? (
-          <div className="mb-6 flex items-start gap-3 p-3 bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 text-xs">
-            <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              You will be securely redirected to the official Razorpay Payment Page. Full 256-bit encryption. No card details are ever stored on this application.
-            </p>
+            {/* What Happens Next Guidance */}
+            <div className="p-3.5 bg-black/40 border border-[#D8C7A5]/30 mb-6 text-xs text-[#D8C7A5] space-y-1">
+              <div className="font-semibold tracking-wider uppercase text-[10px] flex items-center gap-1.5 font-mono">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Next Steps for Your Project
+              </div>
+              <p className="font-light text-[11px] leading-relaxed text-[#ECE9E2]">
+                Our creative director will reach out via email ({clientEmail}) within 24 hours to review your references and initiate the project brief.
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  onProceedToEnquiry(`${paymentReceipt.packageName} (Deposit Paid: ${paymentReceipt.paymentId})`);
+                  onClose();
+                }}
+                className={`w-full py-3.5 text-xs tracking-[0.2em] font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 ${
+                  isDark
+                    ? 'bg-[#F3F1EC] text-[#0b0c0e] hover:bg-[#D8C7A5]'
+                    : 'bg-[#14171A] text-[#FAF7F2] hover:bg-[#A58B55]'
+                }`}
+              >
+                <span>CONTINUE TO PROJECT BRIEF</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                onClick={onClose}
+                className={`w-full py-2.5 text-xs tracking-[0.18em] font-light transition-colors text-center ${
+                  isDark ? 'text-[#8E929A] hover:text-[#F3F1EC]' : 'text-[#7B818F] hover:text-[#14171A]'
+                }`}
+              >
+                Close Receipt
+              </button>
+            </div>
           </div>
         ) : (
-          <div
-            className={`mb-6 p-4 border text-xs space-y-2 ${
-              isDark
-                ? 'bg-[#181b22] border-[#2E333B] text-[#8E929A]'
-                : 'bg-[#FBF9F6] border-[#E5E0D6] text-[#636873]'
-            }`}
-          >
-            <div className="font-medium flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-amber-500 font-semibold font-mono text-[11px]">
-                <AlertCircle className="w-3.5 h-3.5" />
-                Payment link coming soon.
-              </span>
-              <span className="text-[9px] text-[#D8C7A5] font-mono uppercase tracking-widest">
-                STAGE READY
-              </span>
+          /* ============================================================== */
+          /* VIEW 2: ACTIVE CHECKOUT & MULTI-CURRENCY SPECIFICATION         */
+          /* ============================================================== */
+          <div>
+            {/* Modal Header */}
+            <div className="mb-5">
+              <div className="flex items-center gap-3 mb-2">
+                <Logo variant="full" size="sm" />
+                <span className="opacity-30">|</span>
+                <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono block">
+                  RAZORPAY GLOBAL CHECKOUT
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-3xl font-normal">
+                {pkg.name} Package
+              </h3>
+
+              {/* Price & Multi-Currency Breakdown */}
+              {isCustomPackage ? (
+                <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/25 text-amber-200 text-xs">
+                  <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase font-semibold text-amber-400 mb-1">
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>SCOPE AS PER REQUIREMENT · NO FIXED PRICE</span>
+                  </div>
+                  <p className="text-[11px] font-light leading-relaxed">
+                    Custom packages are priced individually based on deliverable counts and timeline. Enter your agreed quoted deposit below, or request a custom scope quote.
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-2.5 pb-2 border-b border-inherit">
+                  <div className="flex flex-wrap items-baseline gap-2.5">
+                    <span className="font-mono text-2xl font-medium">
+                      {pkg.priceInr}
+                    </span>
+                    <span className="text-xs font-mono text-[#D8C7A5] font-semibold">
+                      · {pkg.priceUsd} USD · {pkg.priceEur} EUR
+                    </span>
+                    <span className="text-[10px] text-neutral-400 uppercase tracking-wider ml-auto font-mono">
+                      One-Time Project
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1.5 text-[10px] font-mono opacity-70">
+                    <Globe className="w-3 h-3 text-[#D8C7A5]" />
+                    <span>Razorpay processes globally in INR (₹) with real-time conversion for international cards & UPI</span>
+                  </div>
+                </div>
+              )}
             </div>
-            <p className="leading-relaxed font-light">
-              Direct Razorpay payment page integration is being finalized. In the meantime, reserve this package directly via our enquiry brief with instant booking priority.
-            </p>
+
+            {/* Custom Amount Input for Custom Package */}
+            {isCustomPackage && (
+              <div className="mb-5 p-4 border bg-black/20 space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-mono">
+                  <label htmlFor="custom-amount" className="font-semibold text-[#D8C7A5] uppercase tracking-wider">
+                    ENTER QUOTED AMOUNT (INR ₹)
+                  </label>
+                  <span className="text-[10px] opacity-70">
+                    As agreed with studio
+                  </span>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-mono opacity-60">₹</span>
+                  <input
+                    id="custom-amount"
+                    type="number"
+                    min="100"
+                    step="100"
+                    value={customInrAmount === 0 ? '' : customInrAmount}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setCustomInrAmount(val === '' ? 0 : Math.max(0, parseInt(val, 10) || 0));
+                    }}
+                    disabled={isProcessing}
+                    placeholder="e.g. 10000"
+                    className={`w-full pl-8 pr-3.5 py-2.5 text-sm font-mono border rounded-none focus:outline-none transition-colors ${
+                      isDark
+                        ? 'bg-[#16181f] border-[#2E333B] focus:border-[#D8C7A5] text-white'
+                        : 'bg-[#FAF8F5] border-[#DCD6C9] focus:border-[#A58B55] text-black'
+                    }`}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[11px] font-mono text-[#D8C7A5] pt-1">
+                  <span>Equivalent in USD: ~${amountUsd} USD</span>
+                  <span>Equivalent in EUR: ~€{amountEur} EUR</span>
+                </div>
+              </div>
+            )}
+
+            {/* Package Highlights */}
+            <div
+              className={`border p-4 mb-5 text-xs space-y-2 ${
+                isDark
+                  ? 'bg-[#171a20] border-[#24272D] text-[#B4B7BF]'
+                  : 'bg-[#FAF8F5] border-[#E8E3DA] text-[#555A64]'
+              }`}
+            >
+              {pkg.features.map((feat, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[#D8C7A5] rounded-full shrink-0" />
+                  <span>{feat}</span>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-inherit text-[11px] text-[#D8C7A5] font-mono flex items-center justify-between">
+                <span>Turnaround: {pkg.delivery}</span>
+                <span>All major cards · UPI · Netbanking</span>
+              </div>
+            </div>
+
+            {/* Client Contact Inputs */}
+            <div className="mb-5 space-y-3">
+              <div className="text-[10px] font-mono tracking-widest uppercase opacity-70">
+                CLIENT CONTACT & RECEIPT DETAILS
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="Full Name *"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  disabled={isProcessing}
+                  className={`w-full px-3.5 py-2.5 text-xs border rounded-none focus:outline-none transition-colors ${
+                    isDark
+                      ? 'bg-[#16181f] border-[#2E333B] focus:border-[#D8C7A5] text-white'
+                      : 'bg-[#FAF8F5] border-[#DCD6C9] focus:border-[#A58B55] text-black'
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  type="email"
+                  placeholder="Email Address *"
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  disabled={isProcessing}
+                  className={`w-full px-3.5 py-2.5 text-xs border rounded-none focus:outline-none transition-colors ${
+                    isDark
+                      ? 'bg-[#16181f] border-[#2E333B] focus:border-[#D8C7A5] text-white'
+                      : 'bg-[#FAF8F5] border-[#DCD6C9] focus:border-[#A58B55] text-black'
+                  }`}
+                />
+                <input
+                  type="tel"
+                  placeholder="WhatsApp / Phone"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  disabled={isProcessing}
+                  className={`w-full px-3.5 py-2.5 text-xs border rounded-none focus:outline-none transition-colors ${
+                    isDark
+                      ? 'bg-[#16181f] border-[#2E333B] focus:border-[#D8C7A5] text-white'
+                      : 'bg-[#FAF8F5] border-[#DCD6C9] focus:border-[#A58B55] text-black'
+                  }`}
+                />
+              </div>
+            </div>
+
+            {/* Error Message Alert */}
+            {errorMessage && (
+              <div className="mb-5 p-3 bg-red-950/40 border border-red-800/50 text-red-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Security Indicator */}
+            <div className="mb-6 flex items-start gap-2.5 p-3 bg-emerald-950/30 border border-emerald-800/40 text-emerald-300 text-xs">
+              <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
+              <p className="leading-relaxed text-[11px]">
+                Powered by official Razorpay gateway. Full 256-bit SSL encryption. Accepts Indian & International Debit/Credit Cards, UPI, Netbanking & Wallets with real-time currency conversion.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3">
+              <button
+                onClick={handlePayViaRazorpay}
+                disabled={isProcessing}
+                className={`w-full py-3.5 text-xs tracking-[0.18em] font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isDark
+                    ? 'bg-[#F3F1EC] text-[#0b0c0e] hover:bg-[#D8C7A5]'
+                    : 'bg-[#14171A] text-[#FAF7F2] hover:bg-[#A58B55]'
+                }`}
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>LAUNCHING RAZORPAY...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>
+                      PAY ₹{amountInr.toLocaleString('en-IN')} (~${amountUsd} USD / €{amountEur} EUR)
+                    </span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  onProceedToEnquiry(
+                    isCustomPackage
+                      ? `Custom Campaign (Requirement: ₹${amountInr})`
+                      : pkg.name
+                  );
+                  onClose();
+                }}
+                disabled={isProcessing}
+                className={`w-full py-2.5 text-xs tracking-[0.18em] font-light transition-colors text-center ${
+                  isDark ? 'text-[#8E929A] hover:text-[#F3F1EC]' : 'text-[#7B818F] hover:text-[#14171A]'
+                }`}
+              >
+                {isCustomPackage
+                  ? 'Or request a bespoke scope brief in builder'
+                  : 'Or discuss brief via studio enquiry'}
+              </button>
+            </div>
           </div>
         )}
-
-        {/* Actions */}
-        <div className="space-y-3">
-          <button
-            onClick={handlePayClick}
-            className={`w-full py-3.5 text-xs tracking-[0.2em] font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 ${
-              isDark
-                ? 'bg-[#F3F1EC] text-[#0b0c0e] hover:bg-[#D8C7A5]'
-                : 'bg-[#14171A] text-[#FAF7F2] hover:bg-[#A58B55]'
-            }`}
-          >
-            <span>{hasConfiguredUrl ? getButtonText() : 'RESERVE VIA ENQUIRY BRIEF'}</span>
-            {hasConfiguredUrl ? (
-              <ExternalLink className="w-3.5 h-3.5" />
-            ) : (
-              <ArrowRight className="w-3.5 h-3.5" />
-            )}
-          </button>
-
-          <button
-            onClick={() => {
-              onProceedToEnquiry(pkg.name);
-              onClose();
-            }}
-            className={`w-full py-2.5 text-xs tracking-[0.18em] font-light transition-colors text-center ${
-              isDark ? 'text-[#8E929A] hover:text-[#F3F1EC]' : 'text-[#7B818F] hover:text-[#14171A]'
-            }`}
-          >
-            Or customize a bespoke scope for this package
-          </button>
-        </div>
       </div>
     </div>
   );

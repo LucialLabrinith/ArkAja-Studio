@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 
@@ -9,6 +10,10 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const isProd = process.env.NODE_ENV === 'production';
+
+// Razorpay Test Credentials (configured for active payment processing)
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_TiiOtZsH2caVyE';
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'QEpE8oQyIybTOJryn3opRdMN';
 
 // Ensure public upload directories exist
 const uploadDir = path.resolve(process.cwd(), 'public', 'uploads');
@@ -119,20 +124,173 @@ function saveEnquiry(data: any) {
   return enquiry;
 }
 
-// 1. API: Studio Config & Razorpay Links
+// 1. API: Studio Config & Razorpay Integration
 app.get('/api/config', (req: Request, res: Response) => {
   res.json({
     email: 'arkajastudio@gmail.com',
     instagram: '@arkajadesigner6208',
     instagramUrl: 'https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6',
     location: 'Mumbai, India (Working Worldwide)',
+    razorpayKeyId: RAZORPAY_KEY_ID,
+    isRazorpayConfigured: Boolean(RAZORPAY_KEY_ID),
     starterUrl: process.env.RAZORPAY_STARTER_PAYMENT_URL || '',
     signatureUrl: process.env.RAZORPAY_SIGNATURE_PAYMENT_URL || '',
     customUrl: process.env.RAZORPAY_CUSTOM_PAYMENT_URL || '',
-    hasStarterPayment: Boolean(process.env.RAZORPAY_STARTER_PAYMENT_URL?.trim()),
-    hasSignaturePayment: Boolean(process.env.RAZORPAY_SIGNATURE_PAYMENT_URL?.trim()),
+    hasStarterPayment: true,
+    hasSignaturePayment: true,
     hasCustomPayment: Boolean(process.env.RAZORPAY_CUSTOM_PAYMENT_URL?.trim()),
   });
+});
+
+// 1b. API: Razorpay Create Order Endpoint
+app.post('/api/razorpay/create-order', async (req: Request, res: Response) => {
+  try {
+    const { packageId, packageName, clientName, clientEmail, clientPhone, customAmount } = req.body || {};
+
+    let amountPaise = 249900; // Default Starter: ₹2,499.00
+    if (packageId === 'signature') {
+      amountPaise = 499900; // Signature: ₹4,999.00
+    } else if (packageId === 'custom' || customAmount) {
+      const parsedAmount = Math.max(100, Math.round(Number(customAmount) || 1000));
+      amountPaise = parsedAmount * 100;
+    }
+
+    const receipt = `rcpt_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+    const authHeader = 'Basic ' + Buffer.from(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`).toString('base64');
+
+    const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Authorization': authHeader,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: amountPaise,
+        currency: 'INR',
+        receipt: receipt,
+        notes: {
+          packageId: packageId || 'starter',
+          packageName: packageName || 'Starter Package',
+          clientName: clientName || 'Guest Client',
+          clientEmail: clientEmail || '',
+          clientPhone: clientPhone || '',
+          studio: 'ArkAja Studio',
+        },
+      }),
+    });
+
+    if (!razorpayResponse.ok) {
+      const errText = await razorpayResponse.text();
+      console.error('[Razorpay] Order creation failed:', razorpayResponse.status, errText);
+      res.status(razorpayResponse.status).json({
+        error: 'Failed to create Razorpay order',
+        details: errText,
+      });
+      return;
+    }
+
+    const orderData = await razorpayResponse.json();
+    console.log(`[Razorpay] Order created: ${orderData.id} for ₹${amountPaise / 100}`);
+
+    res.json({
+      success: true,
+      keyId: RAZORPAY_KEY_ID,
+      orderId: orderData.id,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      receipt: orderData.receipt,
+    });
+  } catch (error: any) {
+    console.error('[Razorpay] Error creating order:', error);
+    res.status(500).json({
+      error: 'Internal server error while creating Razorpay order',
+      message: error?.message || 'Unknown error',
+    });
+  }
+});
+
+// 1c. API: Razorpay Verify Payment Signature Endpoint
+app.post('/api/razorpay/verify-payment', (req: Request, res: Response) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      packageId,
+      packageName,
+      clientName,
+      clientEmail,
+      clientPhone,
+      amount,
+    } = req.body || {};
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      res.status(400).json({ error: 'Missing required Razorpay payment verification fields' });
+      return;
+    }
+
+    // Verify HMAC-SHA256 signature using secret
+    const hmac = crypto.createHmac('sha256', RAZORPAY_KEY_SECRET);
+    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const expectedSignature = hmac.digest('hex');
+
+    const isValid = expectedSignature === razorpay_signature;
+
+    if (!isValid) {
+      console.warn('[Razorpay] Signature mismatch:', {
+        expected: expectedSignature,
+        received: razorpay_signature,
+      });
+      res.status(400).json({ success: false, error: 'Payment signature verification failed' });
+      return;
+    }
+
+    // Record verified transaction in payments store
+    const paymentRecord = {
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+      packageId: packageId || 'starter',
+      packageName: packageName || 'Starter Package',
+      clientName: clientName || 'Guest Client',
+      clientEmail: clientEmail || '',
+      clientPhone: clientPhone || '',
+      amount: amount || (packageId === 'signature' ? 4999 : 2499),
+      currency: 'INR',
+      status: 'captured',
+      timestamp: new Date().toISOString(),
+    };
+
+    const paymentsFile = path.resolve(process.cwd(), 'payments.json');
+    let existingPayments: any[] = [];
+    if (fs.existsSync(paymentsFile)) {
+      try {
+        existingPayments = JSON.parse(fs.readFileSync(paymentsFile, 'utf-8'));
+      } catch (e) {
+        existingPayments = [];
+      }
+    }
+    existingPayments.unshift(paymentRecord);
+    fs.writeFileSync(paymentsFile, JSON.stringify(existingPayments, null, 2));
+
+    console.log(`[Razorpay] Payment ${razorpay_payment_id} successfully verified for ${packageName}`);
+
+    res.json({
+      success: true,
+      verified: true,
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      packageName: packageName || 'Starter Package',
+      amount: paymentRecord.amount,
+      message: 'Payment verified and studio production slot secured.',
+    });
+  } catch (error: any) {
+    console.error('[Razorpay] Verification error:', error);
+    res.status(500).json({
+      error: 'Error verifying payment',
+      message: error?.message || 'Unknown error',
+    });
+  }
 });
 
 // 2. API: AI Studio Advisor / Concierge

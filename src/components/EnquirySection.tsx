@@ -142,14 +142,18 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
       const result = await res.json();
       const enquiryId = result.enquiryId || generatedId;
 
-      // 2. Also persist to Firestore database directly
-      await saveEnquiryToFirestore({
-        ...formData,
-        id: enquiryId,
-        enquiryId,
-        userId: user?.uid || 'guest',
-        createdAt: new Date().toISOString(),
-      });
+      // 2. Also persist to Firestore database directly (non-blocking)
+      try {
+        await saveEnquiryToFirestore({
+          ...formData,
+          id: enquiryId,
+          enquiryId,
+          userId: user?.uid || 'guest',
+          createdAt: new Date().toISOString(),
+        });
+      } catch (firestoreErr) {
+        console.warn('[Enquiry] Client-side Firestore sync noted:', firestoreErr);
+      }
 
       // Refresh auth context so user immediately sees their submission in Client Portal
       if (user) {
