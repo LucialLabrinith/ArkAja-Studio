@@ -137,10 +137,8 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
             {filteredProjects.map((project, index) => {
               const isLarge = index === 0 || index === 3;
               const colSpan = isLarge ? 'lg:col-span-7' : 'lg:col-span-5';
-              const cleanFirstImgName = (project.images[0] || '').split('/').pop() || '';
-              const embeddedFirst = getEmbeddedAsset(cleanFirstImgName);
               const projectUploads = uploadedAssets[project.slug] || [];
-              const firstImage = embeddedFirst || projectUploads[0] || project.images[0];
+              const firstImage = project.images[0] || projectUploads[0] || '';
 
               return (
                 <article
@@ -184,9 +182,12 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
                         const target = e.currentTarget;
                         if (!target.dataset.fallbackApplied) {
                           target.dataset.fallbackApplied = 'true';
-                          const cleanName = firstImage.split('/').pop()?.split('?')[0] || '';
-                          if (cleanName && !firstImage.startsWith('/assets/portfolio/')) {
-                            target.src = `/assets/portfolio/${cleanName}`;
+                          const currentSrc = target.src || firstImage || '';
+                          const clean = currentSrc.split('/').pop()?.split('?')[0] || '';
+                          const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
+                          const slug = slugMatch ? slugMatch[1] : clean.replace(/\.[^/.]+$/, '');
+                          if (slug) {
+                            target.src = `/assets/portfolio/${slug}.webp`;
                           }
                         }
                       }}

@@ -33,7 +33,7 @@ function restorePortfolioAssetsFromStore() {
       for (const [filename, base64Payload] of Object.entries(store)) {
         const cleanName = path.basename(filename);
         const targetPath = path.join(portfolioDir, cleanName);
-        if (!fs.existsSync(targetPath)) {
+        if (!fs.existsSync(targetPath) && (base64Payload.startsWith('data:') || base64Payload.length > 500)) {
           const base64Data = base64Payload.replace(/^data:[a-zA-Z0-9/+-]+;base64,/, '');
           fs.writeFileSync(targetPath, Buffer.from(base64Data, 'base64'));
           console.log(`[PortfolioStore] Restored ${cleanName} from persistent JSON store`);
@@ -85,6 +85,7 @@ export function getEmbeddedAsset(filename: string): string | undefined {
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.resolve(process.cwd(), 'public')));
+app.use('/assets/portfolio', express.static(portfolioDir));
 
 // Initialize Gemini SDK with User-Agent header as required
 const apiKey = process.env.GEMINI_API_KEY || '';

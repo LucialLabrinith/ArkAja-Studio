@@ -76,8 +76,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const projectUploads = project ? uploadedAssets[project.slug] || [] : [];
   const rawImages = project ? [...project.images, ...projectUploads] : [];
   const allImages = rawImages.map((img) => {
-    const clean = (img || '').split('/').pop() || img;
-    return getEmbeddedAsset(clean) || img;
+    return getEmbeddedAsset(img) || img;
   });
   const hasImages = allImages.length > 0;
 
@@ -362,10 +361,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                       const target = e.currentTarget;
                       if (!target.dataset.fallbackApplied) {
                         target.dataset.fallbackApplied = 'true';
-                        const currentSrc = allImages[currentImageIndex] || '';
-                        const cleanName = currentSrc.split('/').pop()?.split('?')[0] || '';
-                        if (cleanName && !currentSrc.startsWith('/assets/portfolio/')) {
-                          target.src = `/assets/portfolio/${cleanName}`;
+                        const currentSrc = target.src || allImages[currentImageIndex] || '';
+                        const clean = currentSrc.split('/').pop()?.split('?')[0] || '';
+                        const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
+                        const slug = slugMatch ? slugMatch[1] : clean.replace(/\.[^/.]+$/, '');
+                        if (slug) {
+                          target.src = `/assets/portfolio/${slug}.webp`;
                         }
                       }
                     }}
@@ -787,10 +788,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     const target = e.currentTarget;
                     if (!target.dataset.fallbackApplied) {
                       target.dataset.fallbackApplied = 'true';
-                      const currentSrc = allImages[currentImageIndex] || '';
-                      const cleanName = currentSrc.split('/').pop()?.split('?')[0] || '';
-                      if (cleanName && !currentSrc.startsWith('/assets/portfolio/')) {
-                        target.src = `/assets/portfolio/${cleanName}`;
+                      const currentSrc = target.src || allImages[currentImageIndex] || '';
+                      const clean = currentSrc.split('/').pop()?.split('?')[0] || '';
+                      const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
+                      const slug = slugMatch ? slugMatch[1] : clean.replace(/\.[^/.]+$/, '');
+                      if (slug) {
+                        target.src = `/assets/portfolio/${slug}.webp`;
                       }
                     }
                   }}

@@ -45,12 +45,51 @@ export const EMBEDDED_PORTFOLIO_ASSETS: Record<string, string> = {
 };
 
 export function getEmbeddedAsset(filename: string): string {
-  const clean = filename.split('/').pop() || filename;
+  if (!filename) return '';
+  // If it's already a full URL, data URI, or blob, return directly
+  if (
+    filename.startsWith('data:') ||
+    filename.startsWith('blob:') ||
+    filename.startsWith('http://') ||
+    filename.startsWith('https://')
+  ) {
+    return filename;
+  }
+
+  // If it's already a compiled Vite asset path or known imported value, return directly
+  if (Object.values(EMBEDDED_PORTFOLIO_ASSETS).includes(filename)) {
+    return filename;
+  }
+  if (filename.startsWith('/src/assets/portfolio/')) {
+    return filename;
+  }
+  if (filename.startsWith('/assets/') && filename.includes('-') && !filename.startsWith('/assets/portfolio/')) {
+    return filename;
+  }
+
+  const clean = filename.split('/').pop()?.split('?')[0] || filename;
+
+  // Direct table lookup
+  if (EMBEDDED_PORTFOLIO_ASSETS[clean]) {
+    return EMBEDDED_PORTFOLIO_ASSETS[clean];
+  }
+
+  // Extract base slug (e.g. "lumiere-01" from "lumiere-01.webp" or "lumiere-01-xxxx.webp")
+  const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
+  if (slugMatch) {
+    const slug = slugMatch[1];
+    if (EMBEDDED_PORTFOLIO_ASSETS[`${slug}.webp`]) {
+      return EMBEDDED_PORTFOLIO_ASSETS[`${slug}.webp`];
+    }
+  }
+
   const baseName = clean.replace(/\.(png|jpg|jpeg|webp)$/i, '');
-  return (
-    EMBEDDED_PORTFOLIO_ASSETS[clean] ||
-    EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.webp`] ||
-    EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.png`] ||
-    `/assets/portfolio/${baseName}.webp`
-  );
+  if (EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.webp`]) {
+    return EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.webp`];
+  }
+  if (EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.png`]) {
+    return EMBEDDED_PORTFOLIO_ASSETS[`${baseName}.png`];
+  }
+
+  return `/assets/portfolio/${baseName}.webp`;
 }
