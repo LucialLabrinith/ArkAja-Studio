@@ -1000,4 +1000,17 @@ async function setupServer() {
   });
 }
 
-setupServer();
+// Export app for serverless environments (e.g. Vercel, Netlify)
+export default app;
+
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY);
+const isDirectRun = !isServerless && (
+  !process.argv[1] ||
+  process.argv[1].endsWith('server.ts') ||
+  process.argv[1].endsWith('server.js') ||
+  process.argv[1].includes('tsx')
+);
+
+if (isDirectRun) {
+  setupServer();
+}
