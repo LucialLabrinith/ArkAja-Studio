@@ -12,6 +12,8 @@ import {
   Layers,
   User as UserIcon,
   LogIn,
+  ShieldCheck,
+  Lock,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -30,7 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
-  const { user, signIn } = useAuth();
+  const { user, isOwner } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -158,42 +160,30 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Google Auth / Client Account */}
-            {user ? (
+            {/* Studio Director Portal & Authentication */}
+            {isOwner ? (
               <button
                 onClick={onOpenAccount}
-                className={`flex items-center gap-2 px-2.5 py-1.5 border transition-all duration-200 ${
-                  isDark
-                    ? 'border-[#262B34] hover:border-[#D8C7A5] bg-[#14161B]'
-                    : 'border-[#E0D9CE] hover:border-[#A58B55] bg-[#FFFFFF]'
-                }`}
-                title="Client Portal & Briefs"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 border border-[#D8C7A5] bg-[#D8C7A5]/10 text-[#D8C7A5] transition-all duration-200 shadow-sm"
+                title="Studio Director Portal"
               >
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt={user.displayName || 'Client'}
-                    className="w-5 h-5 rounded-full object-cover border border-[#D8C7A5]"
-                  />
-                ) : (
-                  <UserIcon className="w-3.5 h-3.5 text-[#D8C7A5]" />
-                )}
-                <span className="text-[10px] tracking-wider uppercase font-mono hidden md:inline max-w-[90px] truncate">
-                  {user.displayName?.split(' ')[0] || 'Client'}
+                <ShieldCheck className="w-3.5 h-3.5 text-[#D8C7A5]" />
+                <span className="text-[10px] tracking-wider uppercase font-mono font-semibold">
+                  OWNER: DIVYAAM
                 </span>
               </button>
             ) : (
               <button
-                onClick={() => signIn()}
+                onClick={onOpenAccount}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 border text-[10px] tracking-widest uppercase font-mono transition-all duration-200 ${
                   isDark
                     ? 'border-[#262B34] text-[#C5CAD5] hover:text-[#FAF8F5] hover:border-[#D8C7A5] bg-[#14161B]'
                     : 'border-[#E0D9CE] text-[#555B66] hover:text-[#14171A] hover:border-[#A58B55] bg-[#FFFFFF]'
                 }`}
-                title="Sign in with Google"
+                title="Studio Director Login"
               >
-                <LogIn className="w-3 h-3 text-[#D8C7A5]" />
-                <span className="hidden sm:inline">SIGN IN</span>
+                <Lock className="w-3 h-3 text-[#D8C7A5]" />
+                <span className="hidden sm:inline">DIRECTOR ACCESS</span>
               </button>
             )}
 
@@ -315,6 +305,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
 
             <div className="pt-4 border-t border-inherit flex flex-col gap-2.5">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAccount();
+                }}
+                className="w-full py-2.5 px-4 text-xs font-mono tracking-widest uppercase border border-[#D8C7A5]/60 text-[#D8C7A5] text-center flex items-center justify-center gap-2 bg-[#D8C7A5]/5"
+              >
+                {isOwner ? (
+                  <>
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Owner Portal (Divyaam)</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Studio Director Access</span>
+                  </>
+                )}
+              </button>
+
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);

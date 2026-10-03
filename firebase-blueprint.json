@@ -52,6 +52,25 @@
         "updatedAt": { "type": "string", "description": "ISO timestamp of last update." }
       },
       "required": ["draftId", "userId", "updatedAt"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Portfolio creative project published by studio owner divyaam2008@gmail.com.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique project identifier or slug." },
+        "title": { "type": "string", "description": "Title of the project or collection." },
+        "client": { "type": "string", "description": "Brand or client name." },
+        "category": { "type": "string", "description": "Portfolio category discipline." },
+        "subtitle": { "type": "string", "description": "Short creative tagline or concept." },
+        "description": { "type": "string", "description": "Detailed art direction narrative." },
+        "thumbnail": { "type": "string", "description": "Primary hero image asset URL or base64." },
+        "deliverables": { "type": "array", "description": "List of deliverables included in project." },
+        "tags": { "type": "array", "description": "Taxonomy tags." },
+        "createdAt": { "type": "string", "description": "ISO timestamp of publication." },
+        "createdBy": { "type": "string", "description": "Admin email who created the project." }
+      },
+      "required": ["id", "title", "category", "thumbnail", "createdAt"]
     }
   },
   "firestore": {
@@ -66,6 +85,10 @@
     "/users/{userId}/drafts/{draftId}": {
       "schema": "ProjectDraft",
       "description": "Client saved project scope drafts."
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Public portfolio showcase projects created by studio owner."
     }
   }
 }

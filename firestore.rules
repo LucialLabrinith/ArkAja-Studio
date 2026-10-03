@@ -6,59 +6,68 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isStudioOwner() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'divyaam2008@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
     function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() > 0 && id.size() <= 128;
     }
 
-    // 1. User Profiles
+    // 1. User Profiles & Client Private Drafts
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow create, update: if isOwner(userId)
-        && request.resource.data.uid == userId
-        && request.resource.data.email is string
-        && request.resource.data.email.size() > 3
-        && request.resource.data.email.size() <= 256;
+      allow get: if isOwner(userId) || isStudioOwner();
+      allow create, update: if isOwner(userId);
       allow delete: if false;
 
       // User's private project drafts
       match /drafts/{draftId} {
-        allow get, list: if isOwner(userId);
-        allow create, update: if isOwner(userId)
-          && request.resource.data.userId == userId
-          && isValidId(draftId);
-        allow delete: if isOwner(userId);
+        allow get, list: if isOwner(userId) || isStudioOwner();
+        allow create, update, delete: if isOwner(userId);
       }
     }
 
     // 2. Client Project Enquiries
     match /enquiries/{enquiryId} {
+      // Anyone can submit a project brief or enquiry
       allow create: if isValidId(enquiryId)
         && request.resource.data.enquiryId is string
         && request.resource.data.fullName is string
-        && request.resource.data.fullName.size() >= 2
-        && request.resource.data.fullName.size() <= 150
-        && request.resource.data.brandName is string
-        && request.resource.data.brandName.size() >= 1
-        && request.resource.data.brandName.size() <= 150
         && request.resource.data.email is string
-        && request.resource.data.email.size() >= 5
-        && request.resource.data.email.size() <= 200
-        && request.resource.data.projectDetails is string
-        && request.resource.data.projectDetails.size() >= 1
-        && request.resource.data.projectDetails.size() <= 10000;
-        
-      allow get: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid ||
-        resource.data.email == request.auth.token.email
+        && request.resource.data.projectDetails is string;
+
+      // Studio owner can view and list all incoming enquiries in real time.
+      // Submitting user can view their own enquiry.
+      allow get, list: if isStudioOwner() || (
+        isAuthenticated() && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.email == request.auth.token.email
+        )
       );
 
-      allow list: if isAuthenticated();
+      // Studio owner can update status or manage enquiries
+      allow update, delete: if isStudioOwner();
+    }
 
-      allow update, delete: if false;
+    // 3. Public Portfolio Projects
+    match /projects/{projectId} {
+      // All site visitors can view portfolio projects in real time
+      allow read: if true;
+      // Only studio owner (divyaam2008@gmail.com) can publish, update or delete projects
+      allow write: if isStudioOwner();
+    }
+
+    // 4. Studio Admins collection
+    match /admins/{adminId} {
+      allow read: if isStudioOwner();
+      allow write: if isStudioOwner();
     }
 
     // Connection test document

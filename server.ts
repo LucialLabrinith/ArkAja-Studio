@@ -124,6 +124,36 @@ function saveEnquiry(data: any) {
   return enquiry;
 }
 
+// Store custom portfolio projects added by studio director
+const customProjectsFile = path.resolve(process.cwd(), 'custom-projects.json');
+function getCustomProjects() {
+  try {
+    if (fs.existsSync(customProjectsFile)) {
+      return JSON.parse(fs.readFileSync(customProjectsFile, 'utf-8'));
+    }
+  } catch (e) {
+    return [];
+  }
+  return [];
+}
+function saveCustomProject(project: any) {
+  const list = getCustomProjects();
+  const existingIdx = list.findIndex((p: any) => p.id === project.id);
+  if (existingIdx !== -1) {
+    list[existingIdx] = { ...list[existingIdx], ...project, updatedAt: new Date().toISOString() };
+  } else {
+    list.unshift({ ...project, createdAt: new Date().toISOString() });
+  }
+  fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  return project;
+}
+function removeCustomProject(projectId: string) {
+  let list = getCustomProjects();
+  list = list.filter((p: any) => p.id !== projectId);
+  fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  return true;
+}
+
 // 1. API: Studio Config & Razorpay Integration
 app.get('/api/config', (req: Request, res: Response) => {
   res.json({
@@ -741,36 +771,137 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
 
     const saved = saveEnquiry(req.body);
 
-    // Create formatted email body for mailto fallback
-    const subject = encodeURIComponent(`Project Brief: ${brandName} [${saved.id}]`);
-    const bodyLines = [
-      `Name: ${fullName}`,
-      `Brand / Business: ${brandName}`,
-      `Email: ${email}`,
-      `Country: ${country || 'Not specified'}`,
-      `Phone/WhatsApp: ${phone || 'Not provided'}`,
-      `Category: ${businessCategory || 'General'}`,
-      `Preferred Package: ${preferredPackage || 'Custom'}`,
-      `Services Needed: ${(neededServices || []).join(', ')}`,
-      `Deliverables: ${JSON.stringify(deliverableCounts || {})}`,
-      `Timeline: ${timeline || 'Flexible'}`,
-      `Budget: ${budget || 'Not specified'}`,
-      `Reference Links: ${referenceLinks || 'None'}`,
-      `\nProject Details:\n${projectDetails}`,
-      `\n-- Submitted via ArkAja Studio Web Platform [${saved.id}]`,
-    ];
-    const body = encodeURIComponent(bodyLines.join('\n'));
+    // Format plain-text message for Gmail and email clients
+    const formattedMessage = [
+      `✨ NEW ARKAJA STUDIO PROJECT ENQUIRY [${saved.id}]`,
+      `==================================================`,
+      ``,
+      `1. CLIENT CONTACT INFORMATION:`,
+      `• Full Name: ${fullName}`,
+      `• Brand / Business: ${brandName}`,
+      `• Email: ${email}`,
+      `• Operating Country: ${country || 'Not specified'}`,
+      `• Phone / WhatsApp: ${phone || 'Not provided'}`,
+      ``,
+      `2. PROJECT SCOPE & SPECIFICATIONS:`,
+      `• Business Category: ${businessCategory || 'General'}`,
+      `• Selected Package: ${preferredPackage || 'Custom Scope'}`,
+      `• Required Creative Services: ${Array.isArray(neededServices) ? neededServices.join(', ') : (neededServices || 'Custom')}`,
+      `• Deliverables: ${typeof deliverableCounts === 'object' ? JSON.stringify(deliverableCounts) : (deliverableCounts || 'As per custom requirement')}`,
+      `• Desired Timeline: ${timeline || 'Flexible'}`,
+      `• Target Budget: ${budget || 'Not specified'}`,
+      `• Reference / Moodboard Links: ${referenceLinks || 'None provided'}`,
+      ``,
+      `3. PROJECT DETAILS & CREATIVE BRIEF:`,
+      `${projectDetails}`,
+      ``,
+      `==================================================`,
+      `Submitted via ArkAja Studio Platform [${saved.id}]`,
+      `Timestamp: ${new Date().toISOString()}`,
+    ].join('\n');
+
+    const subjectStr = `Project Enquiry: ${brandName} [${saved.id}]`;
+    const subject = encodeURIComponent(subjectStr);
+    const body = encodeURIComponent(formattedMessage);
+
+    // Direct Gmail web compose URL and mailto fallback
+    const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=arkajastudio@gmail.com&su=${subject}&body=${body}`;
     const mailtoUrl = `mailto:arkajastudio@gmail.com?subject=${subject}&body=${body}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`*New Project Brief for ArkAja Studio [${saved.id}]*\n\n*Brand:* ${brandName}\n*Client:* ${fullName} (${email})\n*Package:* ${preferredPackage}\n*Brief:* ${projectDetails}`)}`;
+
+    // Forward enquiry in real time to arkajastudio@gmail.com and studio director
+    const emailPayload = {
+      _subject: subjectStr,
+      _template: 'table',
+      _captcha: 'false',
+      _cc: 'divyaam2008@gmail.com',
+      Client_Name: fullName,
+      Brand_Name: brandName,
+      Client_Email: email,
+      Country: country || 'Not specified',
+      Phone_WhatsApp: phone || 'Not provided',
+      Category: businessCategory || 'General',
+      Preferred_Package: preferredPackage || 'Custom',
+      Services_Needed: Array.isArray(neededServices) ? neededServices.join(', ') : (neededServices || 'Custom'),
+      Deliverables: typeof deliverableCounts === 'object' ? JSON.stringify(deliverableCounts) : (deliverableCounts || 'Not specified'),
+      Timeline: timeline || 'Flexible',
+      Budget: budget || 'Not specified',
+      Reference_Links: referenceLinks || 'None',
+      Project_Brief: projectDetails,
+      Message_Summary: formattedMessage,
+      Submitted_At: new Date().toISOString(),
+    };
+
+    fetch('https://formsubmit.co/ajax/arkajastudio@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    }).catch((err) => console.warn('[Email Forwarding] arkajastudio@gmail.com note:', err?.message || err));
+
+    fetch('https://formsubmit.co/ajax/divyaam2008@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    }).catch((err) => console.warn('[Email Forwarding] divyaam2008@gmail.com note:', err?.message || err));
 
     res.json({
       success: true,
       enquiryId: saved.id,
+      gmailComposeUrl,
       mailtoUrl,
-      message: 'Thank you. Your enquiry has been received. ArkAja Studio will review your brief and get back to you.',
+      whatsappUrl,
+      formattedMessage,
+      message: 'Thank you. Your enquiry has been received and forwarded to arkajastudio@gmail.com in real time.',
     });
   } catch (error: any) {
     console.error('Enquiry error:', error);
     res.status(500).json({ error: 'Failed to save enquiry' });
+  }
+});
+
+app.get('/api/enquiries', (req: Request, res: Response) => {
+  try {
+    let list = [];
+    if (fs.existsSync(enquiriesFile)) {
+      list = JSON.parse(fs.readFileSync(enquiriesFile, 'utf-8'));
+    }
+    res.json({ success: true, enquiries: list });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to read enquiries' });
+  }
+});
+
+// 3b. API: Custom Portfolio Projects endpoints
+app.get('/api/custom-projects', (req: Request, res: Response) => {
+  res.json({ projects: getCustomProjects() });
+});
+
+app.post('/api/custom-projects', (req: Request, res: Response) => {
+  try {
+    const project = req.body;
+    if (!project || !project.id || !project.title) {
+      res.status(400).json({ error: 'Valid project data is required' });
+      return;
+    }
+    const saved = saveCustomProject(project);
+    res.json({ success: true, project: saved });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to save project' });
+  }
+});
+
+app.delete('/api/custom-projects/:id', (req: Request, res: Response) => {
+  try {
+    removeCustomProject(req.params.id);
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to delete project' });
   }
 });
 

@@ -4,23 +4,26 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  onAuthStateChanged,
   User as FirebaseUser,
 } from 'firebase/auth';
 import {
   getFirestore,
   doc,
   setDoc,
-  getDoc,
   getDocFromServer,
   collection,
   query,
   where,
   getDocs,
+  onSnapshot,
+  deleteDoc,
   serverTimestamp,
 } from 'firebase/firestore';
 
 import configData from '../../firebase-applet-config.json';
+
+export const STUDIO_OWNER_EMAIL = 'divyaam2008@gmail.com';
+export const STUDIO_OWNER_PASSWORD = 'animefanme';
 
 const firebaseConfig = {
   apiKey: configData.apiKey,
@@ -57,21 +60,28 @@ export async function testConnection() {
 }
 testConnection();
 
-// Sign In with Google
+// Sign In with Google (Restricted to Studio Owner)
 export async function signInWithGoogle(): Promise<FirebaseUser | null> {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     if (user) {
-      // Upsert user profile to Firestore
+      // Check if the user is the authorized studio owner
+      if (user.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()) {
+        await signOut(auth);
+        throw new Error('Access restricted: Only the authorized studio director is permitted to access studio management.');
+      }
+
+      // Upsert admin profile to Firestore
       const userRef = doc(db, 'users', user.uid);
       await setDoc(
         userRef,
         {
           uid: user.uid,
-          email: user.email || '',
-          displayName: user.displayName || 'ArkAja Client',
+          email: user.email,
+          displayName: user.displayName || 'Studio Director',
           photoURL: user.photoURL || '',
+          role: 'studio_owner',
           lastLoginAt: new Date().toISOString(),
           updatedAt: serverTimestamp(),
         },
@@ -112,11 +122,123 @@ export async function saveEnquiryToFirestore(enquiry: any): Promise<void> {
       projectDetails: enquiry.projectDetails,
       referenceLinks: enquiry.referenceLinks || '',
       status: 'pending_review',
+      recipientEmail: STUDIO_OWNER_EMAIL,
       createdAt: enquiry.createdAt || new Date().toISOString(),
       timestamp: serverTimestamp(),
     });
   } catch (err) {
     console.error('Failed to persist enquiry to Firestore:', err);
+  }
+}
+
+// Real-time listener for ALL Enquiries (for Studio Owner divyaam2008@gmail.com)
+export function subscribeToAllEnquiries(
+  onUpdate: (enquiries: any[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  try {
+    const enquiriesRef = collection(db, 'enquiries');
+    const unsubscribe = onSnapshot(
+      enquiriesRef,
+      (snapshot) => {
+        const list = snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }));
+        // Sort descending by date
+        list.sort((a: any, b: any) => {
+          const tA = new Date(a.createdAt || 0).getTime();
+          const tB = new Date(b.createdAt || 0).getTime();
+          return tB - tA;
+        });
+        onUpdate(list);
+      },
+      (error) => {
+        console.warn('Real-time enquiries subscription note:', error);
+        if (onError) onError(error);
+      }
+    );
+    return unsubscribe;
+  } catch (err: any) {
+    console.warn('Failed to attach enquiries listener:', err);
+    return () => {};
+  }
+}
+
+// Real-time listener for Portfolio Projects (updates live on website for all visitors)
+export function subscribeToPortfolioProjects(
+  onUpdate: (projects: any[]) => void,
+  onError?: (err: Error) => void
+): () => void {
+  try {
+    const projectsRef = collection(db, 'projects');
+    const unsubscribe = onSnapshot(
+      projectsRef,
+      (snapshot) => {
+        const list = snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }));
+        onUpdate(list);
+      },
+      (error) => {
+        console.warn('Real-time portfolio projects subscription note:', error);
+        if (onError) onError(error);
+      }
+    );
+    return unsubscribe;
+  } catch (err: any) {
+    console.warn('Failed to attach portfolio projects listener:', err);
+    return () => {};
+  }
+}
+
+// Add New Project to Firestore (Only Studio Owner)
+export async function addProjectToFirestore(project: {
+  id: string;
+  slug?: string;
+  title: string;
+  category: string;
+  subtitle: string;
+  description: string;
+  images: string[];
+  deliverables: string[];
+  creativeDirections?: any[];
+}): Promise<void> {
+  const projectRef = doc(db, 'projects', project.id);
+  await setDoc(projectRef, {
+    ...project,
+    createdBy: STUDIO_OWNER_EMAIL,
+    createdAt: new Date().toISOString(),
+    timestamp: serverTimestamp(),
+  });
+}
+
+// Delete Project from Firestore
+export async function deleteProjectFromFirestore(projectId: string): Promise<void> {
+  const projectRef = doc(db, 'projects', projectId);
+  await deleteDoc(projectRef);
+}
+
+// Update Enquiry Status in Firestore
+export async function updateEnquiryStatusInFirestore(
+  enquiryId: string,
+  status: 'pending_review' | 'contacted' | 'booked' | 'archived'
+): Promise<void> {
+  const enquiryRef = doc(db, 'enquiries', enquiryId);
+  await setDoc(enquiryRef, { status, updatedAt: new Date().toISOString() }, { merge: true });
+}
+
+// Get User's submitted enquiries
+export async function getUserEnquiries(email: string, userId?: string) {
+  try {
+    const enquiriesRef = collection(db, 'enquiries');
+    const q = query(enquiriesRef, where('email', '==', email));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((docSnap) => docSnap.data());
+  } catch (err) {
+    console.error('Error fetching user enquiries:', err);
+    return [];
   }
 }
 
@@ -146,25 +268,12 @@ export async function saveDraftToFirestore(userId: string, draft: any): Promise<
   }
 }
 
-// Get User's submitted enquiries
-export async function getUserEnquiries(email: string, userId?: string) {
-  try {
-    const enquiriesRef = collection(db, 'enquiries');
-    const q = query(enquiriesRef, where('email', '==', email));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => doc.data());
-  } catch (err) {
-    console.error('Error fetching user enquiries:', err);
-    return [];
-  }
-}
-
 // Get User's drafts
 export async function getUserDrafts(userId: string) {
   try {
     const draftsRef = collection(db, 'users', userId, 'drafts');
     const snapshot = await getDocs(draftsRef);
-    return snapshot.docs.map((doc) => doc.data());
+    return snapshot.docs.map((docSnap) => docSnap.data());
   } catch (err) {
     console.error('Error fetching user drafts:', err);
     return [];

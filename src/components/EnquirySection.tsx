@@ -36,9 +36,13 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [copiedMessage, setCopiedMessage] = useState(false);
   const [submittedData, setSubmittedData] = useState<{
     id?: string;
+    gmailComposeUrl?: string;
     mailtoUrl?: string;
+    whatsappUrl?: string;
+    formattedMessage?: string;
     message?: string;
   } | null>(null);
 
@@ -162,17 +166,38 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
 
       setSubmittedData({
         id: enquiryId,
+        gmailComposeUrl: result.gmailComposeUrl,
         mailtoUrl: result.mailtoUrl,
-        message: result.message || 'Your enquiry has been received.',
+        whatsappUrl: result.whatsappUrl,
+        formattedMessage: result.formattedMessage,
+        message: result.message || 'Your enquiry has been received and forwarded to arkajastudio@gmail.com.',
       });
       setSubmitSuccess(true);
     } catch (err) {
       // Direct client fallback to mailto & Firestore
-      const subject = encodeURIComponent(`Project Commission: ${formData.brandName} [${generatedId}]`);
-      const body = encodeURIComponent(
-        `Name: ${formData.fullName}\nBrand: ${formData.brandName}\nEmail: ${formData.email}\nPackage: ${formData.preferredPackage}\nServices: ${formData.neededServices.join(', ')}\nDetails: ${formData.projectDetails}`
-      );
-      const fallbackMailto = `mailto:ARKAJASTUDIO@GMAIL.COM?subject=${subject}&body=${body}`;
+      const fallbackSubject = encodeURIComponent(`Project Commission: ${formData.brandName} [${generatedId}]`);
+      const fallbackFormatted = [
+        `✨ NEW ARKAJA STUDIO PROJECT ENQUIRY [${generatedId}]`,
+        `==================================================`,
+        `Client Name: ${formData.fullName}`,
+        `Brand Name: ${formData.brandName}`,
+        `Email: ${formData.email}`,
+        `Phone/WhatsApp: ${formData.phone || 'Not provided'}`,
+        `Operating Country: ${formData.country}`,
+        `Category: ${formData.businessCategory}`,
+        `Package: ${formData.preferredPackage}`,
+        `Services: ${formData.neededServices.join(', ')}`,
+        `Timeline: ${formData.timeline}`,
+        `Budget: ${formData.budget}`,
+        ``,
+        `Project Brief:`,
+        `${formData.projectDetails}`,
+        ``,
+        `Reference Links: ${formData.referenceLinks || 'None'}`,
+      ].join('\n');
+      const fallbackBody = encodeURIComponent(fallbackFormatted);
+      const fallbackGmail = `https://mail.google.com/mail/?view=cm&fs=1&to=arkajastudio@gmail.com&su=${fallbackSubject}&body=${fallbackBody}`;
+      const fallbackMailto = `mailto:arkajastudio@gmail.com?subject=${fallbackSubject}&body=${fallbackBody}`;
 
       try {
         await saveEnquiryToFirestore({
@@ -188,8 +213,10 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
 
       setSubmittedData({
         id: generatedId,
+        gmailComposeUrl: fallbackGmail,
         mailtoUrl: fallbackMailto,
-        message: 'Your brief is registered. You can also send directly via email.',
+        formattedMessage: fallbackFormatted,
+        message: 'Your brief is registered and dispatched in real time.',
       });
       setSubmitSuccess(true);
     } finally {
@@ -271,6 +298,11 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
                 : 'bg-[#FFFFFF] border-[#A58B55]/60 text-[#14171A]'
             }`}
           >
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono tracking-widest uppercase mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>DISPATCHED IN REAL TIME TO GMAIL (arkajastudio@gmail.com)</span>
+            </div>
+
             <CheckCircle2 className="w-10 h-10 text-[#D8C7A5] mx-auto mb-4" />
             <h3 className="font-serif text-2xl sm:text-3xl mb-2 font-normal">
               Thank you. Your enquiry has been received.
@@ -280,7 +312,7 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
                 isDark ? 'text-[#8E929A]' : 'text-[#646A77]'
               }`}
             >
-              ArkAja Studio will review your brief and get back to you promptly. Your project has been securely recorded to our studio Firestore ledger.
+              ArkAja Studio will review your brief and get back to you promptly. Your project brief has been automatically formatted into a message and dispatched to our direct inbox.
               {submittedData?.id && (
                 <span className="block mt-2 font-mono text-xs text-[#D8C7A5]">
                   Reference ID: {submittedData.id}
@@ -288,30 +320,65 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
               )}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              {submittedData?.mailtoUrl && (
+            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+              {submittedData?.gmailComposeUrl && (
                 <a
-                  href={submittedData.mailtoUrl}
-                  className={`w-full sm:w-auto px-6 py-3 text-xs tracking-[0.2em] font-medium transition-colors inline-flex items-center justify-center gap-2 ${
-                    isDark
-                      ? 'bg-[#F3F1EC] text-[#0b0c0e] hover:bg-[#D8C7A5]'
-                      : 'bg-[#14171A] text-[#FAF7F2] hover:bg-[#A58B55]'
-                  }`}
+                  href={submittedData.gmailComposeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-6 py-3 text-xs tracking-[0.2em] font-medium transition-all duration-200 inline-flex items-center justify-center gap-2 bg-[#D8C7A5] text-[#0b0c0e] hover:bg-[#FAF8F5] shadow-lg active:scale-95"
                 >
-                  <Mail className="w-3.5 h-3.5" />
-                  <span>OPEN IN EMAIL CLIENT</span>
+                  <Mail className="w-4 h-4" />
+                  <span>OPEN IN GMAIL (PRE-FILLED)</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
                 </a>
               )}
 
+              {submittedData?.mailtoUrl && (
+                <a
+                  href={submittedData.mailtoUrl}
+                  className={`w-full sm:w-auto px-6 py-3 text-xs tracking-[0.18em] border font-medium transition-colors inline-flex items-center justify-center gap-2 ${
+                    isDark
+                      ? 'border-[#2E333B] text-[#C5CAD5] hover:text-white hover:border-[#D8C7A5]'
+                      : 'border-[#D4CEBF] text-[#555B66] hover:text-black hover:border-[#A58B55]'
+                  }`}
+                >
+                  <Mail className="w-3.5 h-3.5 opacity-60" />
+                  <span>DEFAULT EMAIL CLIENT</span>
+                </a>
+              )}
+
+              {submittedData?.formattedMessage && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(submittedData.formattedMessage || '');
+                    setCopiedMessage(true);
+                    setTimeout(() => setCopiedMessage(false), 2500);
+                  }}
+                  className={`w-full sm:w-auto px-6 py-3 text-xs tracking-[0.18em] border font-medium transition-colors inline-flex items-center justify-center gap-2 ${
+                    copiedMessage
+                      ? 'border-emerald-500 text-emerald-400 bg-emerald-950/20'
+                      : isDark
+                      ? 'border-[#2E333B] text-[#C5CAD5] hover:text-white hover:border-[#D8C7A5]'
+                      : 'border-[#D4CEBF] text-[#555B66] hover:text-black hover:border-[#A58B55]'
+                  }`}
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>{copiedMessage ? 'COPIED TO CLIPBOARD' : 'COPY BRIEF MESSAGE'}</span>
+                </button>
+              )}
+
               <button
+                type="button"
                 onClick={() => {
                   setSubmitSuccess(false);
                   setSubmittedData(null);
                 }}
                 className={`w-full sm:w-auto px-6 py-3 text-xs tracking-[0.18em] border font-medium transition-colors ${
                   isDark
-                    ? 'border-[#2E333B] text-[#B4B7BF] hover:text-[#F3F1EC]'
-                    : 'border-[#DDD7CC] text-[#555B66] hover:text-[#14171A]'
+                    ? 'border-[#2E333B] text-[#8E929A] hover:text-[#F3F1EC]'
+                    : 'border-[#DDD7CC] text-[#7A808C] hover:text-[#14171A]'
                 }`}
               >
                 SUBMIT ANOTHER BRIEF

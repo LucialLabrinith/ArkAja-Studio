@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PORTFOLIO_PROJECTS } from './data/portfolioData';
 import { Project, CustomBuilderState } from './types';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -16,10 +16,11 @@ import { AboutSection } from './components/AboutSection';
 import { EnquirySection } from './components/EnquirySection';
 import { StudioConcierge } from './components/StudioConcierge';
 import { SearchModal } from './components/SearchModal';
-import { ClientAccountModal } from './components/ClientAccountModal';
+import { StudioOwnerModal } from './components/StudioOwnerModal';
 import { Footer } from './components/Footer';
 import { AssetProtectionShield } from './components/AssetProtectionShield';
 import { Sparkles } from 'lucide-react';
+import { subscribeToPortfolioProjects } from './lib/firebase';
 
 function StudioApp() {
   const { isDark } = useTheme();
@@ -32,6 +33,7 @@ function StudioApp() {
   const [studioConfig, setStudioConfig] = useState<any>({});
   const [builderPrefill, setBuilderPrefill] = useState<CustomBuilderState | null>(null);
   const [packagePrefill, setPackagePrefill] = useState<string | null>(null);
+  const [customProjects, setCustomProjects] = useState<Project[]>([]);
 
   // Keyboard shortcut: Cmd+K or Ctrl+K opens search
   useEffect(() => {
@@ -45,7 +47,7 @@ function StudioApp() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Fetch Studio configuration and uploaded project assets
+  // Fetch Studio configuration, server assets, and subscribe to Firestore real-time portfolio projects
   useEffect(() => {
     fetch('/api/config')
       .then((res) => res.json())
@@ -60,7 +62,55 @@ function StudioApp() {
         }
       })
       .catch((err) => console.log('Asset fetch note:', err));
+
+    // Fetch stored custom projects from server
+    fetch('/api/custom-projects')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.projects && Array.isArray(data.projects)) {
+          setCustomProjects(data.projects);
+        }
+      })
+      .catch((err) => console.log('Custom projects fetch note:', err));
+
+    // Subscribe to real-time updates from Firestore projects collection
+    const unsubscribe = subscribeToPortfolioProjects((firestoreProjects) => {
+      if (firestoreProjects && Array.isArray(firestoreProjects) && firestoreProjects.length > 0) {
+        const formatted: Project[] = firestoreProjects.map((p: any) => ({
+          id: p.id,
+          slug: p.slug || p.id,
+          title: p.title,
+          category: (p.category as any) || 'FASHION',
+          label: 'CONCEPT PROJECT',
+          productionLabel: 'AI-ASSISTED CREATIVE PRODUCTION',
+          tagline: p.subtitle || p.tagline || 'Editorial Brand Direction',
+          description: p.description || 'Editorial campaign visual direction created by ArkAja Studio.',
+          services: p.deliverables || p.services || ['Bespoke creative direction'],
+          creativeDirections: p.creativeDirections || [
+            {
+              title: `${p.title} · Editorial Direction`,
+              subtitle: p.subtitle || 'Visual Direction',
+              description: p.description || '',
+              format: 'post',
+            },
+          ],
+          images: p.images || (p.thumbnail ? [p.thumbnail] : []),
+          colorPalette: p.colorPalette || ['#121418', '#FAF8F5', '#D8C7A5'],
+          year: p.year || '2026',
+        }));
+        setCustomProjects(formatted);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  // Merge default authentic curated projects with real-time custom projects
+  const allPortfolioProjects = useMemo(() => {
+    const customIds = new Set(customProjects.map((p) => p.id));
+    const baseWithoutDuplicates = PORTFOLIO_PROJECTS.filter((p) => !customIds.has(p.id));
+    return [...customProjects, ...baseWithoutDuplicates];
+  }, [customProjects]);
 
   const handleAssetUploaded = (slug: string, url: string) => {
     setUploadedAssets((prev) => {
@@ -115,10 +165,10 @@ function StudioApp() {
         {/* 2. Value Proposition */}
         <ValueProp onViewServices={() => scrollToSection('services')} />
 
-        {/* 3. Selected Work */}
+        {/* 3. Selected Work (Real-time synced with Firestore) */}
         <PortfolioGrid
           key={assetRefreshKey}
-          projects={PORTFOLIO_PROJECTS}
+          projects={allPortfolioProjects}
           uploadedAssets={uploadedAssets}
           onSelectProject={(project) => setSelectedProject(project)}
         />
@@ -158,7 +208,7 @@ function StudioApp() {
       {/* Project Detail Modal / Gallery */}
       <ProjectModal
         project={selectedProject}
-        allProjects={PORTFOLIO_PROJECTS}
+        allProjects={allPortfolioProjects}
         uploadedAssets={uploadedAssets}
         onClose={() => setSelectedProject(null)}
         onSelectProject={(p) => setSelectedProject(p)}
@@ -187,17 +237,21 @@ function StudioApp() {
         }}
       />
 
-      {/* Client Account & Firestore Briefs Modal */}
-      <ClientAccountModal
+      {/* Studio Owner / Director Modal (Real-time Enquiries & Project Publisher) */}
+      <StudioOwnerModal
         isOpen={isAccountOpen}
         onClose={() => setIsAccountOpen(false)}
-        onOpenBuilder={() => {
-          setIsAccountOpen(false);
-          scrollToSection('builder');
+        customProjects={customProjects}
+        onProjectAdded={(newProj) => {
+          setCustomProjects((prev) => {
+            const filtered = prev.filter((p) => p.id !== newProj.id);
+            return [newProj, ...filtered];
+          });
+          setAssetRefreshKey((k) => k + 1);
         }}
-        onOpenEnquiry={() => {
-          setIsAccountOpen(false);
-          scrollToSection('enquire');
+        onProjectDeleted={(deletedId) => {
+          setCustomProjects((prev) => prev.filter((p) => p.id !== deletedId));
+          setAssetRefreshKey((k) => k + 1);
         }}
       />
 
@@ -239,6 +293,7 @@ function StudioApp() {
           </div>
         </button>
       )}
+
       {/* Global Asset Protection & Persistent Atelier Logo Stamp */}
       <AssetProtectionShield />
     </div>
