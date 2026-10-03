@@ -60,6 +60,31 @@ export async function testConnection() {
 }
 testConnection();
 
+// Persist ArkAja Studio metadata in Firestore
+export async function initializeStudioMetadata() {
+  try {
+    const studioRef = doc(db, 'studio', 'info');
+    await setDoc(
+      studioRef,
+      {
+        name: 'ArkAja Studio',
+        studioName: 'ArkAja Studio',
+        displayName: 'ArkAja Studio',
+        tagline: 'Creative content for brands with something to say.',
+        positioning: 'AI-assisted creative production. Human-led art direction.',
+        email: 'arkajastudio@gmail.com',
+        databaseId: configData.firestoreDatabaseId,
+        projectId: configData.projectId,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  } catch (err) {
+    console.warn('Studio metadata sync note:', err);
+  }
+}
+initializeStudioMetadata();
+
 // Sign In with Google (Restricted to Studio Owner)
 export async function signInWithGoogle(): Promise<FirebaseUser | null> {
   try {

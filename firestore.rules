@@ -70,6 +70,12 @@ service cloud.firestore {
       allow write: if isStudioOwner();
     }
 
+    // 5. ArkAja Studio Metadata & Information
+    match /studio/{studioId} {
+      allow read: if true;
+      allow write: if isStudioOwner();
+    }
+
     // Connection test document
     match /test/connection {
       allow read: if true;

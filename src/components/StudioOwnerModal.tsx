@@ -191,29 +191,42 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
       };
 
       // 1. Write to Firestore in real time
-      await addProjectToFirestore({
-        id: newProjectId,
-        slug,
-        title: newProjectData.title,
-        category: newProjectData.category,
-        subtitle: newProjectData.tagline,
-        description: newProjectData.description,
-        images: newProjectData.images,
-        deliverables: newProjectData.services,
-        creativeDirections: newProjectData.creativeDirections,
-      });
+      try {
+        await addProjectToFirestore({
+          id: newProjectId,
+          slug,
+          title: newProjectData.title,
+          category: newProjectData.category,
+          subtitle: newProjectData.tagline,
+          description: newProjectData.description,
+          images: newProjectData.images,
+          deliverables: newProjectData.services,
+          creativeDirections: newProjectData.creativeDirections,
+        });
+      } catch (firestoreErr) {
+        console.warn('Firestore project write note:', firestoreErr);
+      }
 
-      // 2. Also persist to local backend store as fallback
-      fetch('/api/portfolio-upload', {
+      // 2. Also persist to local custom-projects backend store
+      fetch('/api/custom-projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          targetFilename: `${slug}.webp`,
-          base64Data: finalImage,
-        }),
-      }).catch((e) => console.warn('Local store sync note:', e));
+        body: JSON.stringify(newProjectData),
+      }).catch((e) => console.warn('Custom projects store note:', e));
 
-      // 3. Notify parent component to update state immediately
+      // 3. Upload thumbnail to backend store if base64 data
+      if (finalImage.startsWith('data:')) {
+        fetch('/api/portfolio-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            targetFilename: `${slug}.webp`,
+            base64Data: finalImage,
+          }),
+        }).catch((e) => console.warn('Local asset store sync note:', e));
+      }
+
+      // 4. Notify parent component to update state immediately
       if (onProjectAdded) {
         onProjectAdded(newProjectData);
       }
@@ -239,9 +252,17 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
 
   // Handle Project Deletion
   const handleDeleteProject = async (projectId: string) => {
-    if (!window.confirm('Are you sure you want to remove this project from the portfolio?')) return;
     try {
-      await deleteProjectFromFirestore(projectId);
+      try {
+        await deleteProjectFromFirestore(projectId);
+      } catch (firestoreErr) {
+        console.warn('Firestore project deletion note:', firestoreErr);
+      }
+
+      fetch(`/api/custom-projects/${projectId}`, {
+        method: 'DELETE',
+      }).catch((e) => console.warn('Server project delete note:', e));
+
       if (onProjectDeleted) {
         onProjectDeleted(projectId);
       }
@@ -421,7 +442,7 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
                     <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Firestore Real-time Active" />
                   </div>
                   <h3 className="font-serif text-2xl font-normal">
-                    Divyaam's Studio Atelier
+                    ArkAja Studio
                   </h3>
                   <div className="text-[11px] font-mono text-[#D8C7A5] flex items-center gap-1.5">
                     <span>{user?.email || 'Authorized Studio Director'}</span>
