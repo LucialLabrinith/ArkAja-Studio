@@ -1,5 +1,27 @@
 [
   {
+    "id": "ARK-MUTGTXDP",
+    "createdAt": "2026-10-04T06:54:29.437Z",
+    "fullName": "Priya Sharma",
+    "brandName": "Priya Luxe Botanicals",
+    "email": "priya@example.com",
+    "phone": "+91 98765 00000",
+    "country": "India",
+    "businessCategory": "Beauty",
+    "preferredPackage": "Basic Website (₹10,000)",
+    "neededServices": [
+      "Basic Website — ₹10,000",
+      "Urgent Website Delivery — +₹2,000",
+      "Enquiry Form Integration — +₹3,000",
+      "AI Chatbot — +₹5,000"
+    ],
+    "calculatedSubtotal": 20000,
+    "pricingSummary": "₹20,000 (Fixed Base Subtotal)",
+    "hasCustomQuote": false,
+    "timeline": "ASAP",
+    "projectDetails": "Testing full suite: Basic Website + Urgent + Enquiry Integration + AI Chatbot = ₹20,000"
+  },
+  {
     "id": "ARK-MUSAHE9Y",
     "createdAt": "2026-10-03T11:09:00.934Z",
     "fullName": "Aria Mehta",

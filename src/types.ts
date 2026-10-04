@@ -29,24 +29,46 @@ export interface ServiceItem {
   description: string;
   includes: string[];
   tag?: string;
+  category?: string;
+  priceText?: string;
+  ctaText?: string;
 }
 
 export interface PricingPackage {
-  id: 'starter' | 'signature' | 'custom';
+  id:
+    | 'starter'
+    | 'signature'
+    | 'custom'
+    | 'basic-website'
+    | 'urgent-website'
+    | 'logo-design'
+    | 'brand-identity'
+    | 'web-apps'
+    | 'ai-chatbot'
+    | 'ai-business'
+    | 'business-launch'
+    | string;
   name: string;
   priceInr: string;
+  priceInrNumber?: number;
   priceUsd: string;
   priceEur: string;
-  priceGbp: string;
+  priceGbp?: string;
   subtitle: string;
   features: string[];
   delivery: string;
   ctaText: string;
   popular?: boolean;
+  isCustomQuote?: boolean;
+  category?: 'WEBSITES' | 'BRANDING' | 'DEVELOPMENT' | 'AI' | 'CONTENT' | 'BUNDLE';
+  disclaimer?: string;
 }
 
 export interface CustomBuilderState {
   categories: string[];
+  selectedServiceItems?: string[];
+  calculatedSubtotalInr?: number;
+  hasCustomQuoteItems?: boolean;
   socialFormats: string[];
   campaignTypes: string[];
   brandVisuals: string[];
@@ -73,6 +95,9 @@ export interface EnquiryFormData {
   phone: string;
   businessCategory: string;
   neededServices: string[];
+  selectedServiceItems?: string[];
+  calculatedSubtotalInr?: number;
+  isCustomQuote?: boolean;
   preferredPackage: string;
   deliverableCounts: Record<string, number>;
   timeline: string;

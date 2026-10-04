@@ -466,6 +466,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     alt={`Thumbnail ${idx + 1}`}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.dataset.fallbackApplied) {
+                        target.dataset.fallbackApplied = 'true';
+                        const clean = (target.src || img || '').split('/').pop()?.split('?')[0] || '';
+                        const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
+                        const slug = slugMatch ? slugMatch[1] : clean.replace(/\.[^/.]+$/, '');
+                        if (slug) {
+                          target.src = `/assets/portfolio/${slug}.webp`;
+                        }
+                      }
+                    }}
                   />
                   <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/80 text-[8.5px] font-mono text-white/90">
                     0{idx + 1}

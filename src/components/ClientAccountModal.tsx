@@ -166,12 +166,20 @@ export const ClientAccountModal: React.FC<ClientAccountModalProps> = ({
                     </p>
                     <div className="flex flex-wrap items-center gap-3 mt-3 pt-2.5 border-t border-inherit text-[11px] text-[#8E929A] font-mono">
                       <span>Pkg: {enq.preferredPackage || 'Custom'}</span>
+                      {(enq.pricingSummary || (enq.calculatedSubtotal && enq.calculatedSubtotal > 0)) && (
+                        <>
+                          <span>·</span>
+                          <span className="text-[#D8C7A5]">
+                            Scope: {enq.pricingSummary || `₹${Number(enq.calculatedSubtotal).toLocaleString('en-IN')}`}
+                          </span>
+                        </>
+                      )}
                       <span>·</span>
                       <span>Timeline: {enq.timeline || 'Flexible'}</span>
                       <span>·</span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {new Date(enq.createdAt).toLocaleDateString()}
+                        {enq.createdAt ? new Date(enq.createdAt).toLocaleDateString() : 'Recent'}
                       </span>
                     </div>
                   </div>

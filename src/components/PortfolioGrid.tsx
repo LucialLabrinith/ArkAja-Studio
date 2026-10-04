@@ -184,11 +184,19 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
                           target.dataset.fallbackApplied = 'true';
                           const currentSrc = target.src || firstImage || '';
                           const clean = currentSrc.split('/').pop()?.split('?')[0] || '';
+                          const embedded = getEmbeddedAsset(clean);
+                          if (embedded) {
+                            target.src = embedded;
+                            return;
+                          }
                           const slugMatch = clean.match(/^([a-z0-9]+-[a-z0-9]+-\d+|[a-z0-9]+-\d+)/i);
                           const slug = slugMatch ? slugMatch[1] : clean.replace(/\.[^/.]+$/, '');
                           if (slug) {
                             target.src = `/assets/portfolio/${slug}.webp`;
                           }
+                        } else if (!target.dataset.finalFallback) {
+                          target.dataset.finalFallback = 'true';
+                          target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='%2314171d'/%3E%3Ctext x='50%25' y='50%25' fill='%23D8C7A5' font-family='serif' font-size='24' text-anchor='middle' dominant-baseline='middle'%3EARKAJA STUDIO%3C/text%3E%3C/svg%3E";
                         }
                       }}
                     />

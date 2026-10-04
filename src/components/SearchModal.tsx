@@ -12,6 +12,7 @@ interface SearchModalProps {
   onSelectProject: (project: any) => void;
   onNavigateToSection: (sectionId: string) => void;
   onOpenAdvisor: () => void;
+  allProjects?: any[];
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({
@@ -20,6 +21,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   onSelectProject,
   onNavigateToSection,
   onOpenAdvisor,
+  allProjects,
 }) => {
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,14 +51,16 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     if (!q) return null;
 
     const matchedProjects: any[] = [];
-    PORTFOLIO_PROJECTS.forEach((p) => {
-      const inTitle = p.title.toLowerCase().includes(q);
-      const inCat = p.category.toLowerCase().includes(q);
-      const inDesc = p.description.toLowerCase().includes(q);
-      const inDirections = p.creativeDirections.some(
-        (cd) => cd.title.toLowerCase().includes(q) || (cd.subtitle ? cd.subtitle.toLowerCase().includes(q) : false)
+    const pool = (allProjects && allProjects.length > 0) ? allProjects : PORTFOLIO_PROJECTS;
+    pool.forEach((p) => {
+      const inTitle = (p.title || '').toLowerCase().includes(q);
+      const inCat = (p.category || '').toLowerCase().includes(q);
+      const inDesc = (p.description || '').toLowerCase().includes(q);
+      const inTagline = (p.tagline || '').toLowerCase().includes(q);
+      const inDirections = (p.creativeDirections || []).some(
+        (cd: any) => (cd?.title || '').toLowerCase().includes(q) || (cd?.subtitle ? cd.subtitle.toLowerCase().includes(q) : false)
       );
-      if (inTitle || inCat || inDesc || inDirections) {
+      if (inTitle || inCat || inDesc || inTagline || inDirections) {
         matchedProjects.push(p);
       }
     });

@@ -614,6 +614,14 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
                                 {enq.preferredPackage || 'Custom'} · {enq.timeline || 'Flexible'}
                               </span>
                             </div>
+                            {(enq.pricingSummary || (enq.calculatedSubtotal && enq.calculatedSubtotal > 0)) && (
+                              <div className="sm:col-span-2">
+                                <span className="opacity-50 block text-[9.5px]">ESTIMATED PRICING SCOPE</span>
+                                <span className="text-[#D8C7A5] font-mono text-[11px]">
+                                  {enq.pricingSummary || `₹${Number(enq.calculatedSubtotal).toLocaleString('en-IN')}`}
+                                </span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Brief message */}

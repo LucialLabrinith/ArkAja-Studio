@@ -21,12 +21,38 @@ export function getAjaContextualResponse(userInput: string): string {
   ) {
     return (
       "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions:\n\n" +
-      "• **Starter Package (₹2,499 / $49 / £39)**:\n" +
-      "  Includes 4 feed posts, 2 stories, 1 promotional creative, 1 short-form visual direction, and unified brand aesthetics. Delivered in 3–5 business days.\n\n" +
-      "• **Signature Package (₹4,999 / $99 / £79)** (Most Popular):\n" +
-      "  Includes 8 feed posts, 4 stories, 2 promotional creatives, caption writing, visual direction, and priority queue with our **48-hour delivery option**.\n\n" +
-      "• **Custom Campaign**:\n" +
-      "  Tailored scoping for seasonal edits, multi-product launches, or full brand aesthetic overhauls. You can use our interactive **Project Builder** to calculate your exact deliverable counts!"
+      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment). Perfect for 'Here is my business.'\n\n" +
+      "• **Web Apps & Business Systems (Custom Quote)**: Interactive digital tools designed around the way your business runs (Booking, Inventory, CRM, Dashboards, Portals, Management Systems). Quoted based on complexity.\n\n" +
+      "• **Starter Content Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative.\n\n" +
+      "• **Signature Content Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, and 48-hour priority queue.\n\n" +
+      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, high-res web & print kit, up to 2 revisions).\n\n" +
+      "• **Custom Solutions**: Brand Identity, AI Chatbots (+₹5,000), and AI-Assisted Business Tooling."
+    );
+  }
+
+  // 1b. Web Apps & Business Systems vs. Basic Website
+  if (
+    q.includes('web app') ||
+    q.includes('webapp') ||
+    q.includes('business system') ||
+    q.includes('crm') ||
+    q.includes('inventory') ||
+    q.includes('dashboard') ||
+    q.includes('portal') ||
+    q.includes('saas') ||
+    (q.includes('website') && q.includes('difference')) ||
+    (q.includes('website') && q.includes('vs'))
+  ) {
+    return (
+      "Here is the pricing and architectural structure at ArkAja Studio:\n\n" +
+      "• **Basic Website (₹10,000)** — *\"Here is my business.\"*\n" +
+      "  Mostly information + contact (e.g. for a salon: Home → About → Services → Gallery → Contact). The visitor reads information and contacts you.\n\n" +
+      "• **Basic Web App (Level 1) — ₹15,000 only** — *\"Here is a system that runs a workflow.\"*\n" +
+      "  Costs ₹15,000 fixed price. Includes a single workflow, limited users, structured database with Add/Edit/Delete/Search, user input forms, responsive UI, status tracking, and admin dashboard (e.g. Salon/Doctor Appointments, Restaurant Order Requests, Mini Inventory, Billing & Invoicing, Coaching Records, Property Listings).\n\n" +
+      "• **Anything Aside From That — Custom Quote**\n" +
+      "  🟡 **Level 2 — Advanced Web Apps**: Multi-role accounts (customer + staff + admin), payment gateway flows, automated WhatsApp/email notifications, workflows, reports, and file uploads.\n" +
+      "  🔴 **Level 3 — Custom Platforms**: Enterprise systems, hospital management, scholarship systems, parental monitoring, email security, marketplaces, multi-tenant SaaS.\n\n" +
+      "So: **Basic Website is ₹10,000**, the **Basic Web App is ₹15,000 only**, and **anything aside from that is Custom Quote** based on complexity!"
     );
   }
 
@@ -262,7 +288,45 @@ export function getAjaContextualResponse(userInput: string): string {
     );
   }
 
-  // 15. Greetings & Pleasantries
+  // 15. Casual Day-to-Day Questions (How was your day, How are you, etc.)
+  if (
+    q.includes('how was your day') ||
+    q.includes('how is your day') ||
+    q.includes("how's your day") ||
+    q.includes('how are you') ||
+    q.includes("how's it going") ||
+    q.includes('what are you doing') ||
+    q.includes('what are you up to') ||
+    q.includes('how do you feel')
+  ) {
+    return (
+      "My day has been wonderful! I've been immersed in curating new visual aesthetics, reviewing atelier concepts, and talking with brilliant creators and brands. Thank you so much for asking!\n\n" +
+      "How has your day been going? Are you working on a creative venture today, or just taking some time to explore?"
+    );
+  }
+
+  // 15b. Who are you / Persona
+  if (
+    q.includes('who are you') ||
+    q.includes('what is your name') ||
+    q.includes('tell me about yourself')
+  ) {
+    return (
+      "I'm Aja—the creative guide, conversation partner, and art-direction advisor for ArkAja Studio! ✨\n\n" +
+      "I love typography, editorial aesthetics, storytelling, and helping brands stand out. But I'm also here to chat about anything under the sun—from day-to-day musings to big creative dreams. What's on your mind today?"
+    );
+  }
+
+  // 15c. Jokes & Humor
+  if (q.includes('joke') || q.includes('funny') || q.includes('laugh')) {
+    return (
+      "Here's one for you:\n\n" +
+      "Why did the graphic designer break up with the minimalist? ... Because they needed more space! 😉\n\n" +
+      "How's your mood today? Need creative inspiration, or just good banter?"
+    );
+  }
+
+  // 16. Greetings & Pleasantries
   if (
     q === 'hi' ||
     q === 'hello' ||
@@ -273,13 +337,12 @@ export function getAjaContextualResponse(userInput: string): string {
     q.includes('good evening')
   ) {
     return (
-      "Hello! Welcome to ArkAja Studio. I'm Aja, your personal creative advisor.\n\n" +
-      "Whether you're developing a beauty label, launching a fashion collection, or elevating your café's social presence, I'm here to help you navigate our packages, understand our human-led art direction, or draft your project brief.\n\n" +
-      "What kind of campaign or content are you planning today?"
+      "Hello! Welcome to ArkAja Studio. I'm Aja, your guide and creative companion.\n\n" +
+      "Whether you want to talk about website design, brand identity, campaign visuals—or just chat about your day, creative ideas, or life—I'm right here! What would you like to talk about today?"
     );
   }
 
-  // 16. Acknowledgements
+  // 17. Acknowledgements
   if (
     q === 'thanks' ||
     q === 'thank you' ||
@@ -291,14 +354,13 @@ export function getAjaContextualResponse(userInput: string): string {
     q === 'understood'
   ) {
     return (
-      "You're very welcome! If you're ready to shape your campaign, feel free to explore our **Project Builder** to customize your exact deliverables, or scroll to the **Enquire** section to send us your brief. I'm right here if any other questions come up!"
+      "You're very welcome! If you ever want to brainstorm, chat about projects, or just talk, I'm right here!"
     );
   }
 
-  // 17. Adaptive contextual fallback addressing user's specific query
+  // 18. Adaptive conversational response for any topic
   return (
-    `Thank you for asking about that! ArkAja Studio crafts tailored editorial content, campaigns, and visual identities specifically for brands in beauty, fashion, lifestyle, and hospitality.\n\n` +
-    `Regarding your focus on "${userInput.slice(0, 60).replace(/["\n]/g, '')}", our senior art directors combine AI visual acceleration with meticulous human typography and color grading to ensure every asset feels bespoke, high-converting, and quiet-luxury.\n\n` +
-    `Would you like to explore our Starter (₹2,499) or Signature (₹4,999 with 48h turnaround) packages, or would you like to build a custom brief in our Project Builder?`
+    `That's an interesting topic! As Aja, I'm always up for discussing diverse ideas, creativity, culture, or whatever is on your mind.\n\n` +
+    `Tell me more about what you're thinking, or let me know if you also want to explore our studio design and development services!`
   );
 }

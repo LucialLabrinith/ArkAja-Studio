@@ -31,7 +31,7 @@ export const StudioConcierge: React.FC<StudioConciergeProps> = ({
     {
       id: 'init-1',
       role: 'model',
-      text: "Hello! Welcome to ArkAja Studio. I'm Aja, your personal creative advisor.\n\nWhether you're developing a beauty label, styling an ethnic or fashion collection, or establishing your brand's presence across social feeds, I'm here to chat about our services, explain our AI-assisted production with human art direction, or help you craft the perfect project brief. How can I assist your brand today?",
+      text: "Hey there! I'm Aja, your guide and creative advisor at ArkAja Studio. ✨\n\nWhether you want to discuss design, web development, branding, or AI solutions—or just chat about your day, life, ideas, or whatever is on your mind—I'm right here! How is your day going?",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -40,11 +40,11 @@ export const StudioConcierge: React.FC<StudioConciergeProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const quickPrompts = [
+    'How was your day, Aja?',
     'What services do you offer?',
     'Explain AI + human art direction',
     'Which package fits my budget?',
-    'What is your creative process?',
-    'How do I start a project?',
+    'Tell me a creative joke',
   ];
 
   const scrollToBottom = () => {
@@ -88,9 +88,9 @@ export const StudioConcierge: React.FC<StudioConciergeProps> = ({
         text: m.text,
       }));
 
-      // Set 3.5s timeout abort controller
+      // Set 12s timeout abort controller for rich Gemini generation
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -102,6 +102,10 @@ export const StudioConcierge: React.FC<StudioConciergeProps> = ({
         }),
       });
       clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`);
+      }
 
       const data = await res.json();
       const replyText = data.reply || getAjaContextualResponse(textToSend);

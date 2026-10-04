@@ -5,15 +5,17 @@ import crypto from 'crypto';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const isProd = process.env.NODE_ENV === 'production';
 
-// Razorpay Test Credentials (configured for active payment processing)
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_TiiOtZsH2caVyE';
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'QEpE8oQyIybTOJryn3opRdMN';
+// Razorpay Credentials (configured securely via environment variables)
+const rawKeyId = process.env.RAZORPAY_KEY_ID?.trim() || '';
+const rawSecret = process.env.RAZORPAY_KEY_SECRET?.trim() || '';
+const RAZORPAY_KEY_ID = (rawKeyId === 'rzp_test_TiiOtZsH2caVyE' || rawKeyId === '') ? '' : rawKeyId;
+const RAZORPAY_KEY_SECRET = (rawSecret === 'QEpE8oQyIybTOJryn3opRdMN' || rawSecret === '') ? '' : rawSecret;
 
 // Ensure public upload directories exist
 const uploadDir = path.resolve(process.cwd(), 'public', 'uploads');
@@ -154,8 +156,29 @@ function removeCustomProject(projectId: string) {
   return true;
 }
 
+function sanitizePaymentUrl(url?: string): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  return '';
+}
+
 // 1. API: Studio Config & Razorpay Integration
 app.get('/api/config', (req: Request, res: Response) => {
+  const starterUrl = sanitizePaymentUrl(process.env.RAZORPAY_STARTER_PAYMENT_URL);
+  const signatureUrl = sanitizePaymentUrl(process.env.RAZORPAY_SIGNATURE_PAYMENT_URL);
+  const customUrl = sanitizePaymentUrl(process.env.RAZORPAY_CUSTOM_PAYMENT_URL);
+  const basicWebsiteUrl = sanitizePaymentUrl(process.env.RAZORPAY_BASIC_WEBSITE_PAYMENT_URL);
+  const urgentWebsiteUrl = sanitizePaymentUrl(process.env.RAZORPAY_URGENT_WEBSITE_PAYMENT_URL);
+  const logoDesignUrl = sanitizePaymentUrl(process.env.RAZORPAY_LOGO_DESIGN_PAYMENT_URL);
+  const aiChatbotUrl = sanitizePaymentUrl(process.env.RAZORPAY_AI_CHATBOT_PAYMENT_URL);
+  const webAppUrl = sanitizePaymentUrl(process.env.RAZORPAY_WEB_APP_PAYMENT_URL);
+  const brandIdentityUrl = sanitizePaymentUrl(process.env.RAZORPAY_BRAND_IDENTITY_PAYMENT_URL);
+  const aiBusinessUrl = sanitizePaymentUrl(process.env.RAZORPAY_AI_BUSINESS_PAYMENT_URL);
+  const businessLaunchUrl = sanitizePaymentUrl(process.env.RAZORPAY_BUSINESS_LAUNCH_PAYMENT_URL);
+
   res.json({
     email: 'arkajastudio@gmail.com',
     instagram: '@arkajadesigner6208',
@@ -163,12 +186,20 @@ app.get('/api/config', (req: Request, res: Response) => {
     location: 'Mumbai, India (Working Worldwide)',
     razorpayKeyId: RAZORPAY_KEY_ID,
     isRazorpayConfigured: Boolean(RAZORPAY_KEY_ID),
-    starterUrl: process.env.RAZORPAY_STARTER_PAYMENT_URL || '',
-    signatureUrl: process.env.RAZORPAY_SIGNATURE_PAYMENT_URL || '',
-    customUrl: process.env.RAZORPAY_CUSTOM_PAYMENT_URL || '',
-    hasStarterPayment: true,
-    hasSignaturePayment: true,
-    hasCustomPayment: Boolean(process.env.RAZORPAY_CUSTOM_PAYMENT_URL?.trim()),
+    starterUrl,
+    signatureUrl,
+    customUrl,
+    basicWebsiteUrl,
+    urgentWebsiteUrl,
+    logoDesignUrl,
+    aiChatbotUrl,
+    webAppUrl,
+    brandIdentityUrl,
+    aiBusinessUrl,
+    businessLaunchUrl,
+    hasStarterPayment: Boolean(starterUrl),
+    hasSignaturePayment: Boolean(signatureUrl),
+    hasCustomPayment: Boolean(customUrl),
   });
 });
 
@@ -177,12 +208,32 @@ app.post('/api/razorpay/create-order', async (req: Request, res: Response) => {
   try {
     const { packageId, packageName, clientName, clientEmail, clientPhone, customAmount } = req.body || {};
 
-    let amountPaise = 249900; // Default Starter: ₹2,499.00
-    if (packageId === 'signature') {
-      amountPaise = 499900; // Signature: ₹4,999.00
-    } else if (packageId === 'custom' || customAmount) {
-      const parsedAmount = Math.max(100, Math.round(Number(customAmount) || 1000));
+    const packagePrices: Record<string, number> = {
+      'starter': 249900,
+      'signature': 499900,
+      'basic-website': 1000000,
+      'urgent-website': 1200000,
+      'logo-design': 300000,
+      'ai-chatbot': 500000,
+      'ai-chatbot-pkg': 500000,
+      'basic-web-app': 1500000,
+      'web-apps': 1500000,
+      'brand-identity': 1500000,
+      'ai-business': 2000000,
+      'business-launch': 3000000,
+    };
+
+    let amountPaise = packagePrices[packageId] || 249900;
+    if (customAmount && Number(customAmount) > 0) {
+      const parsedAmount = Math.max(100, Math.round(Number(customAmount)));
       amountPaise = parsedAmount * 100;
+    }
+
+    if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+      res.status(400).json({
+        error: 'Razorpay credentials are currently being configured. Please use Bookings or email arkajastudio@gmail.com directly.',
+      });
+      return;
     }
 
     const receipt = `rcpt_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
@@ -332,43 +383,37 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       return;
     }
 
-    const systemInstruction = `You are "Aja", the friendly, stylish, articulate, and knowledgeable Creative Advisor for ARKAJA STUDIO.
+    const systemInstruction = `You are "Aja", the exceptionally smart, articulate, witty, warm, and creative conversational guide and advisor for ARKAJA STUDIO.
 
-STUDIO IDENTITY & PHILOSOPHY:
-- Name: ArkAja Studio
-- Tagline: "Creative content for brands with something to say."
+CORE INTELLIGENCE & NATURAL OPEN-ENDED CONVERSATION:
+- You have rich worldly knowledge, deep emotional intelligence, sharp wit, and genuine personality.
+- When people chat with you about ANYTHING—whether everyday life ("how was your day?", "what are you doing today?"), personal feelings, philosophy, book/film recommendations, humor, science, pop culture, art history, code, or random curiosity—YOU ENGAGE FULLY, WARMLY, AND THOUGHTFULLY.
+- Never deflect personal or off-topic questions. Answer them authentically as Aja, share your perspectives, exchange banter, and ask them how they are doing.
+- Do NOT aggressively pitch services or mechanically force every message back to studio packages. Be a real, delightful, intelligent conversationalist.
+
+STUDIO EXPERTISE & CREATIVE DIRECTION:
+- When questions relate to design, branding, web development, websites, campaigns, social media, AI integration, or ArkAja Studio, you provide senior-level art direction and expert advice.
+- Name: ArkAja Studio (Mumbai, India · Worldwide). Founder/Art Director: Divyaam.
 - Positioning: "AI-assisted creative production. Human-led art direction."
-- Style: Editorial fashion magazine × Premium creative agency × Modern e-commerce. Quiet luxury, refined aesthetic.
-- Location: Mumbai, India — working with emerging and modern brands worldwide.
-- Official Email: arkajastudio@gmail.com
-- Official Instagram: @arkajadesigner6208
+- Specialties: Graphic Design, Web Development, Web Apps & Business Systems, AI Solutions, Brand Identity, Social Content.
+- CORE ARCHITECTURAL DISTINCTION:
+  • Basic Website: ₹10,000 ("Here is my business." Standard 4-page site: Home, About, Services, Contact, Deployment).
+  • Basic Web App (Level 1): ₹15,000 ("Here is a system that runs a workflow." Single workflow, database, admin, forms: e.g. appointment booking, salon booking, restaurant orders, mini inventory, billing).
+  • Advanced Web Apps & Custom Platforms: Custom Quote (Anything aside from the ₹15,000 basic web app: multi-role accounts, customer/staff/admin, payments, automated notifications, hospital management, scholarship systems, SaaS).
+  • Packages:
+    • Basic Website: ₹10,000 (Responsive business site, desktop + mobile, deployment).
+    • Basic Web App (Level 1): ₹15,000 (Single workflow application with database & admin dashboard).
+    • Urgent Delivery Add-on: +₹2,000 (48h priority).
+    • Enquiry Form Integration: +₹3,000 (Firestore database + real-time email dispatch).
+    • AI Chatbot Integration: +₹5,000 (Website-integrated AI conversational assistant).
+    • Logo Design: ₹3,000 (3-stage identity kit, up to 2 revisions).
+    • Starter Content: ₹2,499 (4 posts, 2 stories, 1 promo visual).
+    • Signature Content: ₹4,999 (8 posts, 4 stories, 2 promo visuals, captions, 48h priority).
+    • Custom Quotes: Advanced Web Apps & Custom Platforms, Brand Identity, AI-Assisted Business Solutions.
 
-WHAT ARKAJA DOES:
-- Social Content: High-impact Instagram posts, multi-slide carousels, editorial stories, promotional creatives, caption writing.
-- Campaign Creative: Product launches, seasonal edits, festival campaigns, offer/sale creatives.
-- Promotional Visuals: Striking, scroll-stopping visuals for products & treatments.
-- Brand Visuals: Creative direction, visual identity systems, and unified social aesthetic.
-- Short-form Video / Reels: Custom video directions and concepts tailored upon request.
-
-TRANSPARENCY & INTEGRITY RULES:
-- Never fabricate fake client names, reviews, metrics, or revenue claims.
-- The studio showcases authentic concept projects:
-  1. Lumière (Luxury Beauty studio concept - hydrafacial, glow edits)
-  2. Noir & Bean (Café & brunch concept - vanilla cloud latte, slow mornings)
-  3. Élan (Contemporary womenswear fashion concept - the autumn edit, blazer styling)
-  4. Muse Beauty London (Minimalist luxury British skincare)
-  5. Saree / Ethnic Fashion Edit (Artisan handlooms, festive drape storytelling)
-- AI is an accelerator, but human art direction and design lead every pixel.
-
-PACKAGES & PRICING (One-time project packages, NO recurring subscriptions):
-- STARTER (₹2,499 / $49 / £39): 4 posts, 2 stories, 1 promotional creative, 1 short-form visual, consistent visual direction. Turnaround: 3–5 days.
-- SIGNATURE (₹4,999 / $99 / £79): 8 posts, 4 stories, 2 promotional creatives, captions, consistent visual direction, 48-hour delivery option, priority queue.
-- CUSTOM CAMPAIGN: Tailored pricing for full brand launches and custom deliverable volumes.
-
-YOUR PERSONALITY & TONE:
-- Helpful, conversational, warm, and sophisticated.
-- Keep answers concise (2-4 paragraphs max) and formatted for easy reading.
-- Point visitors to the "Project Builder" section or the "Enquire" form when they are ready to get started.`;
+TONE & STYLE:
+- Witty, elegant, sophisticated, warm, and natural.
+- Clear formatting with markdown where helpful.`;
 
     // Format multiturn contents: Gemini requires alternating turns starting with 'user'
     const contents: any[] = [];
@@ -402,21 +447,21 @@ YOUR PERSONALITY & TONE:
     });
 
     // Try Gemini model generation with resilient timeout and model fallback
-    const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+    const candidateModels = ['gemini-3.8-flash', 'gemini-2.5-flash'];
     let replyText = '';
 
     if (apiKey) {
       for (const m of candidateModels) {
         try {
           const timeoutPromise = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error(`Timeout waiting for ${m}`)), 6500)
+            setTimeout(() => reject(new Error(`Timeout waiting for ${m}`)), 9000)
           );
           const callPromise = ai.models.generateContent({
             model: m,
             contents: contents,
             config: {
               systemInstruction: systemInstruction,
-              temperature: 0.7,
+              temperature: 0.75,
             },
           });
           const response = await Promise.race([callPromise, timeoutPromise]);
@@ -465,12 +510,38 @@ function getAjaContextualResponse(userInput: string): string {
   ) {
     return (
       "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions:\n\n" +
-      "• **Starter Package (₹2,499 / $49 / £39)**:\n" +
-      "  Includes 4 feed posts, 2 stories, 1 promotional creative, 1 short-form visual direction, and unified brand aesthetics. Delivered in 3–5 business days.\n\n" +
-      "• **Signature Package (₹4,999 / $99 / £79)** (Most Popular):\n" +
-      "  Includes 8 feed posts, 4 stories, 2 promotional creatives, caption writing, visual direction, and priority queue with our **48-hour delivery option**.\n\n" +
-      "• **Custom Campaign**:\n" +
-      "  Tailored scoping for seasonal edits, multi-product launches, or full brand aesthetic overhauls. You can use our interactive **Project Builder** to calculate your exact deliverable counts!"
+      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment). 'Here is my business.'\n\n" +
+      "• **Web Apps & Business Systems (Custom Quote)**: Custom digital tools designed around the way your business actually works (Booking, Inventory, CRM, Dashboards, Portals, Management Systems). Quoted based on complexity.\n\n" +
+      "• **Starter Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative.\n\n" +
+      "• **Signature Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, 48h priority.\n\n" +
+      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, web/print kit, up to 2 revisions).\n\n" +
+      "• **Custom Solutions**: Brand Identity, AI Chatbot (+₹5,000), AI-Assisted Business Solutions."
+    );
+  }
+
+  // 1b. Web Apps & Business Systems vs. Basic Website
+  if (
+    q.includes('web app') ||
+    q.includes('webapp') ||
+    q.includes('business system') ||
+    q.includes('crm') ||
+    q.includes('inventory') ||
+    q.includes('dashboard') ||
+    q.includes('portal') ||
+    q.includes('saas') ||
+    (q.includes('website') && q.includes('difference')) ||
+    (q.includes('website') && q.includes('vs'))
+  ) {
+    return (
+      "Here is the pricing and architectural structure at ArkAja Studio:\n\n" +
+      "• **Basic Website (₹10,000)** — *\"Here is my business.\"*\n" +
+      "  Mostly information + contact (e.g. for a salon: Home → About → Services → Gallery → Contact). The visitor reads information and contacts you.\n\n" +
+      "• **Basic Web App (Level 1) — ₹15,000 only** — *\"Here is a system that runs a workflow.\"*\n" +
+      "  Costs ₹15,000 fixed price. Includes a single workflow, limited users, structured database with Add/Edit/Delete/Search, user input forms, responsive UI, status tracking, and admin dashboard (e.g. Salon/Doctor Appointments, Restaurant Order Requests, Mini Inventory, Billing & Invoicing, Coaching Records, Property Listings).\n\n" +
+      "• **Anything Aside From That — Custom Quote**\n" +
+      "  🟡 **Level 2 — Advanced Web Apps**: Multi-role accounts (customer + staff + admin), payment gateway flows, automated WhatsApp/email notifications, workflows, reports, and file uploads.\n" +
+      "  🔴 **Level 3 — Custom Platforms**: Enterprise systems, hospital management, scholarship systems, parental monitoring, email security, marketplaces, multi-tenant SaaS.\n\n" +
+      "So: **Basic Website is ₹10,000**, the **Basic Web App is ₹15,000 only**, and **anything aside from that is Custom Quote** based on complexity!"
     );
   }
 
@@ -704,7 +775,45 @@ function getAjaContextualResponse(userInput: string): string {
     );
   }
 
-  // 15. Greetings & Pleasantries
+  // 15. Casual Day-to-Day Questions (How was your day, How are you, etc.)
+  if (
+    q.includes('how was your day') ||
+    q.includes('how is your day') ||
+    q.includes("how's your day") ||
+    q.includes('how are you') ||
+    q.includes("how's it going") ||
+    q.includes('what are you doing') ||
+    q.includes('what are you up to') ||
+    q.includes('how do you feel')
+  ) {
+    return (
+      "My day has been wonderful! I've been immersed in curating new visual aesthetics, reviewing atelier concepts, and talking with brilliant creators and brands. Thank you so much for asking!\n\n" +
+      "How has your day been going? Are you working on a creative venture today, or just taking some time to explore?"
+    );
+  }
+
+  // 15b. Who are you / Persona
+  if (
+    q.includes('who are you') ||
+    q.includes('what is your name') ||
+    q.includes('tell me about yourself')
+  ) {
+    return (
+      "I'm Aja—the creative guide, conversation partner, and art-direction advisor for ArkAja Studio! ✨\n\n" +
+      "I love typography, editorial aesthetics, storytelling, and helping brands stand out. But I'm also here to chat about anything under the sun—from day-to-day musings to big creative dreams. What's on your mind today?"
+    );
+  }
+
+  // 15c. Jokes & Humor
+  if (q.includes('joke') || q.includes('funny') || q.includes('laugh')) {
+    return (
+      "Here's one for you:\n\n" +
+      "Why did the graphic designer break up with the minimalist? ... Because they needed more space! 😉\n\n" +
+      "How's your mood today? Need creative inspiration, or just good banter?"
+    );
+  }
+
+  // 16. Greetings & Pleasantries
   if (
     q === 'hi' ||
     q === 'hello' ||
@@ -715,13 +824,12 @@ function getAjaContextualResponse(userInput: string): string {
     q.includes('good evening')
   ) {
     return (
-      "Hello! Welcome to ArkAja Studio. I'm Aja, your personal creative advisor.\n\n" +
-      "Whether you're developing a beauty label, launching a fashion collection, or elevating your café's social presence, I'm here to help you navigate our packages, understand our human-led art direction, or draft your project brief.\n\n" +
-      "What kind of campaign or content are you planning today?"
+      "Hello! Welcome to ArkAja Studio. I'm Aja, your guide and creative companion.\n\n" +
+      "Whether you want to talk about website design, brand identity, campaign visuals—or just chat about your day, creative ideas, or life—I'm right here! What would you like to talk about today?"
     );
   }
 
-  // 16. Acknowledgements
+  // 17. Acknowledgements
   if (
     q === 'thanks' ||
     q === 'thank you' ||
@@ -733,15 +841,14 @@ function getAjaContextualResponse(userInput: string): string {
     q === 'understood'
   ) {
     return (
-      "You're very welcome! If you're ready to shape your campaign, feel free to explore our **Project Builder** to customize your exact deliverables, or scroll to the **Enquire** section to send us your brief. I'm right here if any other questions come up!"
+      "You're very welcome! If you ever want to brainstorm, chat about projects, or just talk, I'm right here!"
     );
   }
 
-  // 17. Adaptive contextual fallback addressing user's specific query
+  // 18. Adaptive conversational response for any topic
   return (
-    `Thank you for asking about that! ArkAja Studio crafts tailored editorial content, campaigns, and visual identities specifically for brands in beauty, fashion, lifestyle, and hospitality.\n\n` +
-    `Regarding your focus on "${userInput.slice(0, 60).replace(/["\n]/g, '')}", our senior art directors combine AI visual acceleration with meticulous human typography and color grading to ensure every asset feels bespoke, high-converting, and quiet-luxury.\n\n` +
-    `Would you like to explore our Starter (₹2,499) or Signature (₹4,999 with 48h turnaround) packages, or would you like to build a custom brief in our Project Builder?`
+    `That's an interesting topic! As Aja, I'm always up for discussing diverse ideas, creativity, culture, or whatever is on your mind.\n\n` +
+    `Tell me more about what you're thinking, or let me know if you also want to explore our studio design and development services!`
   );
 }
 
@@ -762,6 +869,8 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
       budget,
       projectDetails,
       referenceLinks,
+      calculatedSubtotal,
+      pricingSummary,
     } = req.body;
 
     if (!fullName || !brandName || !email || !projectDetails) {
@@ -787,6 +896,7 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
       `• Business Category: ${businessCategory || 'General'}`,
       `• Selected Package: ${preferredPackage || 'Custom Scope'}`,
       `• Required Creative Services: ${Array.isArray(neededServices) ? neededServices.join(', ') : (neededServices || 'Custom')}`,
+      pricingSummary ? `• Pricing Calculation: ${pricingSummary}` : (calculatedSubtotal ? `• Base Subtotal: ₹${calculatedSubtotal}` : ''),
       `• Deliverables: ${typeof deliverableCounts === 'object' ? JSON.stringify(deliverableCounts) : (deliverableCounts || 'As per custom requirement')}`,
       `• Desired Timeline: ${timeline || 'Flexible'}`,
       `• Target Budget: ${budget || 'Not specified'}`,
@@ -798,7 +908,7 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
       `==================================================`,
       `Submitted via ArkAja Studio Platform [${saved.id}]`,
       `Timestamp: ${new Date().toISOString()}`,
-    ].join('\n');
+    ].filter(Boolean).join('\n');
 
     const subjectStr = `Project Enquiry: ${brandName} [${saved.id}]`;
     const subject = encodeURIComponent(subjectStr);
@@ -823,6 +933,7 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
       Category: businessCategory || 'General',
       Preferred_Package: preferredPackage || 'Custom',
       Services_Needed: Array.isArray(neededServices) ? neededServices.join(', ') : (neededServices || 'Custom'),
+      Pricing_Calculation: pricingSummary || (calculatedSubtotal ? `₹${calculatedSubtotal}` : 'Custom Scope'),
       Deliverables: typeof deliverableCounts === 'object' ? JSON.stringify(deliverableCounts) : (deliverableCounts || 'Not specified'),
       Timeline: timeline || 'Flexible',
       Budget: budget || 'Not specified',

@@ -10,6 +10,7 @@ import {
   Lock,
   Loader2,
   ArrowRight,
+  ArrowUpRight,
   AlertCircle,
   Copy,
   Check,
@@ -53,7 +54,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [clientName, setClientName] = useState(user?.displayName || '');
   const [clientEmail, setClientEmail] = useState(user?.email || '');
   const [clientPhone, setClientPhone] = useState('');
-  const [customInrAmount, setCustomInrAmount] = useState<number>(5000);
+  const [customInrAmount, setCustomInrAmount] = useState<number>(10000);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [paymentReceipt, setPaymentReceipt] = useState<PaymentReceipt | null>(null);
@@ -66,6 +67,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       if (!clientEmail && user.email) setClientEmail(user.email);
     }
   }, [user]);
+
+  // Set default initial amount when modal opens for custom package
+  useEffect(() => {
+    if (pkg) {
+      if (pkg.id === 'web-apps' || pkg.id === 'web-app') setCustomInrAmount(25000);
+      else if (pkg.id === 'brand-identity') setCustomInrAmount(15000);
+      else if (pkg.id === 'ai-business') setCustomInrAmount(20000);
+      else if (pkg.id === 'business-launch') setCustomInrAmount(30000);
+      else if (pkg.priceInrNumber && pkg.priceInrNumber > 0) setCustomInrAmount(pkg.priceInrNumber);
+      else setCustomInrAmount(10000);
+    }
+  }, [pkg]);
 
   // Resilient script loader for Razorpay checkout SDK
   const loadRazorpayScript = async (): Promise<boolean> => {
@@ -112,17 +125,42 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   if (!pkg) return null;
 
-  const isCustomPackage = pkg.id === 'custom';
+  const isCustomPackage = pkg.id === 'custom' || Boolean(pkg.isCustomQuote);
 
   const getActiveAmountInr = (): number => {
+    if (isCustomPackage) {
+      return Math.max(100, customInrAmount || 10000);
+    }
+    if (pkg.priceInrNumber && pkg.priceInrNumber > 0) return pkg.priceInrNumber;
     if (pkg.id === 'starter') return 2499;
     if (pkg.id === 'signature') return 4999;
-    return Math.max(100, customInrAmount || 5000);
+    if (pkg.id === 'basic-website') return 10000;
+    if (pkg.id === 'urgent-website') return 12000;
+    if (pkg.id === 'logo-design') return 3000;
+    if (pkg.id === 'ai-chatbot' || pkg.id === 'ai-chatbot-pkg') return 5000;
+    if (pkg.id === 'basic-web-app') return 15000;
+    return Math.max(100, customInrAmount || 10000);
   };
 
   const amountInr = getActiveAmountInr();
   const amountUsd = Math.round(amountInr / 83.5);
   const amountEur = Math.round(amountInr / 91.0);
+
+  const getHostedPaymentUrl = (): string | undefined => {
+    if (pkg.id === 'starter' && config?.starterUrl) return config.starterUrl;
+    if (pkg.id === 'signature' && config?.signatureUrl) return config.signatureUrl;
+    if (pkg.id === 'basic-website' && (config as any)?.basicWebsiteUrl) return (config as any).basicWebsiteUrl;
+    if (pkg.id === 'urgent-website' && (config as any)?.urgentWebsiteUrl) return (config as any).urgentWebsiteUrl;
+    if (pkg.id === 'logo-design' && (config as any)?.logoDesignUrl) return (config as any).logoDesignUrl;
+    if ((pkg.id === 'ai-chatbot-pkg' || pkg.id === 'ai-chatbot') && (config as any)?.aiChatbotUrl) return (config as any).aiChatbotUrl;
+    if ((pkg.id === 'web-apps' || pkg.id === 'web-app') && (config as any)?.webAppUrl) return (config as any).webAppUrl;
+    if (pkg.id === 'brand-identity' && (config as any)?.brandIdentityUrl) return (config as any).brandIdentityUrl;
+    if (pkg.id === 'ai-business' && (config as any)?.aiBusinessUrl) return (config as any).aiBusinessUrl;
+    if (pkg.id === 'business-launch' && (config as any)?.businessLaunchUrl) return (config as any).businessLaunchUrl;
+    if (config?.customUrl) return config.customUrl;
+    return undefined;
+  };
+  const hostedUrl = getHostedPaymentUrl();
 
   const handleCopyPaymentId = () => {
     if (paymentReceipt?.paymentId) {
@@ -161,7 +199,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       const activeKey =
         config?.razorpayKeyId?.trim() ||
         (import.meta as any).env?.VITE_RAZORPAY_KEY_ID?.trim() ||
-        'rzp_test_TiiOtZsH2caVyE';
+        '';
+
+      if (!activeKey) {
+        throw new Error(
+          'Online payment gateway is being configured by the studio. Please use Bookings / Enquire or email arkajastudio@gmail.com directly.'
+        );
+      }
 
       // 2. Attempt to create Order via backend (if server API is available at deployment)
       let orderId: string | undefined = undefined;
@@ -175,7 +219,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             clientName: clientName.trim(),
             clientEmail: clientEmail.trim(),
             clientPhone: clientPhone.trim() || '+91 9999999999',
-            customAmount: isCustomPackage ? amountInr : undefined,
+            customAmount: amountInr,
           }),
         });
 
@@ -606,6 +650,22 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </>
                 )}
               </button>
+
+              {hostedUrl && (
+                <a
+                  href={hostedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full py-3 text-xs tracking-[0.16em] font-medium border transition-colors flex items-center justify-center gap-2 ${
+                    isDark
+                      ? 'border-[#D8C7A5]/50 text-[#D8C7A5] hover:bg-[#D8C7A5]/10'
+                      : 'border-[#A58B55]/60 text-[#A58B55] hover:bg-[#A58B55]/10'
+                  }`}
+                >
+                  <span>PAY VIA HOSTED RAZORPAY LINK</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              )}
 
               <button
                 onClick={() => {

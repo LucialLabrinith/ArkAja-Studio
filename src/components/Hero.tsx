@@ -84,12 +84,17 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
           {/* Main Editorial Headline & Value */}
           <div className="lg:col-span-7 text-left">
             {/* Studio Eyebrow */}
-            <div className="inline-flex items-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-3 mb-2">
               <span className="w-6 h-[1.5px] bg-[#D8C7A5]" />
               <span className="text-[11px] sm:text-[12px] tracking-[0.32em] font-semibold text-[#A58B55] dark:text-[#D8C7A5] uppercase font-mono">
                 ARKAJA STUDIO
               </span>
               <span className="w-6 h-[1.5px] bg-[#D8C7A5]" />
+            </div>
+
+            {/* Specialty Tagline */}
+            <div className="text-xs sm:text-[13px] font-mono tracking-widest uppercase font-medium text-[#A58B55] dark:text-[#D8C7A5] mb-6">
+              Graphic Designer | Web Developer | App Developer
             </div>
 
             {/* Main Headline */}
@@ -126,7 +131,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               <button
                 onClick={onStartProject}
                 className="px-8 py-3.5 text-[12px] tracking-[0.22em] font-medium bg-[#14171A] text-[#FAF8F5] hover:bg-[#A58B55] dark:bg-[#FAF8F5] dark:text-[#0b0c0e] dark:hover:bg-[#D8C7A5] transition-all duration-200 group flex items-center justify-center gap-2.5 active:scale-95 shadow-md"
@@ -135,15 +140,30 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                 <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
 
+              <a
+                href="#enquire"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('enquire')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`px-8 py-3.5 text-[12px] tracking-[0.22em] font-medium border transition-all duration-200 group flex items-center justify-center gap-2 ${
+                  isDark
+                    ? 'text-[#D8C7A5] border-[#D8C7A5]/60 hover:bg-[#D8C7A5] hover:text-[#0b0c0e] bg-[#121418]'
+                    : 'text-[#8C723E] border-[#A58B55]/70 hover:bg-[#9E824C] hover:text-white bg-[#FFFFFF]'
+                }`}
+              >
+                <span>BOOKINGS</span>
+              </a>
+
               <button
                 onClick={onExploreWork}
-                className={`px-8 py-3.5 text-[12px] tracking-[0.22em] font-medium border transition-all duration-200 group flex items-center justify-center gap-2 ${
+                className={`px-6 py-3.5 text-[12px] tracking-[0.22em] font-medium border transition-all duration-200 group flex items-center justify-center gap-2 ${
                   isDark
                     ? 'text-[#FAF8F5] border-[#2A2E36] hover:border-[#D8C7A5] bg-[#121418] hover:bg-[#1a1d23]'
                     : 'text-[#14171A] border-[#D4CEBF] hover:border-[#A58B55] bg-[#FFFFFF] hover:bg-[#FAF7F2]'
                 }`}
               >
-                <span>EXPLORE SELECTED WORK</span>
+                <span>EXPLORE WORK</span>
                 <ArrowDown className="w-3.5 h-3.5 text-[#D8C7A5] group-hover:translate-y-0.5 transition-transform" />
               </button>
             </div>
@@ -188,11 +208,11 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                       ARKAJA
                     </span>
                     <span
-                      className={`font-sans text-[8.5px] tracking-[0.38em] block leading-none mt-1 font-medium ${
+                      className={`font-sans text-[7.5px] tracking-[0.14em] block leading-none mt-1 font-medium ${
                         isDark ? 'text-[#D8C7A5]' : 'text-[#A58B55]'
                       }`}
                     >
-                      STUDIO DOSSIER
+                      GRAPHIC DESIGNER | WEB DEVELOPER | APP DEVELOPER
                     </span>
                   </div>
                 </div>
