@@ -327,6 +327,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   return (
     <div
+      data-payment-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
