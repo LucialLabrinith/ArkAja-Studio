@@ -509,13 +509,35 @@ function getAjaContextualResponse(userInput: string): string {
     q.includes('investment')
   ) {
     return (
-      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions:\n\n" +
-      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment). 'Here is my business.'\n\n" +
-      "• **Web Apps & Business Systems (Custom Quote)**: Custom digital tools designed around the way your business actually works (Booking, Inventory, CRM, Dashboards, Portals, Management Systems). Quoted based on complexity.\n\n" +
-      "• **Starter Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative.\n\n" +
-      "• **Signature Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, 48h priority.\n\n" +
-      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, web/print kit, up to 2 revisions).\n\n" +
-      "• **Custom Solutions**: Brand Identity, AI Chatbot (+₹5,000), AI-Assisted Business Solutions."
+      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions (with an ongoing **20% Navratri Festive Discount** applied across all packages):\n\n" +
+      "• **Basic Website (₹10,000)**: Clean, responsive online presence (was ~~₹12,500~~ · 20% festive savings).\n\n" +
+      "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard (was ~~₹18,750~~ · 20% off). Anything aside is custom quote.\n\n" +
+      "• **Starter Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative (was ~~₹3,125~~ · 20% off).\n\n" +
+      "• **Signature Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, 48h priority (was ~~₹6,249~~ · 20% off).\n\n" +
+      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, web/print kit, up to 2 revisions) (was ~~₹3,750~~ · 20% off).\n\n" +
+      "• **Custom Solutions**: Brand Identity, AI Chatbot (+₹5,000, was ~~₹6,250~~), Advanced Web Apps / Business Systems (Custom Quote)."
+    );
+  }
+
+  // 1a-festive. Navratri Discounts & Offers
+  if (
+    q.includes('discount') ||
+    q.includes('offer') ||
+    q.includes('navratri') ||
+    q.includes('sale') ||
+    q.includes('coupon') ||
+    q.includes('deal')
+  ) {
+    return (
+      "🌸 **Navratri Utsav Special Offer — Flat 20% Festive Discount Active!**\n\n" +
+      "ArkAja Studio is celebrating the festive season with a flat 20% discount across all packages:\n\n" +
+      "• **Basic Website**: ₹10,000 (was ~~₹12,500~~ · 20% off)\n" +
+      "• **Basic Web App (Level 1)**: ₹15,000 (was ~~₹18,750~~ · 20% off)\n" +
+      "• **Logo Design**: ₹3,000 (was ~~₹3,750~~ · 20% off)\n" +
+      "• **Starter Content**: ₹2,499 (was ~~₹3,125~~ · 20% off)\n" +
+      "• **Signature Content**: ₹4,999 (was ~~₹6,249~~ · 20% off)\n" +
+      "• **Website Add-ons**: Urgent Delivery (+₹2,000), Enquiry Form (+₹3,000), AI Chatbot (+₹5,000)\n\n" +
+      "All rates shown on the studio platform are the final 20% discounted rates, with the 20% higher standard rates strikethrough!"
     );
   }
 

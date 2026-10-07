@@ -105,13 +105,26 @@ body.screenshot-blanked #root {
   pointer-events: none !important;
 }
 
-/* Ensure Screenshot Shield Overlay is always visible on top of blanked document */
+/* Ensure Screenshot Shield Overlay is hidden by default and instantaneously painted on blanking */
 #screenshot-shield-overlay {
+  display: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+html.screenshot-blanked #screenshot-shield-overlay,
+body.screenshot-blanked #screenshot-shield-overlay,
+#screenshot-shield-overlay.active-shield {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
   background-color: #000000 !important;
   z-index: 2147483647 !important;
+  pointer-events: auto !important;
 }
 
 /* Prevent printing & print-to-PDF screenshots with Blank Screen + Message */

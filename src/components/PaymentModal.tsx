@@ -484,9 +484,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               ) : (
                 <div className="mt-2.5 pb-2 border-b border-inherit">
                   <div className="flex flex-wrap items-baseline gap-2.5">
-                    <span className="font-mono text-2xl font-medium">
+                    {pkg.originalPriceInr && (
+                      <span className="font-mono text-base line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80 mr-1">
+                        {pkg.originalPriceInr}
+                      </span>
+                    )}
+                    <span className="font-mono text-2xl font-medium text-emerald-600 dark:text-emerald-400">
                       {pkg.priceInr}
                     </span>
+                    {pkg.originalPriceInr && (
+                      <span className="text-[9.5px] font-mono font-bold tracking-wider px-2 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 uppercase">
+                        20% NAVRATRI OFF
+                      </span>
+                    )}
                     <span className="text-xs font-mono text-[#D8C7A5] font-semibold">
                       · {pkg.priceUsd} USD · {pkg.priceEur} EUR
                     </span>

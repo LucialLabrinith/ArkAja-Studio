@@ -213,17 +213,25 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="px-4 py-2.5 border border-inherit text-xs font-mono">
                 <span className="text-[10px] opacity-60 block uppercase">BASIC WEBSITE</span>
-                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹10,000</span>
+                <div className="flex items-center gap-1.5 my-0.5">
+                  <span className="line-through text-[11px] text-red-500/80 font-mono">₹12,500</span>
+                  <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹10,000</span>
+                  <span className="text-[9px] text-amber-500 font-bold">20% OFF</span>
+                </div>
                 <span className="opacity-70 text-[10.5px] block">&quot;Here is my business.&quot;</span>
               </div>
               <div className="px-4 py-2.5 border border-[#D8C7A5]/60 bg-[#D8C7A5]/10 text-xs font-mono">
                 <span className="text-[10px] opacity-60 block uppercase">BASIC WEB APP (L1)</span>
-                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹15,000</span>
+                <div className="flex items-center gap-1.5 my-0.5">
+                  <span className="line-through text-[11px] text-red-500/80 font-mono">₹18,750</span>
+                  <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹15,000</span>
+                  <span className="text-[9px] text-amber-500 font-bold">20% OFF</span>
+                </div>
                 <span className="opacity-70 text-[10.5px] block">&quot;Single workflow system.&quot;</span>
               </div>
               <div className="px-4 py-2.5 border border-inherit text-xs font-mono">
                 <span className="text-[10px] opacity-60 block uppercase">ADVANCED / PLATFORM</span>
-                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">Custom Quote</span>
+                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5] block my-0.5">Custom Quote</span>
                 <span className="opacity-70 text-[10.5px] block">&quot;Multi-role &amp; enterprise.&quot;</span>
               </div>
             </div>
@@ -273,9 +281,13 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   <span className="text-[10px] font-mono font-semibold text-emerald-400 tracking-wider">
                     🟢 LEVEL 1 · BASIC WEB APP
                   </span>
-                  <span className="text-[10px] font-mono font-semibold text-[#A58B55] dark:text-[#D8C7A5]">
-                    ₹15,000 (FIXED)
-                  </span>
+                  <div className="flex items-center gap-1 font-mono text-[10px]">
+                    <span className="line-through text-red-400/80">₹18,750</span>
+                    <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">
+                      ₹15,000
+                    </span>
+                    <span className="text-[8px] font-bold text-amber-500">20% OFF</span>
+                  </div>
                 </div>
                 <h4 className="font-serif text-lg font-normal mb-2">
                   Streamlined Business Workflows

@@ -27,6 +27,7 @@ export interface ServiceSelectionItem {
   id: string;
   label: string;
   priceLabel: string;
+  originalPriceLabel?: string;
   fixedPrice?: number;
   isCustomQuote: boolean;
   category: 'WEBSITE' | 'BRANDING' | 'CONTENT' | 'DEV' | 'AI' | 'OTHER';
@@ -37,6 +38,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'basic-website',
     label: 'Basic Website',
     priceLabel: '₹10,000',
+    originalPriceLabel: '₹12,500',
     fixedPrice: 10000,
     isCustomQuote: false,
     category: 'WEBSITE',
@@ -45,6 +47,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'urgent-website',
     label: 'Urgent Website Delivery',
     priceLabel: '+₹2,000',
+    originalPriceLabel: '+₹2,500',
     fixedPrice: 2000,
     isCustomQuote: false,
     category: 'WEBSITE',
@@ -53,6 +56,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'enquiry-integration',
     label: 'Enquiry Form Integration',
     priceLabel: '+₹3,000',
+    originalPriceLabel: '+₹3,750',
     fixedPrice: 3000,
     isCustomQuote: false,
     category: 'WEBSITE',
@@ -61,6 +65,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'ai-chatbot',
     label: 'AI Chatbot',
     priceLabel: '+₹5,000',
+    originalPriceLabel: '+₹6,250',
     fixedPrice: 5000,
     isCustomQuote: false,
     category: 'AI',
@@ -69,6 +74,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'logo-design',
     label: 'Logo Design',
     priceLabel: '₹3,000',
+    originalPriceLabel: '₹3,750',
     fixedPrice: 3000,
     isCustomQuote: false,
     category: 'BRANDING',
@@ -84,6 +90,7 @@ export const BUILDER_SERVICE_OPTIONS: ServiceSelectionItem[] = [
     id: 'basic-web-app',
     label: 'Basic Web App (Level 1)',
     priceLabel: '₹15,000',
+    originalPriceLabel: '₹18,750',
     fixedPrice: 15000,
     isCustomQuote: false,
     category: 'DEV',
@@ -422,15 +429,27 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                         <span className="text-xs sm:text-[13px] font-medium leading-tight">
                           {svc.label}
                         </span>
-                        <span
-                          className={`text-xs font-mono font-semibold whitespace-nowrap ${
-                            svc.isCustomQuote
-                              ? 'text-[#A58B55] dark:text-[#D8C7A5]'
-                              : 'text-[#D8C7A5]'
-                          }`}
-                        >
-                          {svc.priceLabel}
-                        </span>
+                        <div className="flex items-center gap-1.5 font-mono text-xs whitespace-nowrap">
+                          {svc.originalPriceLabel && (
+                            <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">
+                              {svc.originalPriceLabel}
+                            </span>
+                          )}
+                          <span
+                            className={`font-semibold ${
+                              svc.isCustomQuote
+                                ? 'text-[#A58B55] dark:text-[#D8C7A5]'
+                                : 'text-[#D8C7A5]'
+                            }`}
+                          >
+                            {svc.priceLabel}
+                          </span>
+                          {svc.originalPriceLabel && (
+                            <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">
+                              20% OFF
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="text-[10px] tracking-widest uppercase font-mono opacity-50 block mt-1">
                         {svc.category}
@@ -449,12 +468,22 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
             >
               <div>
                 <span className="text-[10px] font-mono tracking-widest uppercase opacity-70 block mb-1">
-                  CALCULATED BASE SUBTOTAL
+                  CALCULATED BASE SUBTOTAL (NAVRATRI DISCOUNTED)
                 </span>
-                <div className="flex items-baseline gap-3">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  {pricingCalculation.subtotal > 0 && (
+                    <span className="font-mono text-base line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">
+                      ₹{Math.round(pricingCalculation.subtotal * 1.25).toLocaleString('en-IN')}
+                    </span>
+                  )}
                   <span className="font-serif text-3xl font-normal text-[#D8C7A5]">
                     {pricingCalculation.formattedSubtotal}
                   </span>
+                  {pricingCalculation.subtotal > 0 && (
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 uppercase">
+                      20% NAVRATRI SAVINGS APPLIED
+                    </span>
+                  )}
                   {pricingCalculation.hasCustomQuote && (
                     <span className="text-[11px] font-mono px-2 py-0.5 bg-[#D8C7A5]/15 border border-[#D8C7A5]/40 text-[#A58B55] dark:text-[#D8C7A5] font-semibold">
                       Custom Quote Required

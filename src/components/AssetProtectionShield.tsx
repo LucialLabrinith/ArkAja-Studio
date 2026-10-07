@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Logo } from './Logo';
 import { useTheme } from '../context/ThemeContext';
 import { ShieldCheck, ShieldAlert, Lock, Smartphone, Monitor } from 'lucide-react';
@@ -34,7 +35,7 @@ export const AssetProtectionShield: React.FC = () => {
     setIsScreenshotBlocked(true);
 
     // 2. Overwrite system clipboard to replace any captured image buffer with studio notice
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText('SCREENSHOT PREVENTION ACTIVATED — ArkAja Studio concepts and visual assets are copyright protected.')
         .catch(() => {});
@@ -51,19 +52,15 @@ export const AssetProtectionShield: React.FC = () => {
     // ---------------------------------------------------------------
     // 1. MOBILE PHONES & TABLETS (iOS Safari, Android Chrome, etc.)
     // ---------------------------------------------------------------
-    // When a phone screenshot is taken (Power + Volume, 3-finger swipe,
-    // AssistiveTouch, or pull-down quick settings), the mobile OS triggers
-    // visibilitychange (hidden) or pagehide or blur.
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         activateScreenshotProtection();
       } else {
-        // Keep blanked for 750ms so the phone's screenshot-saving process
-        // has finished writing the black frame before revealing content
+        // Keep blanked for 600ms so mobile OS screenshot buffer writes black
         if (restoreTimeoutRef.current) clearTimeout(restoreTimeoutRef.current);
         restoreTimeoutRef.current = setTimeout(() => {
           deactivateScreenshotProtection();
-        }, 750);
+        }, 600);
       }
     };
 
@@ -75,12 +72,17 @@ export const AssetProtectionShield: React.FC = () => {
       if (restoreTimeoutRef.current) clearTimeout(restoreTimeoutRef.current);
       restoreTimeoutRef.current = setTimeout(() => {
         deactivateScreenshotProtection();
-      }, 750);
+      }, 500);
     };
 
-    // Mobile touch-and-hold (Long-press to save image / share sheet) prevention
-    let touchTimer: NodeJS.Timeout | null = null;
+    // Mobile multi-touch gesture detection: 3-finger swipe screenshot on Android / palm swipe
     const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length >= 3) {
+        // 3-finger swipe screenshot gesture detected
+        activateScreenshotProtection();
+        return;
+      }
+
       const target = e.target as HTMLElement;
       const isProtected =
         target.tagName === 'IMG' ||
@@ -95,16 +97,16 @@ export const AssetProtectionShield: React.FC = () => {
         if (touchTimer) clearTimeout(touchTimer);
         touchTimer = setTimeout(() => {
           if (navigator.vibrate) navigator.vibrate(40);
-          showToast('ArkAja Studio · Image saving and extraction is restricted.');
-          // Temporarily blur asset to disrupt callout
+          showToast('ArkAja Studio · Artwork is copyright protected. Image saving is restricted.');
           target.style.filter = 'blur(10px)';
           setTimeout(() => {
             target.style.filter = '';
           }, 600);
-        }, 320);
+        }, 280);
       }
     };
 
+    let touchTimer: NodeJS.Timeout | null = null;
     const handleTouchEndOrCancel = () => {
       if (touchTimer) clearTimeout(touchTimer);
     };
@@ -112,10 +114,8 @@ export const AssetProtectionShield: React.FC = () => {
     // ---------------------------------------------------------------
     // 2. WINDOW BLUR & FOCUS (CROSS-OS: Phone, Windows, macOS, Linux)
     // ---------------------------------------------------------------
-    // When any Snipping tool, macOS Grab/Cmd+Shift+4, screen recorder,
-    // or external capture tool appears, the browser window loses focus.
     const handleWindowBlur = () => {
-      // Don't blank screen if user is interacting with an authorized checkout/auth iframe, file picker, or payment modal
+      // Don't blank screen if user is interacting with an input, file picker, or payment modal
       const activeEl = document.activeElement;
       const isIframe = activeEl && activeEl.tagName === 'IFRAME';
       const isRazorpayActive = Boolean(
@@ -125,7 +125,12 @@ export const AssetProtectionShield: React.FC = () => {
         document.querySelector('[data-payment-modal="true"]')
       );
       const isFileInputActive = activeEl && activeEl.tagName === 'INPUT' && (activeEl as HTMLInputElement).type === 'file';
-      const isInteractiveForm = activeEl && (activeEl.tagName === 'SELECT' || activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+      const isInteractiveForm = activeEl && (
+        activeEl.tagName === 'SELECT' ||
+        activeEl.tagName === 'INPUT' ||
+        activeEl.tagName === 'TEXTAREA' ||
+        (activeEl as HTMLElement).isContentEditable
+      );
 
       if (isIframe || isRazorpayActive || isFileInputActive || isInteractiveForm) {
         return;
@@ -135,11 +140,10 @@ export const AssetProtectionShield: React.FC = () => {
     };
 
     const handleWindowFocus = () => {
-      // Hold blank screen briefly so snipping tools capturing on blur get black
       if (restoreTimeoutRef.current) clearTimeout(restoreTimeoutRef.current);
       restoreTimeoutRef.current = setTimeout(() => {
         deactivateScreenshotProtection();
-      }, 500);
+      }, 400);
     };
 
     // ---------------------------------------------------------------
@@ -151,7 +155,6 @@ export const AssetProtectionShield: React.FC = () => {
       const keyCode = e.keyCode;
       const isInput = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 
-      // Allow normal typing inside input fields unless modifier combinations are pressed
       if (isInput && !e.metaKey && !e.ctrlKey) {
         return;
       }
@@ -163,7 +166,7 @@ export const AssetProtectionShield: React.FC = () => {
         return;
       }
 
-      const isMac = typeof navigator !== 'undefined' && navigator.platform?.toUpperCase().indexOf('MAC') >= 0;
+      const isMac = typeof navigator !== 'undefined' && (navigator.platform?.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent?.indexOf('Mac') >= 0);
       const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
 
       // Print Preview / Print to PDF: Ctrl+P / Cmd+P
@@ -180,10 +183,9 @@ export const AssetProtectionShield: React.FC = () => {
         return;
       }
 
-      // macOS Screen Capture Shortcuts: Cmd+Shift+3, Cmd+Shift+4, Cmd+Shift+5, Cmd+Ctrl+Shift+3
+      // macOS Screen Capture Shortcuts: Cmd+Shift+3, Cmd+Shift+4, Cmd+Shift+5, Cmd+Ctrl+Shift+3/4
       if (
-        e.metaKey &&
-        e.shiftKey &&
+        (e.metaKey && e.shiftKey) &&
         (key === '3' || key === '4' || key === '5' || key === '$' || key === '#' || key === '%' || key === 's' || key === 'S')
       ) {
         e.preventDefault();
@@ -262,7 +264,7 @@ export const AssetProtectionShield: React.FC = () => {
       };
     }
 
-    // Attach Listeners
+    // Attach Listeners with capture phase
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('pagehide', handlePageHide);
     window.addEventListener('pageshow', handlePageShow);
@@ -274,7 +276,7 @@ export const AssetProtectionShield: React.FC = () => {
     window.addEventListener('dragstart', handleDragStart, { capture: true });
     window.addEventListener('copy', handleCopy);
 
-    // Touch listeners
+    // Mobile touch listeners
     window.addEventListener('touchstart', handleTouchStart, { passive: true, capture: true });
     window.addEventListener('touchend', handleTouchEndOrCancel, { passive: true, capture: true });
     window.addEventListener('touchcancel', handleTouchEndOrCancel, { passive: true, capture: true });
@@ -302,11 +304,66 @@ export const AssetProtectionShield: React.FC = () => {
     };
   }, [activateScreenshotProtection, deactivateScreenshotProtection, showToast]);
 
+  // Render Portal element directly to body so it sits as a sibling to #root
+  const overlayElement = typeof document !== 'undefined' ? (
+    <div
+      id="screenshot-shield-overlay"
+      className={`fixed inset-0 z-[2147483647] bg-[#000000] text-white flex-col items-center justify-center p-6 text-center select-none cursor-default ${
+        isScreenshotBlocked ? 'active-shield' : ''
+      }`}
+      style={{ backgroundColor: '#000000' }}
+      role="alertdialog"
+      aria-modal="true"
+      onClick={() => deactivateScreenshotProtection()}
+    >
+      <div className="flex flex-col items-center justify-center max-w-lg w-full p-8 text-center animate-in fade-in duration-100">
+        {/* Warning Icon Badge */}
+        <div className="w-16 h-16 rounded-full border-2 border-[#D8C7A5] flex items-center justify-center mb-6 text-[#D8C7A5] bg-[#000000]">
+          <ShieldAlert className="w-8 h-8" />
+        </div>
+
+        {/* Clear, Prominent Message */}
+        <h1 className="font-mono text-2xl sm:text-4xl text-[#D8C7A5] font-bold tracking-[0.2em] uppercase mb-4 leading-tight">
+          SCREENSHOT PREVENTION ACTIVATED
+        </h1>
+
+        <p className="font-sans text-sm sm:text-base text-stone-300 font-light leading-relaxed mb-6">
+          Screen captures, recordings, and reproductions of ArkAja Studio proprietary concepts and artworks are restricted.
+        </p>
+
+        <div className="flex items-center justify-center gap-4 text-[10px] font-mono tracking-widest text-[#D8C7A5]/80 uppercase mb-8">
+          <span className="flex items-center gap-1.5">
+            <Smartphone className="w-3 h-3" />
+            <span>MOBILE SHIELD ACTIVE</span>
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1.5">
+            <Monitor className="w-3 h-3" />
+            <span>CROSS-OS SECURED</span>
+          </span>
+        </div>
+
+        <div className="pt-4 border-t border-white/10 w-full flex items-center justify-between text-[10px] font-mono tracking-widest text-[#D8C7A5]/70 uppercase">
+          <span>ARKAJA STUDIO</span>
+          <span>ASSET PROTECTION ACTIVE</span>
+        </div>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            deactivateScreenshotProtection();
+          }}
+          className="mt-8 px-6 py-2.5 text-[11px] font-medium tracking-[0.2em] uppercase bg-[#FAF8F5] text-[#000000] hover:bg-[#D8C7A5] transition-colors"
+        >
+          DISMISS
+        </button>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <>
-      {/* ======================================================== */}
-      {/* 1. PERSISTENT FLOATING STUDIO LOGO VISIBLE THROUGH ALL   */}
-      {/* ======================================================== */}
+      {/* 1. PERSISTENT FLOATING STUDIO LOGO VISIBLE THROUGH ALL */}
       <aside
         aria-label="ArkAja Studio Atelier Crest"
         className={`fixed bottom-5 left-5 z-40 select-none transition-all duration-300 pointer-events-auto shadow-2xl ${
@@ -329,7 +386,6 @@ export const AssetProtectionShield: React.FC = () => {
 
         <div className="h-4 w-[1px] bg-inherit opacity-30" />
 
-        {/* Studio Protection Indicator */}
         <div
           className="flex items-center gap-1.5 text-[9px] font-mono tracking-wider text-[#A58B55] dark:text-[#D8C7A5] opacity-80 group-hover:opacity-100 transition-opacity"
           title="Studio Assets Protected • Screen Capture Prohibited across Mobile & Desktop"
@@ -339,9 +395,7 @@ export const AssetProtectionShield: React.FC = () => {
         </div>
       </aside>
 
-      {/* ======================================================== */}
-      {/* 2. PROTECTIVE NOTIFICATION TOAST                         */}
-      {/* ======================================================== */}
+      {/* 2. PROTECTIVE NOTIFICATION TOAST */}
       {toastMessage && (
         <div
           role="status"
@@ -355,64 +409,8 @@ export const AssetProtectionShield: React.FC = () => {
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* 3. SOLID BLANK SCREEN FOR SCREENSHOT PREVENTION          */}
-      {/* (Captures in the screenshot image will result in a blank */}
-      {/* screen with the message 'SCREENSHOT PREVENTION ACTIVATED')*/}
-      {/* ======================================================== */}
-      {isScreenshotBlocked && (
-        <div
-          id="screenshot-shield-overlay"
-          className="fixed inset-0 z-[2147483647] bg-[#000000] text-white flex flex-col items-center justify-center p-6 text-center select-none cursor-default"
-          style={{ backgroundColor: '#000000' }}
-          role="alertdialog"
-          aria-modal="true"
-          onClick={() => deactivateScreenshotProtection()}
-        >
-          <div className="flex flex-col items-center justify-center max-w-lg w-full p-8 text-center animate-in fade-in duration-100">
-            {/* Warning Icon Badge */}
-            <div className="w-16 h-16 rounded-full border-2 border-[#D8C7A5] flex items-center justify-center mb-6 text-[#D8C7A5] bg-[#000000]">
-              <ShieldAlert className="w-8 h-8" />
-            </div>
-
-            {/* Clear, Prominent Message */}
-            <h1 className="font-mono text-2xl sm:text-4xl text-[#D8C7A5] font-bold tracking-[0.2em] uppercase mb-4 leading-tight">
-              SCREENSHOT PREVENTION ACTIVATED
-            </h1>
-
-            <p className="font-sans text-sm sm:text-base text-stone-300 font-light leading-relaxed mb-6">
-              Screen captures, recordings, and reproductions of ArkAja Studio proprietary concepts and artworks are restricted.
-            </p>
-
-            <div className="flex items-center justify-center gap-4 text-[10px] font-mono tracking-widest text-[#D8C7A5]/80 uppercase mb-8">
-              <span className="flex items-center gap-1.5">
-                <Smartphone className="w-3 h-3" />
-                <span>MOBILE SHIELD ACTIVE</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <Monitor className="w-3 h-3" />
-                <span>CROSS-OS SECURED</span>
-              </span>
-            </div>
-
-            <div className="pt-4 border-t border-white/10 w-full flex items-center justify-between text-[10px] font-mono tracking-widest text-[#D8C7A5]/70 uppercase">
-              <span>ARKAJA STUDIO</span>
-              <span>ASSET PROTECTION ACTIVE</span>
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                deactivateScreenshotProtection();
-              }}
-              className="mt-8 px-6 py-2.5 text-[11px] font-medium tracking-[0.2em] uppercase bg-[#FAF8F5] text-[#000000] hover:bg-[#D8C7A5] transition-colors"
-            >
-              DISMISS
-            </button>
-          </div>
-        </div>
-      )}
+      {/* 3. SOLID BLANK SCREEN MOUNTED VIA PORTAL DIRECTLY TO DOCUMENT.BODY */}
+      {overlayElement && createPortal(overlayElement, document.body)}
     </>
   );
 };

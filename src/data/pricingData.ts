@@ -8,6 +8,8 @@ export const WEBSITE_PACKAGES: PricingPackage[] = [
     id: 'basic-website',
     name: 'BASIC WEBSITE',
     priceInr: '₹10,000',
+    originalPriceInr: '₹12,500',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 10000,
     priceUsd: '$120',
     priceEur: '€110',
@@ -31,6 +33,8 @@ export const WEBSITE_PACKAGES: PricingPackage[] = [
     id: 'urgent-website',
     name: 'URGENT BASIC WEBSITE',
     priceInr: '₹12,000',
+    originalPriceInr: '₹15,000',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 12000,
     priceUsd: '$145',
     priceEur: '€135',
@@ -59,6 +63,7 @@ export interface WebsiteAddon {
   id: string;
   name: string;
   priceInr: string;
+  originalPriceInr?: string;
   priceInrNumber: number;
   description: string;
   note?: string;
@@ -70,27 +75,33 @@ export const WEBSITE_ADDONS: WebsiteAddon[] = [
     id: 'urgent-delivery',
     name: 'Urgent Delivery',
     priceInr: '+₹2,000',
+    originalPriceInr: '+₹2,500',
     priceInrNumber: 2000,
     description: 'Priority queue placement for expedited delivery of your basic website.',
     note: 'Priority delivery charge applied to basic website scope.',
+    badge: '20% FESTIVE OFF',
   },
   {
     id: 'enquiry-integration',
     name: 'Enquiry Form Integration',
     priceInr: '+₹3,000',
+    originalPriceInr: '+₹3,750',
     priceInrNumber: 3000,
     description:
       'The basic website can display your contact information, email, phone or WhatsApp. If you require an actual enquiry form that collects and manages customer enquiries, enquiry integration is available as an add-on.',
     note: 'Includes automated inbox routing, Firestore ledger recording & client notifications.',
+    badge: '20% FESTIVE OFF',
   },
   {
     id: 'ai-chatbot',
     name: 'AI Chatbot Integration',
     priceInr: '+₹5,000',
+    originalPriceInr: '+₹6,250',
     priceInrNumber: 5000,
     description:
       'Website-integrated conversational assistant with AI-powered responses trained on your business knowledge and FAQ for real-time customer assistance.',
     note: 'Basic AI chatbot package. Advanced AI functionality, complex integrations or custom AI systems may require additional charges.',
+    badge: '20% FESTIVE OFF',
   },
 ];
 
@@ -108,6 +119,8 @@ export const BRANDING_PACKAGES: PricingPackage[] = [
     id: 'logo-design',
     name: 'LOGO DESIGN',
     priceInr: '₹3,000',
+    originalPriceInr: '₹3,750',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 3000,
     priceUsd: '$36',
     priceEur: '€33',
@@ -160,6 +173,8 @@ export const CUSTOM_DEV_PACKAGES: PricingPackage[] = [
     id: 'basic-web-app',
     name: 'BASIC WEB APP (LEVEL 1)',
     priceInr: '₹15,000',
+    originalPriceInr: '₹18,750',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 15000,
     priceUsd: '$180',
     priceEur: '€165',
@@ -291,6 +306,8 @@ export const EDITORIAL_PACKAGES: PricingPackage[] = [
     id: 'starter',
     name: 'STARTER',
     priceInr: '₹2,499',
+    originalPriceInr: '₹3,125',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 2499,
     priceUsd: '$30',
     priceEur: '€28',
@@ -312,6 +329,8 @@ export const EDITORIAL_PACKAGES: PricingPackage[] = [
     id: 'signature',
     name: 'SIGNATURE',
     priceInr: '₹4,999',
+    originalPriceInr: '₹6,249',
+    discountBadge: '20% OFF · NAVRATRI SPECIAL',
     priceInrNumber: 4999,
     priceUsd: '$60',
     priceEur: '€55',

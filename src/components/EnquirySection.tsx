@@ -152,12 +152,12 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     {
       id: 'WEBSITE' as const,
       label: 'Only Website',
-      badge: '₹10,000 BASE',
+      badge: '20% OFF · ₹10,000',
       shortDesc: 'Brochure online presence (Home, About, Services, Contact, Deployment).',
       quickPreset: {
         packageName: 'Basic Website (₹10,000)',
         serviceToSelect: 'Basic Website — ₹10,000',
-        priceBadge: '₹10,000',
+        priceBadge: '₹10,000 (was ₹12,500)',
       },
       allowedServices: [
         'Basic Website — ₹10,000',
@@ -169,12 +169,12 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     {
       id: 'WEB_APP' as const,
       label: 'Only Web App',
-      badge: '₹15,000 / CUSTOM',
+      badge: '20% OFF · ₹15,000',
       shortDesc: 'Operational tools: booking, salon, appointments, inventory, CRM, billing.',
       quickPreset: {
         packageName: 'Basic Web App (Level 1) (₹15,000)',
         serviceToSelect: 'Basic Web App (Level 1) — ₹15,000',
-        priceBadge: '₹15,000',
+        priceBadge: '₹15,000 (was ₹18,750)',
       },
       allowedServices: [
         'Basic Web App (Level 1) — ₹15,000',
@@ -185,12 +185,12 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     {
       id: 'SOCIAL_CONTENT' as const,
       label: 'Only Social Content',
-      badge: 'FROM ₹2,499',
+      badge: '20% OFF · FROM ₹2,499',
       shortDesc: 'Curated editorial posts, stories, carousels & promotional campaign visuals.',
       quickPreset: {
         packageName: 'Signature Content (₹4,999)',
         serviceToSelect: 'Social Media & Content',
-        priceBadge: '₹4,999',
+        priceBadge: '₹4,999 (was ₹6,249)',
       },
       allowedServices: [
         'Social Media & Content',
@@ -200,12 +200,12 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     {
       id: 'BRANDING' as const,
       label: 'Only Logo & Brand',
-      badge: 'FROM ₹3,000',
+      badge: '20% OFF · FROM ₹3,000',
       shortDesc: '3-stage identity kit (concept, variations, kit) & brand visual systems.',
       quickPreset: {
         packageName: 'Logo Design (₹3,000)',
         serviceToSelect: 'Logo Design — ₹3,000',
-        priceBadge: '₹3,000',
+        priceBadge: '₹3,000 (was ₹3,750)',
       },
       allowedServices: [
         'Logo Design — ₹3,000',
@@ -215,12 +215,12 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     {
       id: 'AI_SOLUTIONS' as const,
       label: 'Only AI Solutions',
-      badge: 'FROM ₹5,000',
+      badge: '20% OFF · FROM ₹5,000',
       shortDesc: 'Website conversational AI assistants and automated business workflows.',
       quickPreset: {
         packageName: 'AI Chatbot (+₹5,000)',
         serviceToSelect: 'AI Chatbot — +₹5,000',
-        priceBadge: '+₹5,000',
+        priceBadge: '+₹5,000 (was +₹6,250)',
       },
       allowedServices: [
         'AI Chatbot — +₹5,000',
@@ -961,8 +961,13 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex flex-wrap items-baseline gap-2">
                       <span className="text-[11px] font-mono opacity-70">Calculated Base:</span>
+                      {pricingAnalysis.fixedSubtotal > 0 && (
+                        <span className="font-mono text-xs line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">
+                          ₹{Math.round(pricingAnalysis.fixedSubtotal * 1.25).toLocaleString('en-IN')}
+                        </span>
+                      )}
                       <span className="font-serif text-xl sm:text-2xl font-normal text-[#A58B55] dark:text-[#D8C7A5]">
                         {pricingAnalysis.fixedSubtotal > 0
                           ? `₹${pricingAnalysis.fixedSubtotal.toLocaleString('en-IN')}`
@@ -970,6 +975,11 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
                           ? 'Custom Quote'
                           : '₹0'}
                       </span>
+                      {pricingAnalysis.fixedSubtotal > 0 && (
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-600 dark:text-amber-400 uppercase">
+                          20% NAVRATRI SAVINGS
+                        </span>
+                      )}
                       {pricingAnalysis.hasCustomQuote && (
                         <span className="text-[10px] font-mono px-2 py-0.5 bg-[#D8C7A5]/15 border border-[#D8C7A5]/40 text-[#A58B55] dark:text-[#D8C7A5] font-semibold uppercase">
                           + Custom Quote Required

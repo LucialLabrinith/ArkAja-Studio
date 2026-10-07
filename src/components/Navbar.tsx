@@ -77,14 +77,35 @@ export const Navbar: React.FC<NavbarProps> = ({
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
           ? isDark
-            ? 'bg-[#0b0c0e]/95 backdrop-blur-md border-b border-[#24272D]/80 py-2.5 shadow-lg'
-            : 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E8E2D7] py-2.5 shadow-sm'
+            ? 'bg-[#0b0c0e]/95 backdrop-blur-md border-b border-[#24272D]/80 shadow-lg'
+            : 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E8E2D7] shadow-sm'
           : isDark
-          ? 'bg-[#0b0c0e]/90 backdrop-blur-sm border-b border-[#24272D]/50 py-3 sm:py-4'
-          : 'bg-[#FAF8F5]/90 backdrop-blur-sm border-b border-[#E8E2D7]/60 py-3 sm:py-4'
+          ? 'bg-[#0b0c0e]/90 backdrop-blur-sm border-b border-[#24272D]/50'
+          : 'bg-[#FAF8F5]/90 backdrop-blur-sm border-b border-[#E8E2D7]/60'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Navratri Festival Offer Announcement Ribbon */}
+      <div
+        className={`py-1 px-4 text-center text-[10px] sm:text-[11px] font-mono tracking-wider transition-colors border-b flex items-center justify-center gap-2 select-none ${
+          isDark
+            ? 'bg-[#1a140c] text-[#D8C7A5] border-[#A58B55]/30'
+            : 'bg-[#FFF8EB] text-[#8C6D2D] border-[#E8D4B0]'
+        }`}
+      >
+        <Sparkles className="w-3 h-3 text-[#D8C7A5] animate-pulse shrink-0" />
+        <span>
+          <strong>NAVRATRI UTSAV:</strong> FLAT 20% DISCOUNT ACTIVE · 20% HIGHER RATES ARE STRIKETHROUGH
+        </span>
+        <a
+          href="#pricing"
+          onClick={(e) => handleNavClick(e, '#pricing')}
+          className="underline font-semibold ml-1 hover:opacity-80 hidden sm:inline"
+        >
+          VIEW OFFERS →
+        </a>
+      </div>
+
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all ${isScrolled ? 'py-2.5' : 'py-3 sm:py-3.5'}`}>
         <div className="flex items-center justify-between">
           {/* Zone 1: Official Brand Logo & Monogram */}
           <a
