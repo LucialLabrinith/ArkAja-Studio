@@ -275,9 +275,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         {/* Project Header */}
         <div className="mb-10 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 mb-4">
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight">
+            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight">
               {project.title}
-            </h1>
+            </h2>
             <span className="text-[12px] tracking-[0.25em] text-[#D8C7A5] uppercase font-mono">
               CONCEPT / {project.year}
             </span>

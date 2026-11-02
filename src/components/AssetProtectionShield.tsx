@@ -323,9 +323,9 @@ export const AssetProtectionShield: React.FC = () => {
         </div>
 
         {/* Clear, Prominent Message */}
-        <h1 className="font-mono text-2xl sm:text-4xl text-[#D8C7A5] font-bold tracking-[0.2em] uppercase mb-4 leading-tight">
+        <h2 className="font-mono text-2xl sm:text-4xl text-[#D8C7A5] font-bold tracking-[0.2em] uppercase mb-4 leading-tight">
           SCREENSHOT PREVENTION ACTIVATED
-        </h1>
+        </h2>
 
         <p className="font-sans text-sm sm:text-base text-stone-300 font-light leading-relaxed mb-6">
           Screen captures, recordings, and reproductions of ArkAja Studio proprietary concepts and artworks are restricted.

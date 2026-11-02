@@ -307,3 +307,86 @@ export async function getUserDrafts(userId: string) {
     return [];
   }
 }
+
+// 7. Client Reviews Integration
+export interface ClientReviewDoc {
+  id: string;
+  name: string;
+  role?: string;
+  company?: string;
+  location?: string;
+  serviceCategory: string;
+  rating: number;
+  review: string;
+  highlightMetric?: string;
+  createdAt: string;
+}
+
+export async function submitClientReview(review: Omit<ClientReviewDoc, 'id' | 'createdAt'>): Promise<ClientReviewDoc> {
+  const reviewId = `rev-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const fullReview: ClientReviewDoc = {
+    id: reviewId,
+    name: review.name.trim(),
+    role: review.role?.trim() || 'Client',
+    company: review.company?.trim() || 'Independent Brand',
+    location: review.location?.trim() || 'India',
+    serviceCategory: review.serviceCategory || 'Design & Development',
+    rating: Number(review.rating) || 5,
+    review: review.review.trim(),
+    highlightMetric: review.highlightMetric?.trim() || `${review.rating}★ Client Rating`,
+    createdAt: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+  };
+
+  try {
+    const reviewRef = doc(db, 'reviews', reviewId);
+    await setDoc(reviewRef, fullReview);
+  } catch (err) {
+    console.warn('Firestore write failed, falling back to local cache for review:', err);
+  }
+
+  // Always save in localStorage backup
+  try {
+    const local = JSON.parse(localStorage.getItem('arkaja_user_reviews') || '[]');
+    local.unshift(fullReview);
+    localStorage.setItem('arkaja_user_reviews', JSON.stringify(local));
+  } catch (e) {
+    // ignore local storage error
+  }
+
+  return fullReview;
+}
+
+export function subscribeToClientReviews(onUpdate: (reviews: ClientReviewDoc[]) => void) {
+  try {
+    const reviewsRef = collection(db, 'reviews');
+    return onSnapshot(
+      reviewsRef,
+      (snapshot) => {
+        const list: ClientReviewDoc[] = [];
+        snapshot.forEach((docSnap) => {
+          list.push(docSnap.data() as ClientReviewDoc);
+        });
+        onUpdate(list);
+      },
+      (error) => {
+        console.warn('Real-time reviews subscription error (using fallback):', error.message);
+        try {
+          const local = JSON.parse(localStorage.getItem('arkaja_user_reviews') || '[]');
+          onUpdate(local);
+        } catch (e) {
+          onUpdate([]);
+        }
+      }
+    );
+  } catch (err) {
+    console.warn('Error setting up reviews listener:', err);
+    try {
+      const local = JSON.parse(localStorage.getItem('arkaja_user_reviews') || '[]');
+      onUpdate(local);
+    } catch (e) {
+      onUpdate([]);
+    }
+    return () => {};
+  }
+}
+

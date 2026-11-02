@@ -76,6 +76,19 @@ service cloud.firestore {
       allow write: if isStudioOwner();
     }
 
+    // 6. Client Reviews & Feedback
+    match /reviews/{reviewId} {
+      // Anyone can read reviews
+      allow read: if true;
+      // Anyone can post authentic review feedback
+      allow create: if isValidId(reviewId)
+        && request.resource.data.name is string
+        && request.resource.data.rating is number
+        && request.resource.data.review is string;
+      // Studio owner can moderate or delete
+      allow update, delete: if isStudioOwner();
+    }
+
     // Connection test document
     match /test/connection {
       allow read: if true;

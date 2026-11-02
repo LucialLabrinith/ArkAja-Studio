@@ -103,7 +103,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                 isDark ? 'text-[#FAF8F5]' : 'text-[#14171A]'
               }`}
             >
-              Creative content for brands with something to say.
+              Premium Graphic Designers for Growing Brands
             </h1>
 
             {/* Subtitle */}
@@ -112,7 +112,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                 isDark ? 'text-[#B4B7BF]' : 'text-[#4A505C]'
               }`}
             >
-              AI-assisted creative production. Human-led art direction.
+              Welcome to Arkaja Designers, one of the leading designer companies specialized in digital branding, UI design, and creative assets — graphic designers serving clients globally from Mumbai, India.
             </p>
 
             {/* Core Deliverable Badges */}

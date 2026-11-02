@@ -13,6 +13,7 @@ import { ProjectBuilder } from './components/ProjectBuilder';
 import { PricingSection } from './components/PricingSection';
 import { PaymentModal } from './components/PaymentModal';
 import { ProcessSection } from './components/ProcessSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
 import { AboutSection } from './components/AboutSection';
 import { EnquirySection } from './components/EnquirySection';
 import { StudioConcierge } from './components/StudioConcierge';
@@ -225,7 +226,10 @@ function StudioApp() {
         {/* 7. Process Section ("How it works") */}
         <ProcessSection />
 
-        {/* 8. About Section */}
+        {/* 8. Client Testimonials & Feedback Carousel */}
+        <TestimonialsSection />
+
+        {/* 9. About Section */}
         <AboutSection />
 
         {/* 9. Dedicated Enquiry Section & Form */}
