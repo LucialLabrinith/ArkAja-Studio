@@ -155,7 +155,6 @@ export const TestimonialsSection: React.FC = () => {
   const { isDark } = useTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [ratingFilter, setRatingFilter] = useState<'all' | '5' | '4' | '3'>('all');
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -311,15 +310,14 @@ export const TestimonialsSection: React.FC = () => {
 
   const scrollToIndex = (index: number) => {
     if (!scrollRef.current) return;
-    const cards = scrollRef.current.querySelectorAll<HTMLElement>('[data-testimonial-card]');
-    if (cards[index]) {
-      cards[index].scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start',
-      });
-      setActiveIndex(index);
-    }
+    const cardWidth = scrollRef.current.children[0]
+      ? (scrollRef.current.children[0] as HTMLElement).offsetWidth + 24
+      : 380;
+    scrollRef.current.scrollTo({
+      left: index * cardWidth,
+      behavior: 'smooth',
+    });
+    setActiveIndex(index);
   };
 
   const handlePrev = () => {
@@ -338,15 +336,6 @@ export const TestimonialsSection: React.FC = () => {
     }
   };
 
-  // Subtle auto-advance
-  useEffect(() => {
-    if (isPaused || isWriteModalOpen) return;
-    const timer = setInterval(() => {
-      handleNext();
-    }, 7500);
-    return () => clearInterval(timer);
-  }, [activeIndex, isPaused, isWriteModalOpen, filteredTestimonials.length]);
-
   return (
     <section
       id="testimonials"
@@ -355,10 +344,6 @@ export const TestimonialsSection: React.FC = () => {
           ? 'bg-[#0E1015] border-[#1F2228] text-[#FAF8F5]'
           : 'bg-[#FDFCFA] border-[#E8E2D7] text-[#14171A]'
       }`}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
       aria-label="Client Testimonials and Feedback"
     >
       <div className="max-w-7xl mx-auto">

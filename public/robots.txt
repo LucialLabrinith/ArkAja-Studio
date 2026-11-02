@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Google Search Console Verification
+# google-site-verification=Q5NEE_LJEfFzsWzLBoNdA7DmskvRm8FixneH3x3smqU
