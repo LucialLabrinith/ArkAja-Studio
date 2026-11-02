@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-[#FAF8F5]/90 backdrop-blur-sm border-b border-[#E8E2D7]/60'
       }`}
     >
-      {/* Navratri Festival Offer Announcement Ribbon */}
+      {/* Diwali Special Offer Announcement Ribbon */}
       <div
         className={`py-1 px-4 text-center text-[10px] sm:text-[11px] font-mono tracking-wider transition-colors border-b flex items-center justify-center gap-2 select-none ${
           isDark
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         <Sparkles className="w-3 h-3 text-[#D8C7A5] animate-pulse shrink-0" />
         <span>
-          <strong>NAVRATRI UTSAV:</strong> FLAT 20% DISCOUNT ACTIVE · 20% HIGHER RATES ARE STRIKETHROUGH
+          <strong>DIWALI SPECIAL:</strong> FLAT 20% DISCOUNT ACTIVE · 20% HIGHER RATES ARE STRIKETHROUGH
         </span>
         <a
           href="#pricing"

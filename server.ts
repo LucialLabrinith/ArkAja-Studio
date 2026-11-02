@@ -94,6 +94,12 @@ app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.resolve(process.cwd(), 'public')));
 app.use('/assets/portfolio', express.static(portfolioDir));
 
+// Google Search Console Site Verification file direct route
+app.get('/googlef6578e8f54a279b1.html', (_req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+  res.send('google-site-verification: googlef6578e8f54a279b1.html\n');
+});
+
 // Initialize Gemini SDK with User-Agent header as required
 const apiKey = process.env.GEMINI_API_KEY || '';
 const ai = new GoogleGenAI({
@@ -509,7 +515,7 @@ function getAjaContextualResponse(userInput: string): string {
     q.includes('investment')
   ) {
     return (
-      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions (with an ongoing **20% Navratri Festive Discount** applied across all packages):\n\n" +
+      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions (with an ongoing **20% Diwali Festive Discount** applied across all packages):\n\n" +
       "• **Basic Website (₹10,000)**: Clean, responsive online presence (was ~~₹12,500~~ · 20% festive savings).\n\n" +
       "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard (was ~~₹18,750~~ · 20% off). Anything aside is custom quote.\n\n" +
       "• **Starter Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative (was ~~₹3,125~~ · 20% off).\n\n" +
@@ -519,18 +525,19 @@ function getAjaContextualResponse(userInput: string): string {
     );
   }
 
-  // 1a-festive. Navratri Discounts & Offers
+  // 1a-festive. Diwali Discounts & Offers
   if (
     q.includes('discount') ||
     q.includes('offer') ||
+    q.includes('diwali') ||
     q.includes('navratri') ||
     q.includes('sale') ||
     q.includes('coupon') ||
     q.includes('deal')
   ) {
     return (
-      "🌸 **Navratri Utsav Special Offer — Flat 20% Festive Discount Active!**\n\n" +
-      "ArkAja Studio is celebrating the festive season with a flat 20% discount across all packages:\n\n" +
+      "🪔 **Diwali Special Offer — Flat 20% Festive Discount Active!**\n\n" +
+      "ArkAja Studio is celebrating the festival of lights with a flat 20% discount across all packages:\n\n" +
       "• **Basic Website**: ₹10,000 (was ~~₹12,500~~ · 20% off)\n" +
       "• **Basic Web App (Level 1)**: ₹15,000 (was ~~₹18,750~~ · 20% off)\n" +
       "• **Logo Design**: ₹3,000 (was ~~₹3,750~~ · 20% off)\n" +

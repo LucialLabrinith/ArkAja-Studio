@@ -494,7 +494,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     </span>
                     {pkg.originalPriceInr && (
                       <span className="text-[9.5px] font-mono font-bold tracking-wider px-2 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 uppercase">
-                        20% NAVRATRI OFF
+                        20% DIWALI SPECIAL OFF
                       </span>
                     )}
                     <span className="text-xs font-mono text-[#D8C7A5] font-semibold">

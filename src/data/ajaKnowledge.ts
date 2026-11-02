@@ -20,7 +20,7 @@ export function getAjaContextualResponse(userInput: string): string {
     q.includes('signature')
   ) {
     return (
-      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions, currently featuring our **Navratri 20% Festive Celebration Discount**:\n\n" +
+      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions, currently featuring our **Diwali Special 20% Festive Celebration Discount**:\n\n" +
       "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment). Was ~~₹12,500~~ (20% off).\n\n" +
       "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard. Was ~~₹18,750~~ (20% off). Anything aside is custom quote.\n\n" +
       "• **Starter Content Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative. Was ~~₹3,125~~ (20% off).\n\n" +
@@ -30,18 +30,19 @@ export function getAjaContextualResponse(userInput: string): string {
     );
   }
 
-  // 1a-festive. Navratri Discounts & Offers
+  // 1a-festive. Diwali Discounts & Offers
   if (
     q.includes('discount') ||
     q.includes('offer') ||
+    q.includes('diwali') ||
     q.includes('navratri') ||
     q.includes('sale') ||
     q.includes('coupon') ||
     q.includes('deal')
   ) {
     return (
-      "🌸 **Navratri Utsav Special Offer — Flat 20% Festive Discount Active!**\n\n" +
-      "ArkAja Studio is celebrating the festive season with a flat 20% discount across all packages:\n\n" +
+      "🪔 **Diwali Special Offer — Flat 20% Festive Discount Active!**\n\n" +
+      "ArkAja Studio is celebrating the festival of lights with a flat 20% discount across all packages:\n\n" +
       "• **Basic Website**: ₹10,000 (was ~~₹12,500~~ · 20% off)\n" +
       "• **Basic Web App (Level 1)**: ₹15,000 (was ~~₹18,750~~ · 20% off)\n" +
       "• **Logo Design**: ₹3,000 (was ~~₹3,750~~ · 20% off)\n" +

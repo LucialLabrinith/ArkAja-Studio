@@ -145,7 +145,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
         name: 'AI CHATBOT INTEGRATION',
         priceInr: '₹5,000',
         originalPriceInr: '₹6,250',
-        discountBadge: '20% OFF · NAVRATRI SPECIAL',
+        discountBadge: '20% OFF · DIWALI SPECIAL',
         priceInrNumber: 5000,
         priceUsd: '$60',
         priceEur: '$55',
@@ -286,7 +286,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
         </div>
 
         {/* ================================================================= */}
-        {/* NAVRATRI FESTIVE CELEBRATION DISCOUNT BANNER (FLAT 20% OFF)       */}
+        {/* DIWALI SPECIAL FESTIVE CELEBRATION DISCOUNT BANNER (FLAT 20% OFF) */}
         {/* ================================================================= */}
         <div
           className={`p-5 sm:p-6 border mb-12 flex flex-col md:flex-row items-center justify-between gap-5 transition-all shadow-md ${
@@ -302,14 +302,14 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             <div>
               <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
                 <span className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold px-2 py-0.5 bg-[#A58B55] text-black">
-                  NAVRATRI UTSAV SPECIAL
+                  DIWALI SPECIAL
                 </span>
                 <span className="text-xs font-mono font-bold text-[#A58B55] dark:text-[#D8C7A5]">
                   20% FESTIVE DISCOUNT APPLIED
                 </span>
               </div>
               <h3 className="font-serif text-xl sm:text-2xl font-normal mt-1">
-                Ongoing Navratri Offer: All Rates Feature 20% Celebratory Savings
+                Ongoing Diwali Special Offer: All Rates Feature 20% Celebratory Savings
               </h3>
               <p
                 className={`text-xs sm:text-[13px] font-light mt-0.5 ${
@@ -408,7 +408,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                   </p>
 
                   <div className="pb-6 mb-6 border-b border-inherit">
-                    {/* Navratri Strikethrough Original Higher Price */}
+                    {/* Diwali Strikethrough Original Higher Price */}
                     {pkg.originalPriceInr && (
                       <div className="flex items-center gap-2 mb-2">
                         <span className="font-mono text-sm sm:text-base line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80 decoration-2">
@@ -419,7 +419,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                             : pkg.originalPriceInr}
                         </span>
                         <span className="text-[9.5px] font-mono font-bold tracking-wider px-2 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 uppercase">
-                          20% NAVRATRI OFF
+                          20% DIWALI SPECIAL OFF
                         </span>
                       </div>
                     )}
@@ -849,7 +849,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="text-[10px] font-mono tracking-widest uppercase opacity-70 mb-1 flex items-center gap-2">
                 <span>CALCULATED BASE SUBTOTAL</span>
                 <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40">
-                  NAVRATRI DISCOUNTED
+                  DIWALI DISCOUNTED
                 </span>
               </div>
               <div className="flex flex-wrap items-baseline gap-3">

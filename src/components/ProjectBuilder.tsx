@@ -468,7 +468,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
             >
               <div>
                 <span className="text-[10px] font-mono tracking-widest uppercase opacity-70 block mb-1">
-                  CALCULATED BASE SUBTOTAL (NAVRATRI DISCOUNTED)
+                  CALCULATED BASE SUBTOTAL (DIWALI DISCOUNTED)
                 </span>
                 <div className="flex flex-wrap items-baseline gap-3">
                   {pricingCalculation.subtotal > 0 && (
@@ -481,7 +481,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                   </span>
                   {pricingCalculation.subtotal > 0 && (
                     <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 uppercase">
-                      20% NAVRATRI SAVINGS APPLIED
+                      20% DIWALI SAVINGS APPLIED
                     </span>
                   )}
                   {pricingCalculation.hasCustomQuote && (

@@ -977,7 +977,7 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
                       </span>
                       {pricingAnalysis.fixedSubtotal > 0 && (
                         <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-600 dark:text-amber-400 uppercase">
-                          20% NAVRATRI SAVINGS
+                          20% DIWALI SAVINGS
                         </span>
                       )}
                       {pricingAnalysis.hasCustomQuote && (
