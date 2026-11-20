@@ -20,36 +20,33 @@ export function getAjaContextualResponse(userInput: string): string {
     q.includes('signature')
   ) {
     return (
-      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions, currently featuring our **Diwali Special 20% Festive Celebration Discount**:\n\n" +
-      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment). Was ~~₹12,500~~ (20% off).\n\n" +
-      "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard. Was ~~₹18,750~~ (20% off). Anything aside is custom quote.\n\n" +
-      "• **Starter Content Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative. Was ~~₹3,125~~ (20% off).\n\n" +
-      "• **Signature Content Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, and 48-hour priority queue. Was ~~₹6,249~~ (20% off).\n\n" +
-      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, kit, up to 2 revisions). Was ~~₹3,750~~ (20% off).\n\n" +
-      "• **Custom Solutions**: Brand Identity, AI Chatbots (+₹5,000, was ~~₹6,250~~), and Advanced Web Apps / Business Systems (Custom Quote)."
+      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions:\n\n" +
+      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment).\n\n" +
+      "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard. Anything aside is custom quote.\n\n" +
+      "• **Starter Content Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative.\n\n" +
+      "• **Signature Content Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, and 48-hour priority queue.\n\n" +
+      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, kit, up to 2 revisions).\n\n" +
+      "• **Custom Solutions**: Brand Identity, AI Chatbots (+₹5,000), and Advanced Web Apps / Business Systems (Custom Quote)."
     );
   }
 
-  // 1a-festive. Diwali Discounts & Offers
+  // 1a. Standard Rates & Package Bundles
   if (
     q.includes('discount') ||
     q.includes('offer') ||
-    q.includes('diwali') ||
-    q.includes('navratri') ||
     q.includes('sale') ||
     q.includes('coupon') ||
     q.includes('deal')
   ) {
     return (
-      "🪔 **Diwali Special Offer — Flat 20% Festive Discount Active!**\n\n" +
-      "ArkAja Studio is celebrating the festival of lights with a flat 20% discount across all packages:\n\n" +
-      "• **Basic Website**: ₹10,000 (was ~~₹12,500~~ · 20% off)\n" +
-      "• **Basic Web App (Level 1)**: ₹15,000 (was ~~₹18,750~~ · 20% off)\n" +
-      "• **Logo Design**: ₹3,000 (was ~~₹3,750~~ · 20% off)\n" +
-      "• **Starter Content**: ₹2,499 (was ~~₹3,125~~ · 20% off)\n" +
-      "• **Signature Content**: ₹4,999 (was ~~₹6,249~~ · 20% off)\n" +
+      "ArkAja Studio offers transparent, straightforward standard rates across all creative and web packages — with zero hidden fees or subscriptions:\n\n" +
+      "• **Basic Website**: ₹10,000\n" +
+      "• **Basic Web App (Level 1)**: ₹15,000\n" +
+      "• **Logo Design**: ₹3,000\n" +
+      "• **Starter Content**: ₹2,499\n" +
+      "• **Signature Content**: ₹4,999\n" +
       "• **Website Add-ons**: Urgent Delivery (+₹2,000), Enquiry Form (+₹3,000), AI Chatbot (+₹5,000)\n\n" +
-      "All rates shown on the studio platform are the final 20% discounted rates, with the 20% higher standard rates strikethrough!"
+      "Need multiple deliverables bundled together? Use our interactive Project Estimator or submit a brief for a tailored studio quote."
     );
   }
 
@@ -289,8 +286,7 @@ export function getAjaContextualResponse(userInput: string): string {
     return (
       "You can connect directly with the ArkAja Studio team:\n\n" +
       "• **Official Email**: arkajastudio@gmail.com\n" +
-      // TODO: Verify final social handle URL
-      "• **Instagram**: [@arkajastudio](https://www.instagram.com/arkajastudio)\n" +
+      "• **Instagram**: [@arkajastudio](https://www.instagram.com/arkajastudio/)\n" +
       "• **Studio Base**: Mumbai, India — accepting bespoke client projects worldwide.\n\n" +
       "Or fill out the Enquiry brief at the bottom of this page for a same-day response!"
     );

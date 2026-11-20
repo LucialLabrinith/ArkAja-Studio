@@ -21,6 +21,7 @@ import { StudioConcierge } from './components/StudioConcierge';
 import { SearchModal } from './components/SearchModal';
 import { StudioOwnerModal } from './components/StudioOwnerModal';
 import { Footer } from './components/Footer';
+import { RevealSection } from './components/RevealSection';
 import { Sparkles, X } from 'lucide-react';
 import { subscribeToPortfolioProjects } from './lib/firebase';
 
@@ -180,63 +181,79 @@ function StudioApp() {
         />
 
         {/* 2. Value Proposition */}
-        <ValueProp onViewServices={() => scrollToSection('services')} />
+        <RevealSection>
+          <ValueProp onViewServices={() => scrollToSection('services')} />
+        </RevealSection>
 
         {/* 3. Selected Work (Real-time synced with Firestore) */}
-        <PortfolioGrid
-          key={assetRefreshKey}
-          projects={allPortfolioProjects}
-          uploadedAssets={uploadedAssets}
-          onSelectProject={(project) => setSelectedProject(project)}
-        />
+        <RevealSection>
+          <PortfolioGrid
+            key={assetRefreshKey}
+            projects={allPortfolioProjects}
+            uploadedAssets={uploadedAssets}
+            onSelectProject={(project) => setSelectedProject(project)}
+          />
+        </RevealSection>
 
         {/* 4. Services Section */}
-        <ServicesSection
-          onOpenBuilder={() => scrollToSection('builder')}
-          onSelectServiceForEnquiry={(svc) => handleSelectPackageForEnquiry(svc)}
-        />
+        <RevealSection>
+          <ServicesSection
+            onOpenBuilder={() => scrollToSection('builder')}
+            onSelectServiceForEnquiry={(svc) => handleSelectPackageForEnquiry(svc)}
+          />
+        </RevealSection>
 
         {/* 5. Custom Service Builder ("Build Your Project") */}
-        <ProjectBuilder
-          onContinueToEnquiry={handleContinueFromBuilderToEnquiry}
-          onOpenAdvisor={() => setIsAdvisorOpen(true)}
-          onPayFixedSubtotal={(amountInr, bundleTitle, items) => {
-            setBuilderPaymentPkg({
-              id: `builder-bundle-${Date.now()}`,
-              name: 'Custom Service Scope Bundle',
-              priceInr: `₹${amountInr.toLocaleString('en-IN')}`,
-              priceInrNumber: amountInr,
-              priceUsd: `$${Math.round(amountInr / 83.5)}`,
-              priceEur: `€${Math.round(amountInr / 91.0)}`,
-              subtitle: bundleTitle,
-              features: items,
-              delivery: '5–7 Business Days / Priority as selected',
-              ctaText: `PAY ₹${amountInr.toLocaleString('en-IN')} (RAZORPAY)`,
-            });
-          }}
-        />
+        <RevealSection>
+          <ProjectBuilder
+            onContinueToEnquiry={handleContinueFromBuilderToEnquiry}
+            onOpenAdvisor={() => setIsAdvisorOpen(true)}
+            onPayFixedSubtotal={(amountInr, bundleTitle, items) => {
+              setBuilderPaymentPkg({
+                id: `builder-bundle-${Date.now()}`,
+                name: 'Custom Service Scope Bundle',
+                priceInr: `₹${amountInr.toLocaleString('en-IN')}`,
+                priceInrNumber: amountInr,
+                priceUsd: `$${Math.round(amountInr / 83.5)}`,
+                priceEur: `€${Math.round(amountInr / 91.0)}`,
+                subtitle: bundleTitle,
+                features: items,
+                delivery: '5–7 Business Days / Priority as selected',
+                ctaText: `PAY ₹${amountInr.toLocaleString('en-IN')} (RAZORPAY)`,
+              });
+            }}
+          />
+        </RevealSection>
 
         {/* 6. Transparent Package Pricing (with Razorpay redirect logic) */}
-        <PricingSection
-          config={studioConfig}
-          onOpenBuilder={() => scrollToSection('builder')}
-          onSelectPackageForEnquiry={handleSelectPackageForEnquiry}
-        />
+        <RevealSection>
+          <PricingSection
+            config={studioConfig}
+            onOpenBuilder={() => scrollToSection('builder')}
+            onSelectPackageForEnquiry={handleSelectPackageForEnquiry}
+          />
+        </RevealSection>
 
         {/* 7. Process Section ("How it works") */}
-        <ProcessSection />
+        <RevealSection>
+          <ProcessSection />
+        </RevealSection>
 
         {/* TODO: Hook up real client testimonials and Google reviews API here later */}
         {/* <TestimonialsSection /> */}
 
         {/* 8. About Section */}
-        <AboutSection />
+        <RevealSection>
+          <AboutSection />
+        </RevealSection>
 
         {/* 9. Dedicated Enquiry Section & Form */}
-        <EnquirySection
-          prefillBuilderState={builderPrefill}
-          prefillPackage={packagePrefill}
-        />
+        <RevealSection>
+          <EnquirySection
+            prefillBuilderState={builderPrefill}
+            prefillPackage={packagePrefill}
+          />
+        </RevealSection>
       </main>
 
       {/* Builder Direct Payment Modal */}

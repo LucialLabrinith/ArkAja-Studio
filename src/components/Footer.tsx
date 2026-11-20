@@ -7,8 +7,7 @@ export const Footer: React.FC = () => {
   const { isDark } = useTheme();
   const isDarkCanvas = isDark;
 
-  // TODO: Verify final social handle URL
-  const instagramUrl = 'https://www.instagram.com/arkajastudio';
+  const instagramUrl = 'https://www.instagram.com/arkajastudio/';
   const gmailAddress = 'ARKAJASTUDIO@GMAIL.COM';
 
   const navLinks = [

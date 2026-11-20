@@ -115,10 +115,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
           {filteredServices.map((service, index) => (
             <div
               key={service.id}
-              className={`p-8 sm:p-10 border transition-all duration-300 flex flex-col justify-between group ${
+              className={`p-8 sm:p-10 border transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5 ${
                 isDark
-                  ? 'bg-[#121418] border-[#24272D] hover:border-[#D8C7A5]/60'
-                  : 'bg-[#FFFFFF] border-[#E2DDD5] hover:border-[#A58B55]/60 shadow-sm'
+                  ? 'bg-[#121418] border-white/[0.09] hover:border-[#D8C7A5]/60 shadow-[0_8px_28px_-14px_rgba(0,0,0,0.55)]'
+                  : 'bg-[#FFFFFF] border-[#14171A]/[0.09] hover:border-[#A58B55]/60 shadow-[0_1px_2px_rgba(20,23,26,0.03),0_10px_28px_-14px_rgba(20,23,26,0.09)]'
               }`}
             >
               <div>
@@ -213,20 +213,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="px-4 py-2.5 border border-inherit text-xs font-mono">
                 <span className="text-[10px] opacity-60 block uppercase">BASIC WEBSITE</span>
-                <div className="flex items-center gap-1.5 my-0.5">
-                  <span className="line-through text-[11px] text-red-500/80 font-mono">₹12,500</span>
-                  <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹10,000</span>
-                  <span className="text-[9px] text-amber-500 font-bold">20% OFF</span>
-                </div>
+                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5] block my-0.5">₹10,000</span>
                 <span className="opacity-70 text-[10.5px] block">&quot;Here is my business.&quot;</span>
               </div>
               <div className="px-4 py-2.5 border border-[#D8C7A5]/60 bg-[#D8C7A5]/10 text-xs font-mono">
                 <span className="text-[10px] opacity-60 block uppercase">BASIC WEB APP (L1)</span>
-                <div className="flex items-center gap-1.5 my-0.5">
-                  <span className="line-through text-[11px] text-red-500/80 font-mono">₹18,750</span>
-                  <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">₹15,000</span>
-                  <span className="text-[9px] text-amber-500 font-bold">20% OFF</span>
-                </div>
+                <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5] block my-0.5">₹15,000</span>
                 <span className="opacity-70 text-[10.5px] block">&quot;Single workflow system.&quot;</span>
               </div>
               <div className="px-4 py-2.5 border border-inherit text-xs font-mono">
@@ -281,13 +273,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   <span className="text-[10px] font-mono font-semibold text-emerald-400 tracking-wider">
                     🟢 LEVEL 1 · BASIC WEB APP
                   </span>
-                  <div className="flex items-center gap-1 font-mono text-[10px]">
-                    <span className="line-through text-red-400/80">₹18,750</span>
-                    <span className="font-semibold text-[#A58B55] dark:text-[#D8C7A5]">
-                      ₹15,000
-                    </span>
-                    <span className="text-[8px] font-bold text-amber-500">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-[10px] font-semibold text-[#A58B55] dark:text-[#D8C7A5]">
+                    ₹15,000
+                  </span>
                 </div>
                 <h4 className="font-serif text-lg font-normal mb-2">
                   Streamlined Business Workflows

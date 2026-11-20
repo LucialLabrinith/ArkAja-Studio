@@ -144,10 +144,10 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
                 <article
                   key={project.id}
                   onClick={() => onSelectProject(project)}
-                  className={`${colSpan} group cursor-pointer flex flex-col justify-between border transition-all duration-300 p-6 sm:p-7 relative overflow-hidden ${
+                  className={`${colSpan} group cursor-pointer flex flex-col justify-between border transition-all duration-300 p-6 sm:p-7 relative overflow-hidden hover:-translate-y-1 ${
                     isDark
-                      ? 'bg-[#111317] border-[#24272D] hover:border-[#D8C7A5]'
-                      : 'bg-[#FFFFFF] border-[#E8E2D5] hover:border-[#A58B55] shadow-sm'
+                      ? 'bg-[#111317] border-white/[0.09] hover:border-[#D8C7A5]/70 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.55)] hover:shadow-[0_20px_48px_-16px_rgba(0,0,0,0.75)]'
+                      : 'bg-[#FFFFFF] border-[#14171A]/[0.09] hover:border-[#A58B55]/80 shadow-[0_1px_2px_rgba(20,23,26,0.03),0_10px_28px_-14px_rgba(20,23,26,0.10)] hover:shadow-[0_18px_40px_-16px_rgba(165,139,85,0.22)]'
                   }`}
                 >
                   {/* Top Meta Line: Category & Concept Label */}
@@ -165,7 +165,7 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
                   {/* Visual Asset Stage: Flat Raster Artwork */}
                   <div
                     className={`aspect-[16/10] w-full border mb-5 overflow-hidden relative flex items-center justify-center ${
-                      isDark ? 'bg-[#16181f] border-[#24272D]' : 'bg-[#FDFBF7] border-[#E8E2D5]'
+                      isDark ? 'bg-[#16181f] border-white/[0.08]' : 'bg-[#FDFBF7] border-[#14171A]/[0.08]'
                     }`}
                   >
                     <img

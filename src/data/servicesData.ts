@@ -6,7 +6,7 @@ export const STUDIO_SERVICES: ServiceItem[] = [
     id: 'websites',
     title: 'WEBSITES',
     description: 'Professional responsive websites built to establish a distinctive online presence for modern brands.',
-    priceText: '₹10,000 (was ₹12,500 · 20% Off)',
+    priceText: '₹10,000',
     category: 'WEBSITES',
     ctaText: 'START A WEBSITE',
     includes: [
@@ -23,7 +23,7 @@ export const STUDIO_SERVICES: ServiceItem[] = [
     id: 'web-apps',
     title: 'WEB APPS & BUSINESS SYSTEMS',
     description: 'Custom digital tools designed around the way your business actually works. A basic web app costs ₹15,000; anything beyond (multi-role, payments, custom enterprise platforms) is quoted custom.',
-    priceText: '₹15,000 (was ₹18,750 · 20% Off)',
+    priceText: '₹15,000',
     category: 'DEVELOPMENT',
     ctaText: 'START WEB APP',
     includes: [
@@ -40,7 +40,7 @@ export const STUDIO_SERVICES: ServiceItem[] = [
     id: 'logo-design',
     title: 'LOGO DESIGN',
     description: 'Distinctive, memorable mark and wordmark architecture crafted through a thorough 3-stage identity process.',
-    priceText: '₹3,000 (was ₹3,750 · 20% Off)',
+    priceText: '₹3,000',
     category: 'BRANDING',
     ctaText: 'COMMISSION LOGO',
     includes: [
@@ -73,7 +73,7 @@ export const STUDIO_SERVICES: ServiceItem[] = [
     id: 'social-content',
     title: 'SOCIAL MEDIA & CONTENT',
     description: 'Editorial social content that gives your feed a clear, high-fashion visual identity and consistent storytelling.',
-    priceText: 'From ₹2,499 (was ₹3,125 · 20% Off)',
+    priceText: 'From ₹2,499',
     category: 'CONTENT',
     ctaText: 'EXPLORE PACKAGES',
     includes: [

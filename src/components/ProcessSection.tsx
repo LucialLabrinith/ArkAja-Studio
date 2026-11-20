@@ -61,10 +61,10 @@ export const ProcessSection: React.FC = () => {
           {steps.map((step) => (
             <div
               key={step.num}
-              className={`p-8 border flex flex-col justify-between transition-colors ${
+              className={`p-8 border flex flex-col justify-between transition-all duration-300 hover:-translate-y-0.5 ${
                 isDark
-                  ? 'bg-[#111317] border-[#24272D] hover:border-[#D8C7A5]/50'
-                  : 'bg-[#FFFFFF] border-[#E2DDD5] hover:border-[#A58B55]/50 shadow-sm'
+                  ? 'bg-[#111317] border-white/[0.09] hover:border-[#D8C7A5]/50 shadow-[0_8px_24px_-14px_rgba(0,0,0,0.5)]'
+                  : 'bg-[#FFFFFF] border-[#14171A]/[0.09] hover:border-[#A58B55]/60 shadow-[0_1px_2px_rgba(20,23,26,0.03),0_8px_24px_-14px_rgba(20,23,26,0.09)]'
               }`}
             >
               <div>

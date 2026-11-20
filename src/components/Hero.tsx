@@ -280,7 +280,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                         isDark ? 'text-[#8E929A]' : 'text-[#5C6370]'
                       }`}
                     >
-                      Diwali Special (20% Off): Starter ₹2,499 (was ₹3,125) · Signature ₹4,999 (was ₹6,249) · Websites from ₹10,000.
+                      Starter ₹2,499 · Signature ₹4,999 · Websites from ₹10,000 · Web Apps from ₹15,000.
                     </span>
                   </div>
                 </div>

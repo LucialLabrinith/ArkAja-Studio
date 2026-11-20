@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Project } from '../types';
 import { useTheme } from '../context/ThemeContext';
 import { getEmbeddedAsset } from '../data/embeddedAssets';
@@ -12,12 +13,9 @@ import {
   ZoomOut,
   RotateCcw,
   ArrowUpRight,
-  Compass,
-  Sparkles,
-  Layers,
   MoveHorizontal,
-  Expand,
-  Minimize,
+  Check,
+  Target,
 } from 'lucide-react';
 
 interface ProjectModalProps {
@@ -215,104 +213,119 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   };
 
-  if (!project) return null;
+  // Lock background scroll while drawer is open
+  useEffect(() => {
+    if (!project) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [project]);
 
   // Active creative direction based on index
   const activeDirection =
-    project.creativeDirections && project.creativeDirections[currentImageIndex]
+    project?.creativeDirections && project.creativeDirections[currentImageIndex]
       ? project.creativeDirections[currentImageIndex]
-      : project.creativeDirections?.[0];
+      : project?.creativeDirections?.[0];
 
   return (
-    <div
-      className={`fixed inset-0 z-50 overflow-y-auto backdrop-blur-xl flex flex-col justify-between transition-colors ${
-        isDark ? 'bg-[#0b0c0e]/95 text-[#F3F1EC]' : 'bg-[#FFFFFF]/98 text-[#14171A]'
-      }`}
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* Top Bar Navigation */}
-      <div
-        className={`sticky top-0 z-30 flex items-center justify-between px-6 py-4 border-b backdrop-blur-md ${
-          isDark ? 'border-[#24272D] bg-[#0b0c0e]/90' : 'border-[#E8E2D5] bg-[#FFFFFF]/95'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-2 mr-2 hover:opacity-80 transition-opacity"
-            title="ArkAja Studio"
-          >
-            <Logo variant="full" size="sm" />
-          </button>
-          <span className="opacity-30">|</span>
-          <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-semibold font-mono">
-            {project.category}
-          </span>
-          <span className="opacity-40">·</span>
-          <span className="text-[10px] tracking-[0.2em] uppercase opacity-70 font-mono">
-            {project.label}
-          </span>
-          <span className="hidden sm:inline opacity-40">·</span>
-          <span className="hidden sm:inline text-[10px] tracking-[0.2em] opacity-70 font-mono">
-            {project.productionLabel}
-          </span>
-        </div>
-
-        <button
-          onClick={onClose}
-          className={`p-2 transition-colors rounded-sm focus:outline-none focus:ring-1 focus:ring-[#D8C7A5] ${
-            isDark ? 'text-[#8E929A] hover:text-[#F3F1EC]' : 'text-[#7A808C] hover:text-[#14171A]'
-          }`}
-          aria-label="Close Project Detail"
+    <AnimatePresence>
+      {project && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${project.title} project drawer`}
         >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
+          {/* Dimmed Frosted Backdrop — clicking closes the slide-over drawer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/55 backdrop-blur-sm cursor-pointer"
+            aria-hidden="true"
+          />
 
-      {/* Main Editorial Content */}
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex-1">
-        {/* Project Header */}
-        <div className="mb-10 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 mb-4">
-            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight">
-              {project.title}
-            </h2>
-            <span className="text-[12px] tracking-[0.25em] text-[#D8C7A5] uppercase font-mono">
-              CONCEPT / {project.year}
-            </span>
-          </div>
-
-          <p
-            className={`font-sans text-lg sm:text-xl font-light max-w-3xl leading-relaxed mb-6 ${
-              isDark ? 'text-[#B4B7BF]' : 'text-[#555B66]'
+          {/* Slide-Over Editorial Lookbook Drawer */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+            className={`relative z-10 w-full max-w-2xl lg:max-w-3xl h-full overflow-y-auto flex flex-col justify-between border-l shadow-[0_24px_80px_-16px_rgba(0,0,0,0.65)] transition-colors ${
+              isDark
+                ? 'bg-[#0d0f13] border-white/[0.10] text-[#F3F1EC]'
+                : 'bg-[#FAF8F5] border-[#14171A]/[0.10] text-[#14171A]'
             }`}
           >
-            {project.description}
-          </p>
+            {/* Sticky Frosted Drawer Top Bar */}
+            <div
+              className={`sticky top-0 z-30 flex items-center justify-between px-5 sm:px-7 py-4 border-b backdrop-blur-xl ${
+                isDark
+                  ? 'border-white/[0.08] bg-[#0d0f13]/85'
+                  : 'border-[#14171A]/[0.08] bg-[#FAF8F5]/90'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <button
+                  onClick={onClose}
+                  className="flex items-center gap-2 mr-1 hover:opacity-80 transition-opacity shrink-0"
+                  title="ArkAja Studio"
+                >
+                  <Logo variant="monogram" size="sm" />
+                </button>
+                <span className="opacity-30">|</span>
+                <span className="text-[10px] tracking-[0.24em] uppercase text-[#A58B55] dark:text-[#D8C7A5] font-semibold font-mono truncate">
+                  {project.category}
+                </span>
+                <span className="opacity-40">·</span>
+                <span className="text-[10px] tracking-[0.2em] uppercase opacity-70 font-mono truncate">
+                  {project.label}
+                </span>
+              </div>
 
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-inherit">
-            <span className="text-[11px] tracking-[0.2em] uppercase mr-2 font-medium opacity-60 font-mono">
-              Deliverables:
-            </span>
-            {project.services.map((srv, idx) => (
-              <span key={srv} className="text-[11px] tracking-[0.18em] uppercase text-[#D8C7A5] font-mono">
-                {srv}
-                {idx < project.services.length - 1 && <span className="opacity-40 mx-2">/</span>}
-              </span>
-            ))}
-          </div>
-        </div>
+              <button
+                onClick={onClose}
+                className={`p-2 border transition-colors focus:outline-none focus:ring-1 focus:ring-[#D8C7A5] ${
+                  isDark
+                    ? 'border-white/[0.10] text-[#B4B7BF] hover:text-[#F3F1EC] hover:border-[#D8C7A5]/60'
+                    : 'border-[#14171A]/[0.10] text-[#555B66] hover:text-[#14171A] hover:border-[#A58B55]/60'
+                }`}
+                aria-label="Close Project Drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-        {/* ---------------------------------------------------- */}
-        {/* SWIPEABLE IMAGE GALLERY STAGE */}
-        {/* ---------------------------------------------------- */}
-        <div
-          ref={galleryRef}
-          className={`relative mb-8 border select-none overflow-hidden transition-all duration-300 ${
-            isDark ? 'bg-[#121418] border-[#24272D]' : 'bg-[#FFFFFF] border-[#E2DDD5]'
-          }`}
-        >
+            {/* Main Drawer Editorial Content */}
+            <div className="w-full px-5 sm:px-7 py-8 flex-1">
+              {/* Project Header */}
+              <div className="mb-7">
+                <div className="flex flex-wrap items-baseline justify-between gap-3 mb-2">
+                  <h2 className="font-serif text-3xl sm:text-5xl font-normal tracking-tight">
+                    {project.title}
+                  </h2>
+                  <span className="text-[11px] tracking-[0.25em] text-[#A58B55] dark:text-[#D8C7A5] uppercase font-mono">
+                    CONCEPT / {project.year}
+                  </span>
+                </div>
+
+                {project.tagline && (
+                  <p className="font-serif italic text-base sm:text-lg text-[#A58B55] dark:text-[#D8C7A5] mb-5">
+                    {project.tagline}
+                  </p>
+                )}
+
+                {/* Larger Preview Stage */}
+                <div
+                  ref={galleryRef}
+                  className={`relative mb-6 border select-none overflow-hidden transition-all duration-300 shadow-[0_8px_28px_-12px_rgba(0,0,0,0.22)] ${
+                    isDark ? 'bg-[#121418] border-white/[0.08]' : 'bg-[#FFFFFF] border-[#14171A]/[0.10]'
+                  }`}
+                >
           {hasImages ? (
             <div
               className="relative aspect-[16/10] sm:aspect-[16/9] w-full flex items-center justify-center bg-black overflow-hidden group cursor-grab active:cursor-grabbing select-none"
@@ -485,12 +498,56 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         )}
 
         {/* ---------------------------------------------------- */}
+        {/* PROJECT GOAL & DELIVERABLES SUMMARY */}
+        {/* ---------------------------------------------------- */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mb-8">
+          <div
+            className={`md:col-span-7 p-5 sm:p-6 border ${
+              isDark ? 'bg-[#121418] border-white/[0.08]' : 'bg-[#FFFFFF] border-[#14171A]/[0.08]'
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2.5">
+              <Target className="w-3.5 h-3.5 text-[#A58B55] dark:text-[#D8C7A5]" />
+              <span className="text-[10px] font-mono tracking-[0.24em] uppercase text-[#A58B55] dark:text-[#D8C7A5] font-semibold">
+                PROJECT GOAL
+              </span>
+            </div>
+            <p
+              className={`font-sans text-sm font-light leading-relaxed ${
+                isDark ? 'text-[#C5CAD5]' : 'text-[#4A505C]'
+              }`}
+            >
+              {project.description}
+            </p>
+          </div>
+
+          <div
+            className={`md:col-span-5 p-5 sm:p-6 border ${
+              isDark ? 'bg-[#121418] border-white/[0.08]' : 'bg-[#FFFFFF] border-[#14171A]/[0.08]'
+            }`}
+          >
+            <span className="text-[10px] font-mono tracking-[0.24em] uppercase text-[#A58B55] dark:text-[#D8C7A5] font-semibold block mb-3">
+              DELIVERABLES
+            </span>
+            <ul className="space-y-2">
+              {project.services.map((srv) => (
+                <li key={srv} className="flex items-start gap-2 text-xs font-light">
+                  <Check className="w-3.5 h-3.5 text-[#A58B55] dark:text-[#D8C7A5] shrink-0 mt-0.5" />
+                  <span>{srv}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        </div>
+
+        {/* ---------------------------------------------------- */}
         {/* ACTIVE VISUAL DIRECTION CONTEXT CARD */}
         {/* ---------------------------------------------------- */}
         {activeDirection && (
           <div
-            className={`p-6 border mb-14 transition-colors ${
-              isDark ? 'bg-[#121418] border-[#24272D]' : 'bg-[#FFFFFF] border-[#E2DDD5]'
+            className={`p-6 border mb-8 transition-colors ${
+              isDark ? 'bg-[#121418] border-white/[0.08]' : 'bg-[#FFFFFF] border-[#14171A]/[0.08]'
             }`}
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-inherit">
@@ -857,6 +914,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           </div>
         </div>
       )}
-    </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };

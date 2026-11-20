@@ -34,23 +34,33 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { isDark, toggleTheme } = useTheme();
   const { user, isOwner } = useAuth();
 
+  const [activeSection, setActiveSection] = useState<string>('');
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      const sections = ['work', 'builder', 'about', 'enquire'];
+      const scrollPos = window.scrollY + 140;
+      let current = '';
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          current = `#${id}`;
+        }
+      }
+      setActiveSection(current);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
     { label: 'WORK', href: '#work' },
-    { label: 'SERVICES', href: '#services' },
-    { label: 'BOOKINGS', href: '#enquire' },
-    { label: 'PRICING', href: '#pricing' },
-    { label: 'PROCESS', href: '#process' },
+    { label: 'ESTIMATOR', href: '#builder' },
+    { label: 'ABOUT', href: '#about' },
     // TODO: Hook up real client testimonials and Google reviews API here later
     // { label: 'REVIEWS', href: '#testimonials' },
-    { label: 'ABOUT', href: '#about' },
   ];
 
   // Universal Cross-OS Smooth Scroll Handler
@@ -79,11 +89,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
           ? isDark
-            ? 'bg-[#0b0c0e]/95 backdrop-blur-md border-b border-[#24272D]/80 shadow-lg'
-            : 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E8E2D7] shadow-sm'
+            ? 'bg-[#0b0c0e]/78 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.65)]'
+            : 'bg-[#FAF8F5]/82 backdrop-blur-xl border-b border-[#14171A]/[0.08] shadow-[0_8px_30px_-14px_rgba(20,23,26,0.12)]'
           : isDark
-          ? 'bg-[#0b0c0e]/90 backdrop-blur-sm border-b border-[#24272D]/50'
-          : 'bg-[#FAF8F5]/90 backdrop-blur-sm border-b border-[#E8E2D7]/60'
+          ? 'bg-[#0b0c0e]/65 backdrop-blur-lg border-b border-white/[0.06]'
+          : 'bg-[#FAF8F5]/75 backdrop-blur-lg border-b border-[#14171A]/[0.06]'
       }`}
     >
       {/* TODO: Make dynamic seasonal banner */}
@@ -123,22 +133,29 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Logo variant="full" size="md" />
           </a>
 
-          {/* Zone 2: Direct Top Navigation Links (Desktop & Laptops) */}
-          <nav className="hidden lg:flex items-center gap-7" aria-label="Main Navigation">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className={`text-[12px] tracking-[0.2em] font-medium transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-[#D8C7A5] hover:after:w-full after:transition-all after:duration-200 ${
-                  isDark
-                    ? 'text-[#B4B7BF] hover:text-[#FAF8F5]'
-                    : 'text-[#555B66] hover:text-[#14171A]'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+          {/* Zone 2: Minimal Sticky Frosted-Glass Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8" aria-label="Main Navigation">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`text-[11.5px] tracking-[0.22em] font-medium transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:bg-[#D8C7A5] after:transition-all after:duration-200 ${
+                    isActive
+                      ? isDark
+                        ? 'text-[#FAF8F5] after:w-full'
+                        : 'text-[#14171A] after:w-full'
+                      : isDark
+                      ? 'text-[#B4B7BF] hover:text-[#FAF8F5] after:w-0 hover:after:w-full'
+                      : 'text-[#555B66] hover:text-[#14171A] after:w-0 hover:after:w-full'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Zone 3: Interactive Suite (Search, Theme Toggle, Auth, AI Advisor & Start Project) */}
@@ -225,17 +242,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden sm:inline">ASK AJA</span>
             </button>
 
-            {/* Primary CTA */}
-            <button
-              onClick={onOpenBuilder}
-              className={`px-3.5 sm:px-5 py-2 sm:py-2 text-[11px] sm:text-[12px] tracking-[0.2em] font-medium transition-all duration-200 whitespace-nowrap active:scale-95 shadow-sm ${
+            {/* Primary CTA: Start a Project */}
+            <a
+              href="#enquire"
+              onClick={(e) => handleNavClick(e, '#enquire')}
+              className={`px-3.5 sm:px-5 py-2 text-[11px] sm:text-[11.5px] tracking-[0.2em] font-medium transition-all duration-200 whitespace-nowrap active:scale-95 shadow-sm ${
                 isDark
                   ? 'text-[#0b0c0e] bg-[#FAF8F5] hover:bg-[#D8C7A5]'
                   : 'text-[#FFFFFF] bg-[#9E824C] hover:bg-[#866D3D]'
               }`}
             >
-              START PROJECT
-            </button>
+              START A PROJECT
+            </a>
 
             {/* Mobile Menu Button */}
             <button

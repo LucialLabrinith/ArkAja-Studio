@@ -144,8 +144,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
         id: 'ai-chatbot-pkg',
         name: 'AI CHATBOT INTEGRATION',
         priceInr: '₹5,000',
-        originalPriceInr: '₹6,250',
-        discountBadge: '20% OFF · DIWALI SPECIAL',
         priceInrNumber: 5000,
         priceUsd: '$60',
         priceEur: '$55',
@@ -285,47 +283,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
           </div>
         </div>
 
-        {/* ================================================================= */}
-        {/* DIWALI SPECIAL FESTIVE CELEBRATION DISCOUNT BANNER (FLAT 20% OFF) */}
-        {/* ================================================================= */}
-        <div
-          className={`p-5 sm:p-6 border mb-12 flex flex-col md:flex-row items-center justify-between gap-5 transition-all shadow-md ${
-            isDark
-              ? 'bg-gradient-to-r from-[#1c160c] via-[#14120f] to-[#121418] border-[#D8C7A5]/50 text-[#FAF8F5]'
-              : 'bg-gradient-to-r from-[#FFF9EE] via-[#FDF5E6] to-[#FAF1DF] border-[#C5A358]/60 text-[#14171A]'
-          }`}
-        >
-          <div className="flex items-center gap-4 text-center md:text-left">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#A58B55] to-[#EEDFB3] flex items-center justify-center text-black font-bold shrink-0 shadow-md">
-              <Sparkles className="w-6 h-6 text-black animate-pulse" />
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
-                <span className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold px-2 py-0.5 bg-[#A58B55] text-black">
-                  DIWALI SPECIAL
-                </span>
-                <span className="text-xs font-mono font-bold text-[#A58B55] dark:text-[#D8C7A5]">
-                  20% FESTIVE DISCOUNT APPLIED
-                </span>
-              </div>
-              <h3 className="font-serif text-xl sm:text-2xl font-normal mt-1">
-                Ongoing Diwali Special Offer: All Rates Feature 20% Celebratory Savings
-              </h3>
-              <p
-                className={`text-xs sm:text-[13px] font-light mt-0.5 ${
-                  isDark ? 'text-[#B4B7BF]' : 'text-[#646A77]'
-                }`}
-              >
-                The 20% higher standard rates are strikethrough below. All displayed prices are your final discounted rates.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 px-3.5 py-2 border border-[#A58B55]/60 bg-black/10 text-xs font-mono font-semibold text-[#A58B55] dark:text-[#D8C7A5] whitespace-nowrap">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>FESTIVE SAVINGS ACTIVE</span>
-          </div>
-        </div>
-
         {/* Category Tabs */}
         <div className="flex items-center justify-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-10 border-b border-inherit">
           {[
@@ -363,14 +320,14 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             return (
               <div
                 key={pkg.id}
-                className={`p-8 sm:p-10 flex flex-col justify-between transition-all duration-300 relative border ${
+                className={`p-8 sm:p-10 flex flex-col justify-between transition-all duration-300 relative border hover:-translate-y-0.5 ${
                   isSignature
                     ? isDark
-                      ? 'border-2 border-[#D8C7A5] shadow-2xl bg-[#121418] text-[#FAF8F5]'
-                      : 'border-2 border-[#A58B55] shadow-xl bg-[#FFFFFF] text-[#14171A]'
+                      ? 'border-2 border-[#D8C7A5] shadow-[0_18px_48px_-18px_rgba(0,0,0,0.75)] bg-[#121418] text-[#FAF8F5]'
+                      : 'border-2 border-[#A58B55] shadow-[0_14px_38px_-16px_rgba(165,139,85,0.28)] bg-[#FFFFFF] text-[#14171A]'
                     : isDark
-                    ? 'bg-[#111317] border-[#24272D] hover:border-[#3a3f4c] text-[#FAF8F5]'
-                    : 'bg-[#FFFFFF] border-[#E2DDD5] hover:border-[#A58B55] text-[#14171A] shadow-sm'
+                    ? 'bg-[#111317] border-white/[0.09] hover:border-[#D8C7A5]/50 shadow-[0_8px_28px_-14px_rgba(0,0,0,0.55)] text-[#FAF8F5]'
+                    : 'bg-[#FFFFFF] border-[#14171A]/[0.09] hover:border-[#A58B55]/70 text-[#14171A] shadow-[0_1px_2px_rgba(20,23,26,0.03),0_10px_28px_-14px_rgba(20,23,26,0.09)]'
                 }`}
               >
                 {isSignature && (
@@ -408,22 +365,6 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                   </p>
 
                   <div className="pb-6 mb-6 border-b border-inherit">
-                    {/* Diwali Strikethrough Original Higher Price */}
-                    {pkg.originalPriceInr && (
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-mono text-sm sm:text-base line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80 decoration-2">
-                          {currencyView === 'USD'
-                            ? `$${Math.round((pkg.priceInrNumber || 10000) * 1.25 / 83.5)} USD`
-                            : currencyView === 'EUR'
-                            ? `€${Math.round((pkg.priceInrNumber || 10000) * 1.25 / 91)} EUR`
-                            : pkg.originalPriceInr}
-                        </span>
-                        <span className="text-[9.5px] font-mono font-bold tracking-wider px-2 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 uppercase">
-                          20% DIWALI SPECIAL OFF
-                        </span>
-                      </div>
-                    )}
-
                     <div className="flex flex-col gap-1">
                       <span className="font-serif text-3xl sm:text-4xl font-normal tracking-tight">
                         {priceInfo.primary}
@@ -543,11 +484,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">Basic Website</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">₹12,500</span>
-                    <span className="font-semibold text-[#D8C7A5]">₹10,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">₹10,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Responsive 4-page website (Home, About, Services, Contact) + deployment.
@@ -576,11 +513,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">Urgent Website Delivery</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">+₹2,500</span>
-                    <span className="font-semibold text-[#D8C7A5]">+₹2,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">+₹2,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Fast-track priority queue (48–72h expedited production delivery).
@@ -609,11 +542,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">Enquiry Form Integration</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">+₹3,750</span>
-                    <span className="font-semibold text-[#D8C7A5]">+₹3,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">+₹3,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Interactive enquiry collection, email notifications, and database recording.
@@ -642,11 +571,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">AI Chatbot Integration</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">+₹6,250</span>
-                    <span className="font-semibold text-[#D8C7A5]">+₹5,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">+₹5,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Website-integrated AI assistant trained on your business knowledge and FAQ.
@@ -675,11 +600,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">Logo Design</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">₹3,750</span>
-                    <span className="font-semibold text-[#D8C7A5]">₹3,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">₹3,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Concept, variations kit &amp; production delivery files (up to 2 revisions).
@@ -737,11 +658,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-xs">Basic Web App (Level 1)</span>
-                  <div className="flex items-center gap-1.5 font-mono text-xs">
-                    <span className="line-through text-[11px] text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">₹18,750</span>
-                    <span className="font-semibold text-[#D8C7A5]">₹15,000</span>
-                    <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 px-1 py-0.5 bg-amber-500/15 border border-amber-500/30">20% OFF</span>
-                  </div>
+                  <span className="font-mono text-xs font-semibold text-[#D8C7A5]">₹15,000</span>
                 </div>
                 <p className="text-[11px] opacity-70 mt-1">
                   Single workflow system (Appointment, salon booking, inventory, billing). Fixed ₹15,000.
@@ -848,26 +765,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
             <div>
               <div className="text-[10px] font-mono tracking-widest uppercase opacity-70 mb-1 flex items-center gap-2">
                 <span>CALCULATED BASE SUBTOTAL</span>
-                <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40">
-                  DIWALI DISCOUNTED
-                </span>
               </div>
               <div className="flex flex-wrap items-baseline gap-3">
-                {calculationSummary.fixedTotal > 0 && (
-                  <span className="font-mono text-base line-through text-red-500/80 dark:text-red-400 font-semibold decoration-red-500/80">
-                    ₹{Math.round(calculationSummary.fixedTotal * 1.25).toLocaleString('en-IN')}
-                  </span>
-                )}
                 <span className="font-serif text-3xl sm:text-4xl font-normal text-[#D8C7A5]">
                   {calculationSummary.fixedTotal > 0
                     ? `₹${calculationSummary.fixedTotal.toLocaleString('en-IN')}`
                     : 'Custom Quote'}
                 </span>
-                {calculationSummary.fixedTotal > 0 && (
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 uppercase">
-                    YOU SAVE ₹{Math.round(calculationSummary.fixedTotal * 0.25).toLocaleString('en-IN')} (20% OFF)
-                  </span>
-                )}
                 {calculationSummary.hasCustomQuoteItems && (
                   <span className="text-xs font-mono px-2.5 py-0.5 bg-[#D8C7A5]/15 border border-[#D8C7A5]/40 text-[#A58B55] dark:text-[#D8C7A5] font-semibold">
                     + Custom Quote Required

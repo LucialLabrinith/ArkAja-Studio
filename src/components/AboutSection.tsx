@@ -55,9 +55,8 @@ export const AboutSection: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Instagram className="w-4 h-4 shrink-0 text-[#D8C7A5]" />
-                  {/* TODO: Verify final social handle URL */}
                   <a
-                    href="https://www.instagram.com/arkajastudio"
+                    href="https://www.instagram.com/arkajastudio/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`hover:text-[#D8C7A5] transition-colors inline-flex items-center gap-1 ${
