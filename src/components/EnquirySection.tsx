@@ -465,8 +465,8 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     }
   };
 
-  const instagramUrl =
-    'https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6';
+  // TODO: Verify final social handle URL
+  const instagramUrl = 'https://www.instagram.com/arkajastudio';
   const gmailAddress = 'ARKAJASTUDIO@GMAIL.COM';
 
   return (
@@ -526,7 +526,7 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
               }`}
             >
               <Instagram className="w-3.5 h-3.5 text-[#D8C7A5]" />
-              <span>VIEW INSTAGRAM (@arkajadesigner6208)</span>
+              <span>VIEW INSTAGRAM (@arkajastudio)</span>
               <ArrowUpRight className="w-3 h-3 text-[#8E929A]" />
             </a>
           </div>

@@ -63,7 +63,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
             isDark ? 'text-[#D8C7A5]/30' : 'text-[#A58B55]/45'
           }`}
         >
-          MUMBAI · PARIS · LONDON
+          MUMBAI · INDIA
         </div>
 
         {/* The Mono Logo as Watermark */}
@@ -353,7 +353,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
         >
           <div className="flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D8C7A5]" />
-            <span className="font-medium">Independent Creative Studio</span>
+            <span className="font-medium">Independent Creative &amp; Tech Studio</span>
             <span>·</span>
             <span>Mumbai, India</span>
           </div>

@@ -164,20 +164,15 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
 
                   {/* Visual Asset Stage: Flat Raster Artwork */}
                   <div
-                    className={`aspect-[16/10] w-full border mb-5 overflow-hidden relative flex items-center justify-center select-none ${
+                    className={`aspect-[16/10] w-full border mb-5 overflow-hidden relative flex items-center justify-center ${
                       isDark ? 'bg-[#16181f] border-[#24272D]' : 'bg-[#FDFBF7] border-[#E8E2D5]'
                     }`}
-                    data-protected-asset="true"
-                    onContextMenu={(e) => e.preventDefault()}
                   >
                     <img
                       src={firstImage}
                       alt={`${project.title} - ${project.tagline}`}
-                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out pointer-events-none select-none"
+                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                       loading="lazy"
-                      draggable={false}
-                      onDragStart={(e) => e.preventDefault()}
-                      onContextMenu={(e) => e.preventDefault()}
                       onError={(e) => {
                         const target = e.currentTarget;
                         if (!target.dataset.fallbackApplied) {
@@ -199,13 +194,6 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
                           target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='%2314171d'/%3E%3Ctext x='50%25' y='50%25' fill='%23D8C7A5' font-family='serif' font-size='24' text-anchor='middle' dominant-baseline='middle'%3EARKAJA STUDIO%3C/text%3E%3C/svg%3E";
                         }
                       }}
-                    />
-
-                    {/* Transparent Protection Shield Layer */}
-                    <div
-                      className="absolute inset-0 z-10 select-none cursor-pointer"
-                      onContextMenu={(e) => e.preventDefault()}
-                      onDragStart={(e) => e.preventDefault()}
                     />
 
                     {/* Studio Logo Watermark Stamp on Artwork */}

@@ -48,7 +48,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'BOOKINGS', href: '#enquire' },
     { label: 'PRICING', href: '#pricing' },
     { label: 'PROCESS', href: '#process' },
-    { label: 'REVIEWS', href: '#testimonials' },
+    // TODO: Hook up real client testimonials and Google reviews API here later
+    // { label: 'REVIEWS', href: '#testimonials' },
     { label: 'ABOUT', href: '#about' },
   ];
 
@@ -85,9 +86,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-[#FAF8F5]/90 backdrop-blur-sm border-b border-[#E8E2D7]/60'
       }`}
     >
-      {/* Diwali Special Offer Announcement Ribbon */}
+      {/* TODO: Make dynamic seasonal banner */}
       <div
-        className={`py-1 px-4 text-center text-[10px] sm:text-[11px] font-mono tracking-wider transition-colors border-b flex items-center justify-center gap-2 select-none ${
+        className={`py-1 px-4 text-center text-[10px] sm:text-[11px] font-mono tracking-wider transition-colors border-b flex items-center justify-center gap-2 ${
           isDark
             ? 'bg-[#1a140c] text-[#D8C7A5] border-[#A58B55]/30'
             : 'bg-[#FFF8EB] text-[#8C6D2D] border-[#E8D4B0]'
@@ -95,14 +96,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         <Sparkles className="w-3 h-3 text-[#D8C7A5] animate-pulse shrink-0" />
         <span>
-          <strong>DIWALI SPECIAL:</strong> FLAT 20% DISCOUNT ACTIVE · 20% HIGHER RATES ARE STRIKETHROUGH
+          Now Booking Creative &amp; Web Projects for December &amp; January
         </span>
         <a
-          href="#pricing"
-          onClick={(e) => handleNavClick(e, '#pricing')}
+          href="#enquire"
+          onClick={(e) => handleNavClick(e, '#enquire')}
           className="underline font-semibold ml-1 hover:opacity-80 hidden sm:inline"
         >
-          VIEW OFFERS →
+          BOOK NOW →
         </a>
       </div>
 

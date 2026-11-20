@@ -55,15 +55,16 @@ export const AboutSection: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Instagram className="w-4 h-4 shrink-0 text-[#D8C7A5]" />
+                  {/* TODO: Verify final social handle URL */}
                   <a
-                    href="https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6"
+                    href="https://www.instagram.com/arkajastudio"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`hover:text-[#D8C7A5] transition-colors inline-flex items-center gap-1 ${
                       isDarkCanvas ? 'text-[#FAF8F5]' : 'text-[#14171A]'
                     }`}
                   >
-                    <span>@arkajadesigner6208</span>
+                    <span>@arkajastudio</span>
                     <ArrowUpRight className="w-3 h-3 text-[#D8C7A5]" />
                   </a>
                 </div>

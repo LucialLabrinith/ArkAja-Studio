@@ -289,7 +289,8 @@ export function getAjaContextualResponse(userInput: string): string {
     return (
       "You can connect directly with the ArkAja Studio team:\n\n" +
       "• **Official Email**: arkajastudio@gmail.com\n" +
-      "• **Instagram**: [@arkajadesigner6208](https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6)\n" +
+      // TODO: Verify final social handle URL
+      "• **Instagram**: [@arkajastudio](https://www.instagram.com/arkajastudio)\n" +
       "• **Studio Base**: Mumbai, India — accepting bespoke client projects worldwide.\n\n" +
       "Or fill out the Enquiry brief at the bottom of this page for a same-day response!"
     );

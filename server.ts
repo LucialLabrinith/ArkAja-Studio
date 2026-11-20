@@ -187,8 +187,9 @@ app.get('/api/config', (req: Request, res: Response) => {
 
   res.json({
     email: 'arkajastudio@gmail.com',
-    instagram: '@arkajadesigner6208',
-    instagramUrl: 'https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6',
+    // TODO: Verify final social handle URL
+    instagram: '@arkajastudio',
+    instagramUrl: 'https://www.instagram.com/arkajastudio',
     location: 'Mumbai, India (Working Worldwide)',
     razorpayKeyId: RAZORPAY_KEY_ID,
     isRazorpayConfigured: Boolean(RAZORPAY_KEY_ID),
@@ -782,7 +783,8 @@ function getAjaContextualResponse(userInput: string): string {
     return (
       "You can connect directly with the ArkAja Studio team:\n\n" +
       "• **Official Email**: arkajastudio@gmail.com\n" +
-      "• **Instagram**: [@arkajadesigner6208](https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6)\n" +
+      // TODO: Verify final social handle URL
+      "• **Instagram**: [@arkajastudio](https://www.instagram.com/arkajastudio)\n" +
       "• **Studio Base**: Mumbai, India — accepting bespoke client projects worldwide.\n\n" +
       "Or fill out the Enquiry brief at the bottom of this page for a same-day response!"
     );

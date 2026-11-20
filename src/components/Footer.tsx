@@ -7,8 +7,8 @@ export const Footer: React.FC = () => {
   const { isDark } = useTheme();
   const isDarkCanvas = isDark;
 
-  const instagramUrl =
-    'https://www.instagram.com/arkajadesigner6208?stkn=aHBmdnFtc241djZ6';
+  // TODO: Verify final social handle URL
+  const instagramUrl = 'https://www.instagram.com/arkajastudio';
   const gmailAddress = 'ARKAJASTUDIO@GMAIL.COM';
 
   const navLinks = [
@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
                 }`}
               >
                 <Instagram className="w-3.5 h-3.5 text-[#D8C7A5]" />
-                <span>@arkajadesigner6208</span>
+                <span>@arkajastudio</span>
                 <ArrowUpRight className="w-3 h-3 opacity-60" />
               </a>
             </div>
@@ -110,8 +110,21 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Engineered From Scratch Trust Line & Availability Status */}
+        <div className="pt-8 pb-5 border-b border-inherit/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono tracking-wide">
+          <span className="opacity-80">
+            Custom designed &amp; engineered in-house by ArkAja Studio
+          </span>
+          <span className="inline-flex items-center gap-2 text-[10.5px] tracking-wider uppercase font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+            <span className={isDarkCanvas ? 'text-[#FAF8F5]' : 'text-[#14171A]'}>
+              Available for projects
+            </span>
+          </span>
+        </div>
+
         {/* Bottom Legal & Disclosure Line */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-70 font-light">
+        <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] opacity-70 font-light">
           <div>
             © 2026 ArkAja Studio. All rights reserved.
           </div>

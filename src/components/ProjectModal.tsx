@@ -316,8 +316,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           {hasImages ? (
             <div
               className="relative aspect-[16/10] sm:aspect-[16/9] w-full flex items-center justify-center bg-black overflow-hidden group cursor-grab active:cursor-grabbing select-none"
-              data-protected-asset="true"
-              onContextMenu={(e) => e.preventDefault()}
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -354,9 +352,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     alt={`${project.title} - Visual ${currentImageIndex + 1}`}
                     referrerPolicy="no-referrer"
                     draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
-                    className="w-full h-full object-contain pointer-events-none select-none"
+                    className="w-full h-full object-contain"
                     onError={(e) => {
                       const target = e.currentTarget;
                       if (!target.dataset.fallbackApplied) {
@@ -720,8 +716,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           {/* Lightbox Center Image Stage */}
           <div
             className="flex-1 relative flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing p-4 select-none"
-            data-protected-asset="true"
-            onContextMenu={(e) => e.preventDefault()}
             onDoubleClick={handleDoubleClick}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -793,9 +787,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   alt={`${project.title} Lightbox View`}
                   referrerPolicy="no-referrer"
                   draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                  className="max-h-[75vh] max-w-[90vw] object-contain drop-shadow-2xl select-none pointer-events-none"
+                  className="max-h-[75vh] max-w-[90vw] object-contain drop-shadow-2xl"
                   onError={(e) => {
                     const target = e.currentTarget;
                     if (!target.dataset.fallbackApplied) {

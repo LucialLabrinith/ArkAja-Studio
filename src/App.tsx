@@ -13,14 +13,14 @@ import { ProjectBuilder } from './components/ProjectBuilder';
 import { PricingSection } from './components/PricingSection';
 import { PaymentModal } from './components/PaymentModal';
 import { ProcessSection } from './components/ProcessSection';
-import { TestimonialsSection } from './components/TestimonialsSection';
+// TODO: Hook up real client testimonials and Google reviews API here later
+// import { TestimonialsSection } from './components/TestimonialsSection';
 import { AboutSection } from './components/AboutSection';
 import { EnquirySection } from './components/EnquirySection';
 import { StudioConcierge } from './components/StudioConcierge';
 import { SearchModal } from './components/SearchModal';
 import { StudioOwnerModal } from './components/StudioOwnerModal';
 import { Footer } from './components/Footer';
-import { AssetProtectionShield } from './components/AssetProtectionShield';
 import { Sparkles, X } from 'lucide-react';
 import { subscribeToPortfolioProjects } from './lib/firebase';
 
@@ -226,10 +226,10 @@ function StudioApp() {
         {/* 7. Process Section ("How it works") */}
         <ProcessSection />
 
-        {/* 8. Client Testimonials & Feedback Carousel */}
-        <TestimonialsSection />
+        {/* TODO: Hook up real client testimonials and Google reviews API here later */}
+        {/* <TestimonialsSection /> */}
 
-        {/* 9. About Section */}
+        {/* 8. About Section */}
         <AboutSection />
 
         {/* 9. Dedicated Enquiry Section & Form */}
@@ -407,9 +407,6 @@ function StudioApp() {
           </button>
         </div>
       )}
-
-      {/* Global Asset Protection & Persistent Atelier Logo Stamp */}
-      <AssetProtectionShield />
     </div>
   );
 }
