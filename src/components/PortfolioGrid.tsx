@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Search, ArrowUpRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { getEmbeddedAsset } from '../data/embeddedAssets';
+import { BeforeAfterSlider } from './BeforeAfterSlider';
 
 interface PortfolioGridProps {
   projects: Project[];
@@ -143,8 +144,16 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
               return (
                 <article
                   key={project.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => onSelectProject(project)}
-                  className={`${colSpan} group cursor-pointer flex flex-col justify-between border transition-all duration-300 p-6 sm:p-7 relative overflow-hidden hover:-translate-y-1 ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onSelectProject(project);
+                    }
+                  }}
+                  className={`${colSpan} group cursor-pointer flex flex-col justify-between border transition-all duration-300 p-6 sm:p-7 relative overflow-hidden hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A58B55] ${
                     isDark
                       ? 'bg-[#111317] border-white/[0.09] hover:border-[#D8C7A5]/70 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.55)] hover:shadow-[0_20px_48px_-16px_rgba(0,0,0,0.75)]'
                       : 'bg-[#FFFFFF] border-[#14171A]/[0.09] hover:border-[#A58B55]/80 shadow-[0_1px_2px_rgba(20,23,26,0.03),0_10px_28px_-14px_rgba(20,23,26,0.10)] hover:shadow-[0_18px_40px_-16px_rgba(165,139,85,0.22)]'
@@ -227,11 +236,11 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
 
                     {/* Project Card Bottom Action */}
                     <div className="flex items-center justify-between pt-3 border-t border-inherit">
-                      <span className="text-[10px] font-mono tracking-widest uppercase opacity-60">
-                        EXPLORE ARTWORK
+                      <span className="text-[10px] font-mono tracking-widest uppercase opacity-65">
+                        {project.services.length} DELIVERABLES
                       </span>
-                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#A58B55] dark:text-[#D8C7A5] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                        <span>VIEW GALLERY</span>
+                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#8C6E33] dark:text-[#D8C7A5] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                        <span>VIEW CASE STUDY</span>
                         <ArrowUpRight className="w-3 h-3" />
                       </span>
                     </div>
@@ -267,6 +276,9 @@ export const PortfolioGrid: React.FC<PortfolioGridProps> = ({
             </button>
           </div>
         )}
+
+        {/* Interactive Draggable Before & After Editorial Redesign Slider */}
+        <BeforeAfterSlider />
       </div>
     </section>
   );

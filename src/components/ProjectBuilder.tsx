@@ -342,7 +342,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-3 mb-3">
             <Logo variant="full" size="sm" />
             <span className="opacity-30">|</span>
@@ -362,6 +362,41 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
           </p>
         </div>
 
+        {/* Live Studio Capacity & Estimator Pill Badge */}
+        <div className="max-w-4xl mx-auto flex justify-center mb-5">
+          <div
+            className={`inline-flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 px-4 sm:px-6 py-2.5 rounded-full border text-[11px] sm:text-xs font-mono tracking-wide transition-colors ${
+              isDark
+                ? 'bg-[#161922] border-[#D8C7A5]/45 text-[#F3F1EC] shadow-[0_8px_28px_-10px_rgba(0,0,0,0.8)]'
+                : 'bg-[#F5EFE2] border-[#8C6E33]/45 text-[#14171A] shadow-[0_6px_20px_-10px_rgba(140,110,51,0.28)]'
+            }`}
+          >
+            <span className="inline-flex items-center gap-2 font-semibold">
+              <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    isDark ? 'bg-emerald-400' : 'bg-emerald-500'
+                  }`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isDark ? 'bg-emerald-400' : 'bg-emerald-600'
+                  }`}
+                />
+              </span>
+              <span className={isDark ? 'text-[#D8C7A5]' : 'text-[#7A5E29]'}>
+                Interactive Estimator · Engineered In-House
+              </span>
+            </span>
+            <span className="opacity-40" aria-hidden="true">|</span>
+            <span className="font-medium">Avg. Turnaround: 48–72 hrs</span>
+            <span className="opacity-40" aria-hidden="true">|</span>
+            <span className={`font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>
+              2 Client Slots Open
+            </span>
+          </div>
+        </div>
+
         <div
           className={`max-w-4xl mx-auto border transition-colors shadow-2xl ${
             isDark
@@ -375,7 +410,11 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
           <div className="p-6 sm:p-10 border-b border-inherit">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono block mb-1">
+                <span
+                  className={`text-[10px] tracking-[0.25em] uppercase font-mono font-semibold block mb-1 ${
+                    isDark ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'
+                  }`}
+                >
                   STEP 01 · SELECT SERVICES
                 </span>
                 <h3 className="font-serif text-xl sm:text-2xl font-normal">
@@ -427,15 +466,15 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                           <span
                             className={`font-semibold ${
                               svc.isCustomQuote
-                                ? 'text-[#A58B55] dark:text-[#D8C7A5]'
-                                : 'text-[#D8C7A5]'
+                                ? 'text-[#8C6E33] dark:text-[#D8C7A5]'
+                                : 'text-[#8C6E33] dark:text-[#D8C7A5]'
                             }`}
                           >
                             {svc.priceLabel}
                           </span>
                         </div>
                       </div>
-                      <span className="text-[10px] tracking-widest uppercase font-mono opacity-50 block mt-1">
+                      <span className="text-[10px] tracking-widest uppercase font-mono opacity-55 block mt-1">
                         {svc.category}
                       </span>
                     </div>
@@ -455,11 +494,11 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                   CALCULATED BASE SUBTOTAL
                 </span>
                 <div className="flex flex-wrap items-baseline gap-3">
-                  <span className="font-serif text-3xl font-normal text-[#D8C7A5]">
+                  <span className="font-serif text-3xl font-normal text-[#8C6E33] dark:text-[#D8C7A5]">
                     {pricingCalculation.formattedSubtotal}
                   </span>
                   {pricingCalculation.hasCustomQuote && (
-                    <span className="text-[11px] font-mono px-2 py-0.5 bg-[#D8C7A5]/15 border border-[#D8C7A5]/40 text-[#A58B55] dark:text-[#D8C7A5] font-semibold">
+                    <span className="text-[11px] font-mono px-2 py-0.5 bg-[#8C6E33]/10 dark:bg-[#D8C7A5]/15 border border-[#8C6E33]/35 dark:border-[#D8C7A5]/40 text-[#7A5E29] dark:text-[#D8C7A5] font-semibold">
                       Custom Quote Required
                     </span>
                   )}
@@ -494,7 +533,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
           {/* STEP 2: CREATIVE DELIVERABLE SPECIFICATIONS                    */}
           {/* ============================================================== */}
           <div className="p-6 sm:p-10 border-b border-inherit">
-            <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono block mb-1">
+            <span className="text-[10px] tracking-[0.25em] uppercase text-[#8C6E33] dark:text-[#D8C7A5] font-mono font-semibold block mb-1">
               STEP 02 · CREATIVE &amp; CONTENT DETAILS
             </span>
             <h3 className="font-serif text-xl sm:text-2xl font-normal mb-6">
@@ -503,7 +542,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
 
             {/* Deliverable Counters */}
             <div className="mb-8">
-              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono mb-3 text-[#D8C7A5]">
+              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono font-semibold mb-3 text-[#8C6E33] dark:text-[#D8C7A5]">
                 Content Volume Quantities (for content scopes)
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -557,7 +596,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
 
             {/* Social Formats */}
             <div className="mb-6">
-              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono mb-2 text-[#D8C7A5]">
+              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono font-semibold mb-2 text-[#8C6E33] dark:text-[#D8C7A5]">
                 Content Asset Formats Needed
               </label>
               <div className="flex flex-wrap gap-2">
@@ -587,7 +626,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
 
             {/* Campaign Moments */}
             <div>
-              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono mb-2 text-[#D8C7A5]">
+              <label className="block text-[11px] tracking-[0.2em] uppercase font-mono font-semibold mb-2 text-[#8C6E33] dark:text-[#D8C7A5]">
                 Campaign Occasions / Launch Types
               </label>
               <div className="flex flex-wrap gap-2">
@@ -620,7 +659,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
           {/* STEP 3: BUSINESS METRICS & TIMELINES                           */}
           {/* ============================================================== */}
           <div className="p-6 sm:p-10 border-b border-inherit">
-            <span className="text-[10px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono block mb-1">
+            <span className="text-[10px] tracking-[0.25em] uppercase text-[#8C6E33] dark:text-[#D8C7A5] font-mono font-semibold block mb-1">
               STEP 03 · CONTEXT &amp; TIMELINE
             </span>
             <h3 className="font-serif text-xl sm:text-2xl font-normal mb-6">
@@ -714,7 +753,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
             }`}
           >
             <div className="flex items-center justify-between pb-3 border-b border-inherit mb-4">
-              <span className="text-[11px] tracking-[0.25em] uppercase text-[#D8C7A5] font-mono">
+              <span className="text-[11px] tracking-[0.25em] uppercase text-[#8C6E33] dark:text-[#D8C7A5] font-mono font-semibold">
                 YOUR PROJECT SUMMARY
               </span>
               <div className="flex items-center gap-4">
@@ -722,11 +761,11 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveDraft}
-                    className="text-[11px] tracking-wider uppercase text-[#D8C7A5] hover:underline flex items-center gap-1 font-mono"
+                    className="text-[11px] tracking-wider uppercase text-[#8C6E33] dark:text-[#D8C7A5] hover:underline flex items-center gap-1 font-mono font-medium"
                   >
                     {draftSaved ? (
                       <>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         <span>Saved to Cloud!</span>
                       </>
                     ) : (
@@ -740,7 +779,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                 <button
                   type="button"
                   onClick={onOpenAdvisor}
-                  className="text-[11px] tracking-[0.15em] text-[#D8C7A5] hover:opacity-80 flex items-center gap-1.5"
+                  className="text-[11px] tracking-[0.15em] text-[#8C6E33] dark:text-[#D8C7A5] hover:opacity-80 flex items-center gap-1.5 font-medium"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Discuss with Aja</span>
@@ -750,7 +789,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-light mb-6 opacity-90">
               <div>
-                <span className="opacity-60 block text-[10px] tracking-wider uppercase font-mono">
+                <span className="opacity-65 block text-[10px] tracking-wider uppercase font-mono">
                   SELECTED SERVICES
                 </span>
                 <span className="font-normal">
@@ -758,7 +797,7 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                 </span>
               </div>
               <div>
-                <span className="opacity-60 block text-[10px] tracking-wider uppercase font-mono">
+                <span className="opacity-65 block text-[10px] tracking-wider uppercase font-mono">
                   DELIVERABLE COUNTS
                 </span>
                 <span className="font-mono">
@@ -766,10 +805,10 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                 </span>
               </div>
               <div>
-                <span className="opacity-60 block text-[10px] tracking-wider uppercase font-mono">
+                <span className="opacity-65 block text-[10px] tracking-wider uppercase font-mono">
                   BASE ESTIMATE
                 </span>
-                <span className="text-[#D8C7A5] font-mono font-medium text-sm">
+                <span className="text-[#8C6E33] dark:text-[#D8C7A5] font-mono font-semibold text-sm">
                   {pricingCalculation.formattedSubtotal}
                 </span>
               </div>

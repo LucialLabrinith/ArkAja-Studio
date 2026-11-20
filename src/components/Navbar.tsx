@@ -104,7 +104,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             : 'bg-[#FFF8EB] text-[#8C6D2D] border-[#E8D4B0]'
         }`}
       >
-        <Sparkles className="w-3 h-3 text-[#D8C7A5] animate-pulse shrink-0" />
+        <Sparkles
+          className={`w-3 h-3 animate-pulse shrink-0 ${
+            isDark ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'
+          }`}
+        />
         <span>
           Now Booking Creative &amp; Web Projects for December &amp; January
         </span>
@@ -142,7 +146,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`text-[11.5px] tracking-[0.22em] font-medium transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:bg-[#D8C7A5] after:transition-all after:duration-200 ${
+                  className={`text-[11.5px] tracking-[0.22em] font-medium transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:transition-all after:duration-200 ${
+                    isDark ? 'after:bg-[#D8C7A5]' : 'after:bg-[#8C6E33]'
+                  } ${
                     isActive
                       ? isDark
                         ? 'text-[#FAF8F5] after:w-full'
@@ -223,7 +229,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
                 title="Studio Director Login"
               >
-                <Lock className="w-3 h-3 text-[#D8C7A5]" />
+                <Lock className={`w-3 h-3 ${isDark ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'}`} />
                 <span className="hidden sm:inline">DIRECTOR ACCESS</span>
               </button>
             )}
@@ -234,11 +240,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               className={`flex items-center gap-2 px-3 py-2 text-[11px] tracking-[0.15em] font-medium transition-all duration-200 whitespace-nowrap ${
                 isDark
                   ? 'text-[#D8C7A5] hover:text-[#FAF8F5] border border-[#D8C7A5]/40 hover:border-[#D8C7A5] bg-[#14161a]'
-                  : 'text-[#8C723E] hover:text-[#14171A] border border-[#A58B55]/40 hover:border-[#A58B55] bg-[#FFFFFF]'
+                  : 'text-[#7A5E29] hover:text-[#14171A] border border-[#8C6E33]/40 hover:border-[#8C6E33] bg-[#FFFFFF]'
               }`}
               title="Chat with Aja, Studio Advisor"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#D8C7A5]" />
+              <Sparkles className={`w-3.5 h-3.5 ${isDark ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'}`} />
               <span className="hidden sm:inline">ASK AJA</span>
             </button>
 
@@ -352,7 +358,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setMobileMenuOpen(false);
                   onOpenAccount();
                 }}
-                className="w-full py-2.5 px-4 text-xs font-mono tracking-widest uppercase border border-[#D8C7A5]/60 text-[#D8C7A5] text-center flex items-center justify-center gap-2 bg-[#D8C7A5]/5"
+                className={`w-full py-2.5 px-4 text-xs font-mono tracking-widest uppercase border text-center flex items-center justify-center gap-2 ${
+                  isDark
+                    ? 'border-[#D8C7A5]/60 text-[#D8C7A5] bg-[#D8C7A5]/5'
+                    : 'border-[#8C6E33]/50 text-[#7A5E29] bg-[#8C6E33]/5'
+                }`}
               >
                 {isOwner ? (
                   <>
@@ -383,7 +393,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setMobileMenuOpen(false);
                   onOpenAdvisor();
                 }}
-                className="w-full py-2.5 px-4 text-xs font-medium tracking-widest uppercase border border-[#D8C7A5] text-[#D8C7A5] text-center flex items-center justify-center gap-2"
+                className={`w-full py-2.5 px-4 text-xs font-medium tracking-widest uppercase border text-center flex items-center justify-center gap-2 ${
+                  isDark
+                    ? 'border-[#D8C7A5] text-[#D8C7A5]'
+                    : 'border-[#8C6E33] text-[#7A5E29]'
+                }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Ask Aja (AI Advisor)</span>

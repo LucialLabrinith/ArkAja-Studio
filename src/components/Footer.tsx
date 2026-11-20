@@ -49,7 +49,11 @@ export const Footer: React.FC = () => {
 
           {/* Navigation Links */}
           <div className="lg:col-span-3 space-y-3">
-            <span className="text-[10px] tracking-[0.28em] uppercase text-[#D8C7A5] font-mono block mb-2 font-semibold">
+            <span
+              className={`text-[10px] tracking-[0.28em] uppercase font-mono block mb-2 font-semibold ${
+                isDarkCanvas ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'
+              }`}
+            >
               NAVIGATION
             </span>
             <ul className="space-y-2 text-xs tracking-wider font-medium">
@@ -70,7 +74,11 @@ export const Footer: React.FC = () => {
 
           {/* Contact & Social Column */}
           <div className="lg:col-span-4 space-y-4">
-            <span className="text-[10px] tracking-[0.28em] uppercase text-[#D8C7A5] font-mono block mb-2 font-semibold">
+            <span
+              className={`text-[10px] tracking-[0.28em] uppercase font-mono block mb-2 font-semibold ${
+                isDarkCanvas ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'
+              }`}
+            >
               STUDIO CONNECT
             </span>
             <div className="space-y-2.5 text-xs font-light">
@@ -80,7 +88,7 @@ export const Footer: React.FC = () => {
                   isDarkCanvas ? 'hover:text-[#FAF8F5]' : 'hover:text-[#14171A]'
                 }`}
               >
-                <Mail className="w-3.5 h-3.5 text-[#D8C7A5]" />
+                <Mail className={`w-3.5 h-3.5 ${isDarkCanvas ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'}`} />
                 <span className="font-mono">{gmailAddress}</span>
               </a>
 
@@ -92,7 +100,7 @@ export const Footer: React.FC = () => {
                   isDarkCanvas ? 'hover:text-[#FAF8F5]' : 'hover:text-[#14171A]'
                 }`}
               >
-                <Instagram className="w-3.5 h-3.5 text-[#D8C7A5]" />
+                <Instagram className={`w-3.5 h-3.5 ${isDarkCanvas ? 'text-[#D8C7A5]' : 'text-[#8C6E33]'}`} />
                 <span>@arkajastudio</span>
                 <ArrowUpRight className="w-3 h-3 opacity-60" />
               </a>
@@ -111,14 +119,21 @@ export const Footer: React.FC = () => {
 
         {/* Engineered From Scratch Trust Line & Availability Status */}
         <div className="pt-8 pb-5 border-b border-inherit/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono tracking-wide">
-          <span className="opacity-80">
-            Custom designed &amp; engineered in-house by ArkAja Studio
+          <span className={isDarkCanvas ? 'text-[#C5CAD5]' : 'text-[#3F4550]'}>
+            Custom designed &amp; engineered from scratch by ArkAja Studio
           </span>
-          <span className="inline-flex items-center gap-2 text-[10.5px] tracking-wider uppercase font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-            <span className={isDarkCanvas ? 'text-[#FAF8F5]' : 'text-[#14171A]'}>
-              Available for projects
-            </span>
+          <span
+            className={`inline-flex items-center gap-2 text-[10.5px] tracking-wider uppercase font-semibold ${
+              isDarkCanvas ? 'text-[#FAF8F5]' : 'text-[#14171A]'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full animate-pulse ${
+                isDarkCanvas ? 'bg-emerald-400' : 'bg-emerald-600'
+              }`}
+              aria-hidden="true"
+            />
+            <span>Available for projects</span>
           </span>
         </div>
 
