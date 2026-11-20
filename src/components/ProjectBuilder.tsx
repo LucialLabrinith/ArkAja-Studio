@@ -27,7 +27,6 @@ export interface ServiceSelectionItem {
   id: string;
   label: string;
   priceLabel: string;
-  originalPriceLabel?: string;
   fixedPrice?: number;
   isCustomQuote: boolean;
   category: 'WEBSITE' | 'BRANDING' | 'CONTENT' | 'DEV' | 'AI' | 'OTHER';

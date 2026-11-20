@@ -60,8 +60,6 @@ export interface PricingPackage {
   ctaText: string;
   popular?: boolean;
   isCustomQuote?: boolean;
-  originalPriceInr?: string;
-  discountBadge?: string;
   category?: 'WEBSITES' | 'BRANDING' | 'DEVELOPMENT' | 'AI' | 'CONTENT' | 'BUNDLE';
   disclaimer?: string;
 }

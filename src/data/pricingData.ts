@@ -59,7 +59,6 @@ export interface WebsiteAddon {
   id: string;
   name: string;
   priceInr: string;
-  originalPriceInr?: string;
   priceInrNumber: number;
   description: string;
   note?: string;
