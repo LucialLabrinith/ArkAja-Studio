@@ -88,12 +88,46 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
 
   // Subscribe to real-time enquiries when owner is logged in
   useEffect(() => {
-    if (isOpen && isOwner) {
-      const unsubscribe = subscribeToAllEnquiries((enqs) => {
-        setLiveEnquiries(enqs);
-      });
-      return () => unsubscribe();
-    }
+    if (!isOpen || !isOwner) return;
+
+    let cancelled = false;
+    fetch('/api/enquiries')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.enquiries && Array.isArray(data.enquiries)) {
+          setLiveEnquiries((prev) => {
+            const byId = new Map<string, any>();
+            for (const item of [...prev, ...data.enquiries]) {
+              const key = item.id || item.enquiryId;
+              if (key && !byId.has(key)) byId.set(key, item);
+            }
+            return Array.from(byId.values()).sort(
+              (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+            );
+          });
+        }
+      })
+      .catch(() => {});
+
+    const unsubscribe = subscribeToAllEnquiries((enqs) => {
+      if (!cancelled) {
+        setLiveEnquiries((prev) => {
+          const byId = new Map<string, any>();
+          for (const item of [...enqs, ...prev]) {
+            const key = item.id || item.enquiryId;
+            if (key && !byId.has(key)) byId.set(key, item);
+          }
+          return Array.from(byId.values()).sort(
+            (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+          );
+        });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [isOpen, isOwner]);
 
   if (!isOpen) return null;

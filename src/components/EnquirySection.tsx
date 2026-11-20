@@ -124,22 +124,25 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     }
   }, [prefillPackage]);
 
-  const serviceOptions = [
-    'Basic Website — ₹10,000',
-    'Urgent Website Delivery — +₹2,000',
-    'Enquiry Form Integration — +₹3,000',
-    'AI Chatbot — +₹5,000',
-    'Logo Design — ₹3,000',
-    'Basic Web App (Level 1) — ₹15,000',
-    'Advanced Web App / Platform — Custom Quote',
-    'Brand Identity — Custom Quote',
-    'Web Apps & Business Systems — Custom Quote',
-    'Social Media & Content',
-    'Campaign / Promotional Creative',
-    'AI-Assisted Business Solution — Custom Quote',
-    'Custom Website Features — Custom Quote',
-    'Other',
-  ];
+  const serviceOptions = useMemo(
+    () => [
+      'Basic Website — ₹10,000',
+      'Urgent Website Delivery — +₹2,000',
+      'Enquiry Form Integration — +₹3,000',
+      'AI Chatbot — +₹5,000',
+      'Logo Design — ₹3,000',
+      'Basic Web App (Level 1) — ₹15,000',
+      'Advanced Web App / Platform — Custom Quote',
+      'Brand Identity — Custom Quote',
+      'Web Apps & Business Systems — Custom Quote',
+      'Social Media & Content',
+      'Campaign / Promotional Creative',
+      'AI-Assisted Business Solution — Custom Quote',
+      'Custom Website Features — Custom Quote',
+      'Other',
+    ],
+    []
+  );
 
   const SEGREGATION_CONFIGS = [
     {
@@ -369,6 +372,9 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
         }),
       });
 
+      if (!res.ok) {
+        throw new Error(`Enquiry API returned ${res.status}`);
+      }
       const result = await res.json();
       const enquiryId = result.enquiryId || generatedId;
 

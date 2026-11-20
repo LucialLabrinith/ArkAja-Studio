@@ -60,8 +60,14 @@ export async function testConnection() {
 }
 testConnection();
 
-// Persist ArkAja Studio metadata in Firestore
+// Persist ArkAja Studio metadata in Firestore (runs only when studio owner is authenticated)
 export async function initializeStudioMetadata() {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()
+  ) {
+    return;
+  }
   try {
     const studioRef = doc(db, 'studio', 'info');
     await setDoc(
@@ -83,7 +89,6 @@ export async function initializeStudioMetadata() {
     console.warn('Studio metadata sync note:', err);
   }
 }
-initializeStudioMetadata();
 
 // Sign In with Google (Restricted to Studio Owner)
 export async function signInWithGoogle(): Promise<FirebaseUser | null> {
@@ -112,6 +117,7 @@ export async function signInWithGoogle(): Promise<FirebaseUser | null> {
         },
         { merge: true }
       );
+      void initializeStudioMetadata();
     }
     return user;
   } catch (err: any) {
@@ -128,30 +134,31 @@ export async function signOutUser(): Promise<void> {
 // Persist Enquiry to Firestore
 export async function saveEnquiryToFirestore(enquiry: any): Promise<void> {
   try {
-    const enquiryRef = doc(db, 'enquiries', enquiry.id || enquiry.enquiryId);
+    const resolvedId = String(enquiry?.id || enquiry?.enquiryId || `ARK-${Date.now().toString(36).toUpperCase()}`);
+    const enquiryRef = doc(db, 'enquiries', resolvedId);
     await setDoc(enquiryRef, {
-      enquiryId: enquiry.id || enquiry.enquiryId,
-      userId: enquiry.userId || 'guest',
-      userEmail: enquiry.email,
-      fullName: enquiry.fullName,
-      brandName: enquiry.brandName,
-      email: enquiry.email,
-      country: enquiry.country || '',
-      phone: enquiry.phone || '',
-      businessCategory: enquiry.businessCategory || '',
-      neededServices: enquiry.neededServices || [],
-      preferredPackage: enquiry.preferredPackage || '',
-      deliverableCounts: enquiry.deliverableCounts || {},
-      timeline: enquiry.timeline || '',
-      budget: enquiry.budget || '',
-      projectDetails: enquiry.projectDetails,
-      referenceLinks: enquiry.referenceLinks || '',
-      calculatedSubtotal: enquiry.calculatedSubtotal || 0,
-      pricingSummary: enquiry.pricingSummary || '',
-      hasCustomQuote: Boolean(enquiry.hasCustomQuote),
+      enquiryId: resolvedId,
+      userId: String(enquiry?.userId || 'guest'),
+      userEmail: String(enquiry?.email || ''),
+      fullName: String(enquiry?.fullName || ''),
+      brandName: String(enquiry?.brandName || ''),
+      email: String(enquiry?.email || ''),
+      country: String(enquiry?.country || ''),
+      phone: String(enquiry?.phone || ''),
+      businessCategory: String(enquiry?.businessCategory || ''),
+      neededServices: Array.isArray(enquiry?.neededServices) ? enquiry.neededServices : [],
+      preferredPackage: String(enquiry?.preferredPackage || ''),
+      deliverableCounts: enquiry?.deliverableCounts && typeof enquiry.deliverableCounts === 'object' ? enquiry.deliverableCounts : {},
+      timeline: String(enquiry?.timeline || ''),
+      budget: String(enquiry?.budget || ''),
+      projectDetails: String(enquiry?.projectDetails || ''),
+      referenceLinks: String(enquiry?.referenceLinks || ''),
+      calculatedSubtotal: Number(enquiry?.calculatedSubtotal) || 0,
+      pricingSummary: String(enquiry?.pricingSummary || ''),
+      hasCustomQuote: Boolean(enquiry?.hasCustomQuote),
       status: 'pending_review',
       recipientEmail: STUDIO_OWNER_EMAIL,
-      createdAt: enquiry.createdAt || new Date().toISOString(),
+      createdAt: String(enquiry?.createdAt || new Date().toISOString()),
       timestamp: serverTimestamp(),
     });
   } catch (err) {
@@ -164,6 +171,12 @@ export function subscribeToAllEnquiries(
   onUpdate: (enquiries: any[]) => void,
   onError?: (err: Error) => void
 ): () => void {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()
+  ) {
+    return () => {};
+  }
   try {
     const enquiriesRef = collection(db, 'enquiries');
     const unsubscribe = onSnapshot(
@@ -233,6 +246,12 @@ export async function addProjectToFirestore(project: {
   deliverables: string[];
   creativeDirections?: any[];
 }): Promise<void> {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()
+  ) {
+    return;
+  }
   const projectRef = doc(db, 'projects', project.id);
   await setDoc(projectRef, {
     ...project,
@@ -244,6 +263,12 @@ export async function addProjectToFirestore(project: {
 
 // Delete Project from Firestore
 export async function deleteProjectFromFirestore(projectId: string): Promise<void> {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()
+  ) {
+    return;
+  }
   const projectRef = doc(db, 'projects', projectId);
   await deleteDoc(projectRef);
 }
@@ -253,12 +278,21 @@ export async function updateEnquiryStatusInFirestore(
   enquiryId: string,
   status: 'pending_review' | 'contacted' | 'booked' | 'archived'
 ): Promise<void> {
+  if (
+    !auth.currentUser ||
+    auth.currentUser.email?.toLowerCase() !== STUDIO_OWNER_EMAIL.toLowerCase()
+  ) {
+    return;
+  }
   const enquiryRef = doc(db, 'enquiries', enquiryId);
   await setDoc(enquiryRef, { status, updatedAt: new Date().toISOString() }, { merge: true });
 }
 
 // Get User's submitted enquiries
-export async function getUserEnquiries(email: string, userId?: string) {
+export async function getUserEnquiries(email: string, _userId?: string) {
+  if (!auth.currentUser || !email) {
+    return [];
+  }
   try {
     const enquiriesRef = collection(db, 'enquiries');
     const q = query(enquiriesRef, where('email', '==', email));
@@ -272,6 +306,9 @@ export async function getUserEnquiries(email: string, userId?: string) {
 
 // Save Project Scope Draft
 export async function saveDraftToFirestore(userId: string, draft: any): Promise<void> {
+  if (!auth.currentUser || auth.currentUser.uid !== userId) {
+    return;
+  }
   try {
     const draftId = draft.draftId || `draft-${Date.now()}`;
     const draftRef = doc(db, 'users', userId, 'drafts', draftId);
@@ -298,6 +335,9 @@ export async function saveDraftToFirestore(userId: string, draft: any): Promise<
 
 // Get User's drafts
 export async function getUserDrafts(userId: string) {
+  if (!auth.currentUser || !userId) {
+    return [];
+  }
   try {
     const draftsRef = collection(db, 'users', userId, 'drafts');
     const snapshot = await getDocs(draftsRef);

@@ -68,8 +68,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   }, [user]);
 
-  // Set default initial amount when modal opens for custom package
+  // Set default initial amount and clear stale modal state when package changes
   useEffect(() => {
+    setErrorMessage(null);
+    setPaymentReceipt(null);
     if (pkg) {
       if (pkg.id === 'web-apps' || pkg.id === 'web-app') setCustomInrAmount(25000);
       else if (pkg.id === 'brand-identity') setCustomInrAmount(15000);

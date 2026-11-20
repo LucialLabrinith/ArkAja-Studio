@@ -93,7 +93,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       services: matchedServices,
       pricing: matchedPricing,
     };
-  }, [query]);
+  }, [query, allProjects]);
 
   if (!isOpen) return null;
 

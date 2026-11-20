@@ -651,33 +651,35 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
 
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <button
-                  type="button"
-                  onClick={() => onSelectProject(prevProject)}
-                  className={`flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider transition-colors truncate cursor-pointer ${
-                    isDark
-                      ? 'text-[#A6ABB6] hover:text-[#FAF8F5]'
-                      : 'text-[#555B66] hover:text-[#14171A]'
-                  }`}
-                >
-                  <ChevronLeft className={`w-3.5 h-3.5 shrink-0 ${accentText}`} />
-                  <span className="truncate">{prevProject.title}</span>
-                </button>
+              {prevProject && nextProject && (
+                <div className="flex items-center justify-between gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => onSelectProject(prevProject)}
+                    className={`flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider transition-colors truncate cursor-pointer ${
+                      isDark
+                        ? 'text-[#A6ABB6] hover:text-[#FAF8F5]'
+                        : 'text-[#555B66] hover:text-[#14171A]'
+                    }`}
+                  >
+                    <ChevronLeft className={`w-3.5 h-3.5 shrink-0 ${accentText}`} />
+                    <span className="truncate">{prevProject.title}</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => onSelectProject(nextProject)}
-                  className={`flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider transition-colors truncate cursor-pointer ${
-                    isDark
-                      ? 'text-[#A6ABB6] hover:text-[#FAF8F5]'
-                      : 'text-[#555B66] hover:text-[#14171A]'
-                  }`}
-                >
-                  <span className="truncate">{nextProject.title}</span>
-                  <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${accentText}`} />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => onSelectProject(nextProject)}
+                    className={`flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider transition-colors truncate cursor-pointer ${
+                      isDark
+                        ? 'text-[#A6ABB6] hover:text-[#FAF8F5]'
+                        : 'text-[#555B66] hover:text-[#14171A]'
+                    }`}
+                  >
+                    <span className="truncate">{nextProject.title}</span>
+                    <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${accentText}`} />
+                  </button>
+                </div>
+              )}
             </div>
           </motion.aside>
 

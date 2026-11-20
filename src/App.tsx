@@ -67,25 +67,32 @@ function StudioApp() {
 
   // Fetch Studio configuration, server assets, and subscribe to Firestore real-time portfolio projects
   useEffect(() => {
-    fetch('/api/config')
-      .then((res) => res.json())
-      .then((data) => setStudioConfig(data))
+    const fetchJsonSafe = async (url: string) => {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) return null;
+      return res.json();
+    };
+
+    fetchJsonSafe('/api/config')
+      .then((data) => {
+        if (data) setStudioConfig(data);
+      })
       .catch((err) => console.log('Config fetch note:', err));
 
-    fetch('/api/projects-assets')
-      .then((res) => res.json())
+    fetchJsonSafe('/api/projects-assets')
       .then((data) => {
-        if (data.assets) {
+        if (data?.assets) {
           setUploadedAssets(data.assets);
         }
       })
       .catch((err) => console.log('Asset fetch note:', err));
 
     // Fetch stored custom projects from server
-    fetch('/api/custom-projects')
-      .then((res) => res.json())
+    fetchJsonSafe('/api/custom-projects')
       .then((data) => {
-        if (data.projects && Array.isArray(data.projects)) {
+        if (data?.projects && Array.isArray(data.projects)) {
           setCustomProjects(data.projects);
         }
       })

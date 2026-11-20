@@ -69,22 +69,7 @@ function savePortfolioAssetToStore(filename: string, base64Payload: string) {
       : `data:image/png;base64,${base64Payload}`;
     store[cleanName] = fullPayload;
     fs.writeFileSync(portfolioStoreFile, JSON.stringify(store, null, 2));
-
-    // Persist into code file src/data/embeddedAssets.ts so it remains in code permanently
-    const codePath = path.resolve(process.cwd(), 'src', 'data', 'embeddedAssets.ts');
-    const codeContent = `/**
- * Auto-generated persistent code store for user-uploaded flat portfolio artwork.
- * This stores the images directly in code so they persist across any reloads and restarts.
- */
-export const EMBEDDED_PORTFOLIO_ASSETS: Record<string, string> = ${JSON.stringify(store, null, 2)};
-
-export function getEmbeddedAsset(filename: string): string | undefined {
-  const clean = filename.split('/').pop() || filename;
-  return EMBEDDED_PORTFOLIO_ASSETS[clean];
-}
-`;
-    fs.writeFileSync(codePath, codeContent, 'utf-8');
-    console.log(`[PortfolioStore] Saved ${cleanName} to code store (embeddedAssets.ts) and disk`);
+    console.log(`[PortfolioStore] Saved ${cleanName} to persistent JSON store and disk`);
   } catch (err) {
     console.error('Error saving to portfolio store:', err);
   }
@@ -453,15 +438,16 @@ TONE & STYLE:
     });
 
     // Try Gemini model generation with resilient timeout and model fallback
-    const candidateModels = ['gemini-3.8-flash', 'gemini-2.5-flash'];
+    const candidateModels = ['gemini-4-hydrogen', 'gemini-2.5-flash'];
     let replyText = '';
 
     if (apiKey) {
       for (const m of candidateModels) {
+        let timerId: ReturnType<typeof setTimeout> | undefined;
         try {
-          const timeoutPromise = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error(`Timeout waiting for ${m}`)), 9000)
-          );
+          const timeoutPromise = new Promise<never>((_, reject) => {
+            timerId = setTimeout(() => reject(new Error(`Timeout waiting for ${m}`)), 5000);
+          });
           const callPromise = ai.models.generateContent({
             model: m,
             contents: contents,
@@ -470,6 +456,8 @@ TONE & STYLE:
               temperature: 0.75,
             },
           });
+          // Suppress late rejection if timeout wins the race
+          callPromise.catch(() => {});
           const response = await Promise.race([callPromise, timeoutPromise]);
           if (response && response.text) {
             replyText = response.text.trim();
@@ -477,6 +465,8 @@ TONE & STYLE:
           }
         } catch (err: any) {
           console.warn(`Gemini API candidate ${m} note:`, err?.message || err);
+        } finally {
+          if (timerId) clearTimeout(timerId);
         }
       }
     }
@@ -1239,11 +1229,6 @@ app.get('/api/portfolio-status', (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to retrieve portfolio status' });
   }
-});
-
-// 8. API: Project Assets endpoint
-app.get('/api/projects-assets', (req: Request, res: Response) => {
-  res.json({ success: true, assets: {} });
 });
 
 // Setup Vite or static serving
