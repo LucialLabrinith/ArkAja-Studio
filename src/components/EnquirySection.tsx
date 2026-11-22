@@ -12,11 +12,7 @@ import {
   CheckCircle2,
   Copy,
   Check,
-  CheckSquare,
-  Square,
   Sparkles,
-  ShieldCheck,
-  AlertCircle,
 } from 'lucide-react';
 
 interface EnquirySectionProps {
@@ -294,15 +290,6 @@ export const EnquirySection: React.FC<EnquirySectionProps> = ({
     'Logo Design — ₹3,000': 3000,
     'Basic Web App (Level 1) — ₹15,000': 15000,
   };
-
-  const CUSTOM_QUOTE_ITEMS = [
-    'Brand Identity — Custom Quote',
-    'Advanced Web App / Platform — Custom Quote',
-    'Web Apps & Business Systems — Custom Quote',
-    'Web App / Custom Development — Custom Quote',
-    'AI-Assisted Business Solution — Custom Quote',
-    'Custom Website Features — Custom Quote',
-  ];
 
   // Dynamic pricing calculation adhering to rules 13 & 14
   const pricingAnalysis = useMemo(() => {

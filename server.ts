@@ -15,6 +15,9 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const isProd = process.env.NODE_ENV === 'production';
+const isServerless = Boolean(
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY
+);
 
 // Razorpay Credentials (configured securely via environment variables)
 const rawKeyId = process.env.RAZORPAY_KEY_ID?.trim() || '';
@@ -22,23 +25,36 @@ const rawSecret = process.env.RAZORPAY_KEY_SECRET?.trim() || '';
 const RAZORPAY_KEY_ID = (rawKeyId === 'rzp_test_TiiOtZsH2caVyE' || rawKeyId === '') ? '' : rawKeyId;
 const RAZORPAY_KEY_SECRET = (rawSecret === 'QEpE8oQyIybTOJryn3opRdMN' || rawSecret === '') ? '' : rawSecret;
 
-// Ensure public upload directories exist
-const uploadDir = path.resolve(process.cwd(), 'public', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Ensure public upload directories exist (safe on read-only serverless FS like Vercel)
+const uploadDir = isServerless
+  ? path.join('/tmp', 'arkaja-uploads')
+  : path.resolve(process.cwd(), 'public', 'uploads');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch {
+  // Ignore on read-only filesystem
 }
 
 // Ensure public portfolio asset directory exists
 const portfolioDir = path.resolve(process.cwd(), 'public', 'assets', 'portfolio');
-if (!fs.existsSync(portfolioDir)) {
-  fs.mkdirSync(portfolioDir, { recursive: true });
+try {
+  if (!fs.existsSync(portfolioDir)) {
+    fs.mkdirSync(portfolioDir, { recursive: true });
+  }
+} catch {
+  // Ignore on read-only filesystem
 }
 
 // Persistent JSON backup store for uploaded portfolio artwork
-const portfolioStoreFile = path.resolve(process.cwd(), 'portfolio-assets-store.json');
+const portfolioStoreFile = isServerless
+  ? path.join('/tmp', 'portfolio-assets-store.json')
+  : path.resolve(process.cwd(), 'portfolio-assets-store.json');
 
 // Auto-restore any saved base64 images from JSON store to disk on server boot
 function restorePortfolioAssetsFromStore() {
+  if (isServerless) return;
   try {
     if (fs.existsSync(portfolioStoreFile)) {
       const store: Record<string, string> = JSON.parse(fs.readFileSync(portfolioStoreFile, 'utf-8'));
@@ -154,15 +170,17 @@ const AJA_MODEL_CONFIGS: Array<{
   },
 ];
 
-// Store enquiries in a lightweight JSON store
-const enquiriesFile = path.resolve(process.cwd(), 'enquiries.json');
+// Store enquiries in a lightweight JSON store (uses /tmp on read-only serverless FS)
+const enquiriesFile = isServerless
+  ? path.join('/tmp', 'enquiries.json')
+  : path.resolve(process.cwd(), 'enquiries.json');
 function saveEnquiry(data: any) {
   let list = [];
   try {
     if (fs.existsSync(enquiriesFile)) {
       list = JSON.parse(fs.readFileSync(enquiriesFile, 'utf-8'));
     }
-  } catch (e) {
+  } catch {
     list = [];
   }
   const enquiry = {
@@ -171,18 +189,24 @@ function saveEnquiry(data: any) {
     ...data,
   };
   list.unshift(enquiry);
-  fs.writeFileSync(enquiriesFile, JSON.stringify(list, null, 2));
+  try {
+    fs.writeFileSync(enquiriesFile, JSON.stringify(list, null, 2));
+  } catch (err) {
+    console.warn('Could not persist enquiry to local disk:', err);
+  }
   return enquiry;
 }
 
 // Store custom portfolio projects added by studio director
-const customProjectsFile = path.resolve(process.cwd(), 'custom-projects.json');
+const customProjectsFile = isServerless
+  ? path.join('/tmp', 'custom-projects.json')
+  : path.resolve(process.cwd(), 'custom-projects.json');
 function getCustomProjects() {
   try {
     if (fs.existsSync(customProjectsFile)) {
       return JSON.parse(fs.readFileSync(customProjectsFile, 'utf-8'));
     }
-  } catch (e) {
+  } catch {
     return [];
   }
   return [];
@@ -195,13 +219,21 @@ function saveCustomProject(project: any) {
   } else {
     list.unshift({ ...project, createdAt: new Date().toISOString() });
   }
-  fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  try {
+    fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  } catch (err) {
+    console.warn('Could not persist custom project to local disk:', err);
+  }
   return project;
 }
 function removeCustomProject(projectId: string) {
   let list = getCustomProjects();
   list = list.filter((p: any) => p.id !== projectId);
-  fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  try {
+    fs.writeFileSync(customProjectsFile, JSON.stringify(list, null, 2));
+  } catch (err) {
+    console.warn('Could not update custom projects file:', err);
+  }
   return true;
 }
 
@@ -215,7 +247,7 @@ function sanitizePaymentUrl(url?: string): string {
 }
 
 // 1. API: Studio Config & Razorpay Integration
-app.get('/api/config', (req: Request, res: Response) => {
+app.get('/api/config', (_req: Request, res: Response) => {
   const starterUrl = sanitizePaymentUrl(process.env.RAZORPAY_STARTER_PAYMENT_URL);
   const signatureUrl = sanitizePaymentUrl(process.env.RAZORPAY_SIGNATURE_PAYMENT_URL);
   const customUrl = sanitizePaymentUrl(process.env.RAZORPAY_CUSTOM_PAYMENT_URL);
@@ -508,6 +540,8 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders?.();
+  // Send immediate SSE comment frame so clients/proxies recognize live stream right away
+  res.write(': connected\n\n');
 
   const sendEvent = (payload: Record<string, any>) => {
     if (!res.writableEnded) {
@@ -516,9 +550,22 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
   };
 
   let clientClosed = false;
-  req.on('close', () => {
-    clientClosed = true;
+  res.on('close', () => {
+    if (!res.writableEnded) {
+      clientClosed = true;
+    }
   });
+
+  const raceWithTimeout = <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`Timeout waiting for ${label}`)), ms);
+    });
+    promise.catch(() => {});
+    return Promise.race([promise, timeoutPromise]).finally(() => {
+      if (timer) clearTimeout(timer);
+    });
+  };
 
   try {
     const contents = buildAjaContents(message, history);
@@ -529,15 +576,28 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
       for (const candidate of AJA_MODEL_CONFIGS) {
         if (clientClosed) break;
         try {
-          const stream = await ai.models.generateContentStream({
-            model: candidate.model,
-            contents,
-            config: candidate.config,
-          });
+          const stream = await raceWithTimeout(
+            ai.models.generateContentStream({
+              model: candidate.model,
+              contents,
+              config: candidate.config,
+            }),
+            6500,
+            `${candidate.model} stream open`
+          );
 
-          for await (const chunk of stream) {
-            if (clientClosed) break;
-            const delta = chunk?.text;
+          const iterator = stream[Symbol.asyncIterator]();
+          let firstChunkReceived = false;
+
+          while (!clientClosed) {
+            const nextResult = await raceWithTimeout(
+              iterator.next(),
+              firstChunkReceived ? 10000 : 6500,
+              `${candidate.model} chunk`
+            );
+            if (nextResult.done) break;
+            firstChunkReceived = true;
+            const delta = nextResult.value?.text;
             if (delta) {
               fullText += delta;
               sendEvent({ type: 'chunk', text: delta });
@@ -557,7 +617,6 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
           }
         } catch (err: any) {
           console.warn(`Gemini Stream candidate ${candidate.model} note:`, err?.message || err);
-          // If partial text already streamed before interruption, finalize cleanly
           if (fullText.trim()) {
             const suggestions = inferAjaSuggestions(message, fullText);
             sendEvent({
@@ -573,7 +632,7 @@ app.post('/api/chat/stream', async (req: Request, res: Response) => {
       }
     }
 
-    // Instant smart studio fallback when Gemini is unavailable
+    // Instant smart studio fallback when Gemini is unavailable or slow
     const smartFallback = getAjaSmartFallback(message, history);
     sendEvent({ type: 'chunk', text: smartFallback.reply });
     sendEvent({
@@ -721,20 +780,20 @@ app.post('/api/enquiries', (req: Request, res: Response) => {
   }
 });
 
-app.get('/api/enquiries', (req: Request, res: Response) => {
+app.get('/api/enquiries', (_req: Request, res: Response) => {
   try {
     let list = [];
     if (fs.existsSync(enquiriesFile)) {
       list = JSON.parse(fs.readFileSync(enquiriesFile, 'utf-8'));
     }
     res.json({ success: true, enquiries: list });
-  } catch (err: any) {
+  } catch {
     res.status(500).json({ error: 'Failed to read enquiries' });
   }
 });
 
 // 3b. API: Custom Portfolio Projects endpoints
-app.get('/api/custom-projects', (req: Request, res: Response) => {
+app.get('/api/custom-projects', (_req: Request, res: Response) => {
   res.json({ projects: getCustomProjects() });
 });
 
@@ -764,7 +823,7 @@ app.delete('/api/custom-projects/:id', (req: Request, res: Response) => {
 // 4. API: Upload Project Image Asset (supports user uploading their authentic artwork)
 app.post('/api/upload', (req: Request, res: Response) => {
   try {
-    const { projectSlug, fileName, base64Data } = req.body;
+    const { projectSlug, base64Data } = req.body;
     if (!projectSlug || !base64Data) {
       res.status(400).json({ error: 'projectSlug and base64Data are required' });
       return;
@@ -807,7 +866,7 @@ app.post('/api/upload', (req: Request, res: Response) => {
 });
 
 // 5. API: Scan Available Uploaded Assets
-app.get('/api/projects-assets', (req: Request, res: Response) => {
+app.get('/api/projects-assets', (_req: Request, res: Response) => {
   try {
     const files = fs.readdirSync(uploadDir);
     const assetMap: Record<string, string[]> = {
@@ -904,7 +963,7 @@ app.post('/api/portfolio-upload', (req: Request, res: Response) => {
 });
 
 // 7. API: Get Status of All 12 Portfolio Flat Artwork Slots
-app.get('/api/portfolio-status', (req: Request, res: Response) => {
+app.get('/api/portfolio-status', (_req: Request, res: Response) => {
   try {
     const requiredFiles = [
       'lumiere-01.webp',
@@ -955,7 +1014,7 @@ app.get('/api/portfolio-status', (req: Request, res: Response) => {
       totalSlots: requiredFiles.length,
       uploadedCount: Object.values(statusMap).filter((s) => s.exists).length,
     });
-  } catch (error: any) {
+  } catch {
     res.status(500).json({ error: 'Failed to retrieve portfolio status' });
   }
 });
@@ -972,7 +1031,7 @@ async function setupServer() {
   } else {
     const distPath = path.resolve(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req: Request, res: Response) => {
+    app.get('*', (_req: Request, res: Response) => {
       res.sendFile(path.resolve(distPath, 'index.html'));
     });
   }
@@ -985,7 +1044,6 @@ async function setupServer() {
 // Export app for serverless environments (e.g. Vercel, Netlify)
 export default app;
 
-const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY);
 const isDirectRun = !isServerless && (
   !process.argv[1] ||
   process.argv[1].endsWith('server.ts') ||

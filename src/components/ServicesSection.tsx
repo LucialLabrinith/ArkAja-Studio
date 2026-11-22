@@ -3,7 +3,7 @@ import { STUDIO_SERVICES, CUSTOM_VIDEO_SERVICE } from '../data/servicesData';
 import { BUSINESS_LAUNCH_PACKAGE } from '../data/pricingData';
 import { useTheme } from '../context/ThemeContext';
 import { Logo } from './Logo';
-import { ArrowUpRight, ArrowRight, Sparkles, Check, Layers, Code, Bot, Palette, Globe, Rocket } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, Check, Layers, Code, Bot, Palette, Globe, Rocket } from 'lucide-react';
 
 interface ServicesSectionProps {
   onOpenBuilder: () => void;
@@ -112,7 +112,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
 
         {/* 8 Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-14">
-          {filteredServices.map((service, index) => (
+          {filteredServices.map((service) => (
             <div
               key={service.id}
               className={`p-8 sm:p-10 border transition-all duration-300 flex flex-col justify-between group hover:-translate-y-0.5 ${

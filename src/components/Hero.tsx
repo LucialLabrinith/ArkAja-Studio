@@ -8,7 +8,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => {
-  const { isDark, isCombo } = useTheme();
+  const { isDark } = useTheme();
 
   return (
     <section

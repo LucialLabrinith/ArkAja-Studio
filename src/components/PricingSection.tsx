@@ -1,11 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   WEBSITE_PACKAGES,
-  WEBSITE_ADDONS,
   DOMAIN_NOTICE,
   BRANDING_PACKAGES,
   CUSTOM_DEV_PACKAGES,
-  BUSINESS_LAUNCH_PACKAGE,
   EDITORIAL_PACKAGES,
   ALL_PRICING_PACKAGES,
 } from '../data/pricingData';
@@ -18,12 +16,8 @@ import {
   ArrowRight,
   ShieldCheck,
   Globe,
-  Plus,
-  HelpCircle,
   Sparkles,
   CreditCard,
-  Layers,
-  Zap,
 } from 'lucide-react';
 
 interface PricingSectionProps {

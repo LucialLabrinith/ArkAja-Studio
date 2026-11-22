@@ -9,9 +9,6 @@ import {
   Search,
   Sun,
   Moon,
-  Layers,
-  User as UserIcon,
-  LogIn,
   ShieldCheck,
   Lock,
 } from 'lucide-react';
@@ -32,7 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
-  const { user, isOwner } = useAuth();
+  const { isOwner } = useAuth();
 
   const [activeSection, setActiveSection] = useState<string>('');
 

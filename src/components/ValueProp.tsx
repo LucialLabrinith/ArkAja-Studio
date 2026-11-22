@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { useTheme } from '../context/ThemeContext';
 

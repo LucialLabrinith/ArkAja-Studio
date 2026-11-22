@@ -14,7 +14,7 @@ export const Logo: React.FC<LogoProps> = ({
   size = 'md',
   forceTheme,
 }) => {
-  const { isDark, isCombo } = useTheme();
+  const { isDark } = useTheme();
   // In combo mode, default text on light/ivory backgrounds is dark ink (#14171A)
   const isDarkCanvas = forceTheme ? forceTheme === 'dark' : isDark;
 

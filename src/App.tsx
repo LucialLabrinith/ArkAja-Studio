@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PORTFOLIO_PROJECTS } from './data/portfolioData';
 import { Project, CustomBuilderState, PricingPackage } from './types';
 import { ThemeProvider, useTheme } from './context/ThemeContext';

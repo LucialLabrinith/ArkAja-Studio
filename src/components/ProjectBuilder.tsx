@@ -12,8 +12,6 @@ import {
   Sparkles,
   Bookmark,
   CheckCircle2,
-  AlertCircle,
-  Layers,
   CreditCard,
 } from 'lucide-react';
 
@@ -220,20 +218,6 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
     'Brand Campaign',
   ];
 
-  const brandOptions = [
-    'Creative Direction',
-    'Social Visual System',
-    'Content Templates',
-    'Visual Mood / Art Direction',
-  ];
-
-  const videoOptions = [
-    'Short-form Reel',
-    'Product Reel',
-    'Promotional Reel',
-    'Editing',
-  ];
-
   const businessTypes = [
     'Beauty',
     'Fashion',
@@ -259,14 +243,6 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
   ];
 
   const timelines = ['ASAP', '48 hours', '3–5 days', '1 week', 'Flexible'];
-
-  const budgetOptions = [
-    'Under ₹5,000',
-    '₹5,000–₹10,000',
-    '₹10,000–₹25,000',
-    '₹25,000+',
-    'Custom Quote',
-  ];
 
   const toggleArrayItem = (
     key: keyof Pick<

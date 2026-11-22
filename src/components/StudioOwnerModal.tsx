@@ -8,19 +8,15 @@ import {
   Mail,
   ShieldCheck,
   CheckCircle2,
-  Clock,
   Trash2,
   Upload,
   Plus,
-  ExternalLink,
   MessageCircle,
-  Eye,
   LogOut,
   Sparkles,
   Inbox,
   Layers,
   AlertCircle,
-  Phone,
 } from 'lucide-react';
 import {
   STUDIO_OWNER_EMAIL,
@@ -192,10 +188,6 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
     try {
       const slug = projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `proj-${Date.now()}`;
       const newProjectId = `proj-${slug}-${Date.now().toString(36)}`;
-
-      const tagsArray = projectTags
-        ? projectTags.split(',').map((t) => t.trim()).filter(Boolean)
-        : ['Editorial', 'Art Direction'];
 
       const deliverablesArray = projectDeliverables
         ? projectDeliverables.split('\n').map((d) => d.trim()).filter(Boolean)
@@ -575,7 +567,6 @@ export const StudioOwnerModal: React.FC<StudioOwnerModalProps> = ({
                 ) : (
                   <div className="space-y-3.5 max-h-[58vh] overflow-y-auto pr-1">
                     {liveEnquiries.map((enq) => {
-                      const isPending = enq.status === 'pending_review' || !enq.status;
                       const isContacted = enq.status === 'contacted';
                       const isBooked = enq.status === 'booked';
 
