@@ -74,7 +74,7 @@ export const AboutSection: React.FC = () => {
           {/* Right Column: Editorial Philosophy & AI-Assisted Positioning */}
           <div className="lg:col-span-7 space-y-6 pt-2">
             <p className="font-serif text-2xl sm:text-3xl font-normal leading-snug">
-              ArkAja Studio is an independent creative studio focused on modern, visually-led content for emerging brands and businesses.
+              ArkAja Studio builds fast, custom-coded websites, digital storefronts, and WhatsApp ordering web apps for local brands and bakeries.
             </p>
 
             <p
@@ -82,7 +82,7 @@ export const AboutSection: React.FC = () => {
                 isDarkCanvas ? 'text-[#B4B7BF]' : 'text-[#555B66]'
               }`}
             >
-              We combine AI-assisted creative production with human art direction, visual design and content strategy to create social content that feels intentional, contemporary and brand-specific.
+              We combine clean full-stack web development, interactive ordering workflows, and human-led brand design to launch high-converting websites, custom web apps, and distinctive brand identities for growing businesses.
             </p>
 
             <div
@@ -123,19 +123,19 @@ export const AboutSection: React.FC = () => {
                   isDarkCanvas ? 'text-[#B4B7BF]' : 'text-[#4B5261]'
                 }`}
               >
-                <span>Creative Direction</span>
+                <span className="text-[#D8C7A5] font-semibold">Web Development</span>
                 <span className="opacity-40">·</span>
-                <span>Visual Design</span>
+                <span className="text-[#D8C7A5] font-semibold">Custom Web Apps</span>
                 <span className="opacity-40">·</span>
-                <span>Content Strategy</span>
+                <span>Digital Storefronts</span>
                 <span className="opacity-40">·</span>
-                <span>Art Direction</span>
+                <span>Brand Design</span>
                 <span className="opacity-40">·</span>
-                <span>Campaign Thinking</span>
+                <span>WhatsApp Ordering Systems</span>
                 <span className="opacity-40">·</span>
-                <span>AI-Assisted Production</span>
+                <span>UI/UX Design</span>
                 <span className="opacity-40">·</span>
-                <span className="text-[#D8C7A5] font-semibold">Human Refinement</span>
+                <span>Visual Content</span>
               </div>
             </div>
           </div>

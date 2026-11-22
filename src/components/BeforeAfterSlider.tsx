@@ -10,8 +10,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Lock,
+  ArrowUpRight,
+  Sparkles,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { LiveCakeShopDemo } from './LiveCakeShopDemo';
+import { LiveNexoraDemo } from './LiveNexoraDemo';
 
 interface RedesignDemoItem {
   id: 'cute' | 'professional';
@@ -50,6 +54,8 @@ const INITIAL_POSITION = 50;
 export const BeforeAfterSlider: React.FC = () => {
   const { isDark } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLiveCakeOpen, setIsLiveCakeOpen] = useState<boolean>(false);
+  const [isLiveNexoraOpen, setIsLiveNexoraOpen] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [position, setPosition] = useState<number>(INITIAL_POSITION);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -58,6 +64,24 @@ export const BeforeAfterSlider: React.FC = () => {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const activeDemo = REDESIGN_DEMOS[activeIndex];
+
+  // Allow direct shareable links (?demo=cake-shop or ?demo=nexora) to open either interactive live website immediately
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const demoParam = params.get('demo');
+    if (demoParam === 'cake-shop' || window.location.hash === '#cake-shop-demo') {
+      setIsLiveCakeOpen(true);
+    } else if (demoParam === 'nexora' || window.location.hash === '#nexora-demo') {
+      setIsLiveNexoraOpen(true);
+    }
+  }, []);
+
+  const openLiveDemoFor = (id: 'cute' | 'professional') => {
+    setIsOpen(false);
+    if (id === 'cute') setIsLiveCakeOpen(true);
+    else setIsLiveNexoraOpen(true);
+  };
 
   // Measure live full-screen browser viewport width for crisp push-aside panes
   useEffect(() => {
@@ -327,6 +351,20 @@ export const BeforeAfterSlider: React.FC = () => {
 
                 <button
                   type="button"
+                  onClick={() => openLiveDemoFor(activeDemo.id)}
+                  className={`px-3 py-1.5 text-white text-[10px] font-mono tracking-[0.12em] uppercase font-bold transition-all inline-flex items-center gap-1.5 shadow-md cursor-pointer shrink-0 ${
+                    activeDemo.id === 'cute'
+                      ? 'bg-[#D85A7F] hover:bg-[#C2476B]'
+                      : 'bg-[#7C4DFF] hover:bg-[#6A3CEB]'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Try Live Interactive Website</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setIsOpen(false)}
                   className={`px-2.5 py-1.5 border transition-colors inline-flex items-center gap-1.5 text-[10px] font-mono tracking-[0.16em] uppercase shrink-0 cursor-pointer ${
                     isDark
@@ -461,10 +499,23 @@ export const BeforeAfterSlider: React.FC = () => {
                     className="w-full h-full object-contain object-center block select-none pointer-events-none"
                   />
 
-                  {/* Subtle corner label */}
-                  <div className="pointer-events-none absolute bottom-3 right-3 px-2.5 py-1 bg-[#14171A]/85 text-[#D8C7A5] border border-[#D8C7A5]/45 text-[9.5px] font-mono tracking-[0.15em] uppercase font-semibold shadow-sm">
-                    AFTER · ARKAJA REDESIGN
-                  </div>
+                  {/* Interactive CTA on the After pane for both Vera's Cake Shop & Nexora */}
+                  <button
+                    type="button"
+                    data-slider-action="live-demo"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openLiveDemoFor(activeDemo.id);
+                    }}
+                    className={`pointer-events-auto absolute bottom-3 right-3 px-3.5 py-2 text-white text-[10.5px] font-mono tracking-[0.12em] uppercase font-bold shadow-lg inline-flex items-center gap-1.5 transition-transform hover:scale-105 cursor-pointer z-10 ${
+                      activeDemo.id === 'cute'
+                        ? 'bg-[#D85A7F] hover:bg-[#C2476B]'
+                        : 'bg-[#7C4DFF] hover:bg-[#6A3CEB]'
+                    }`}
+                  >
+                    <span>Try Live Interactive Website</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
 
                   {/* Gentle dim scrim when pushed off-screen */}
                   <div
@@ -690,62 +741,113 @@ export const BeforeAfterSlider: React.FC = () => {
               isDark ? 'text-[#8E929A]' : 'text-[#646A77]'
             }`}
           >
-            Click to launch our interactive comparison showcase across two distinct aesthetics —{' '}
+            Click to launch our interactive comparison showcase — or click straight into both{' '}
             <span className={isDark ? 'text-[#FAF8F5] font-normal' : 'text-[#14171A] font-normal'}>
-              Cute &amp; Playful (Vera&rsquo;s Cake Shop)
+              live coded interactive websites: Vera&rsquo;s Cake Shop
             </span>{' '}
-            and{' '}
+            (bakery &amp; WhatsApp ordering) and{' '}
             <span className={isDark ? 'text-[#FAF8F5] font-normal' : 'text-[#14171A] font-normal'}>
-              Modern &amp; Professional (Nexora)
-            </span>
-            .
+              Nexora
+            </span>{' '}
+            (interactive SaaS dashboard &amp; pricing estimator).
           </p>
         </div>
 
-        {/* Crisp Visual Preview Thumbnails + Show Demo CTA */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 shrink-0">
-          <div className="flex items-center gap-2.5">
-            {REDESIGN_DEMOS.map((demo, idx) => (
-              <button
-                key={demo.id}
-                type="button"
-                onClick={() => openDemoAt(idx)}
-                className={`group relative w-24 sm:w-28 h-20 border overflow-hidden cursor-pointer transition-all hover:-translate-y-0.5 ${
-                  isDark
-                    ? 'border-white/[0.14] hover:border-[#D8C7A5] bg-[#171A21]'
-                    : 'border-[#14171A]/[0.14] hover:border-[#8C6E33] bg-[#FAF8F5]'
-                }`}
-                title={`Preview ${demo.title} (${demo.styleTag})`}
-              >
-                <img
-                  src={demo.afterSrc}
-                  alt={`${demo.title} redesign preview`}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-x-0 bottom-0 px-1.5 py-0.5 bg-black/75 text-[8.5px] font-mono tracking-wider uppercase text-[#FAF8F5] truncate text-left">
-                  0{idx + 1} · {demo.title}
-                </div>
-              </button>
-            ))}
-          </div>
+        {/* Crisp Visual Preview Thumbnails + Bright Interactive CTAs */}
+        <div className="flex flex-col gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              {REDESIGN_DEMOS.map((demo, idx) => (
+                <button
+                  key={demo.id}
+                  type="button"
+                  onClick={() => openLiveDemoFor(demo.id)}
+                  className={`group relative w-28 sm:w-32 h-24 border overflow-hidden cursor-pointer transition-all hover:-translate-y-0.5 ${
+                    isDark
+                      ? 'border-white/[0.14] hover:border-[#D8C7A5] bg-[#171A21]'
+                      : 'border-[#14171A]/[0.14] hover:border-[#8C6E33] bg-[#FAF8F5]'
+                  }`}
+                  title={`Open Live Interactive Website: ${demo.title}`}
+                >
+                  <img
+                    src={demo.afterSrc}
+                    alt={`${demo.title} interactive website preview`}
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span
+                    className={`absolute top-1 left-1 px-1.5 py-0.5 text-white text-[7.5px] font-mono uppercase tracking-wider font-bold ${
+                      demo.id === 'cute' ? 'bg-[#D85A7F]' : 'bg-[#7C4DFF]'
+                    }`}
+                  >
+                    LIVE SITE ↗
+                  </span>
+                  <div className="absolute inset-x-0 bottom-0 px-1.5 py-1 bg-black/80 text-[8.5px] font-mono tracking-wider uppercase text-[#FAF8F5] truncate text-left">
+                    0{idx + 1} · {demo.title}
+                  </div>
+                </button>
+              ))}
+            </div>
 
-          <button
-            type="button"
-            onClick={() => openDemoAt(0)}
-            className={`px-6 py-3.5 text-[11px] font-mono tracking-[0.2em] uppercase font-semibold transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-[#FAF8F5] text-[#0b0c0e] hover:bg-[#D8C7A5]'
-                : 'bg-[#14171A] text-[#FAF8F5] hover:bg-[#8C6E33]'
-            }`}
-          >
-            <MoveHorizontal className="w-4 h-4" />
-            <span>SHOW DEMO</span>
-          </button>
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => setIsLiveCakeOpen(true)}
+                className="px-4 py-2.5 bg-[#D85A7F] hover:bg-[#C2476B] text-white text-[10.5px] font-mono tracking-[0.12em] uppercase font-bold transition-all duration-200 inline-flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-[0_6px_18px_-4px_rgba(216,90,127,0.5)]"
+              >
+                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <span>Try Cake Shop Live</span>
+                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsLiveNexoraOpen(true)}
+                className="px-4 py-2.5 bg-[#7C4DFF] hover:bg-[#6A3CEB] text-white text-[10.5px] font-mono tracking-[0.12em] uppercase font-bold transition-all duration-200 inline-flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-[0_6px_18px_-4px_rgba(124,77,255,0.5)]"
+              >
+                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                <span>Try Nexora SaaS Live</span>
+                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => openDemoAt(0)}
+                className={`px-4 py-2 text-[10px] font-mono tracking-[0.16em] uppercase font-semibold border transition-all duration-200 inline-flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
+                  isDark
+                    ? 'bg-[#161922] text-[#FAF8F5] border-white/20 hover:border-[#D8C7A5] hover:text-[#D8C7A5]'
+                    : 'bg-[#FAF8F5] text-[#14171A] border-[#14171A]/20 hover:border-[#8C6E33] hover:text-[#8C6E33]'
+                }`}
+              >
+                <MoveHorizontal className="w-3.5 h-3.5" />
+                <span>Before &amp; After Slider</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Render layered full-screen modal directly in document.body */}
+      {/* Render layered full-screen comparison modal directly in document.body */}
       {typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null}
+
+      {/* Render real, coded interactive Vera's Cake Shop live ordering website */}
+      <LiveCakeShopDemo
+        isOpen={isLiveCakeOpen}
+        onClose={() => setIsLiveCakeOpen(false)}
+        onSwitchToCompare={() => {
+          setIsLiveCakeOpen(false);
+          openDemoAt(0);
+        }}
+      />
+
+      {/* Render real, coded interactive Nexora SaaS & tech live website */}
+      <LiveNexoraDemo
+        isOpen={isLiveNexoraOpen}
+        onClose={() => setIsLiveNexoraOpen(false)}
+        onSwitchToCompare={() => {
+          setIsLiveNexoraOpen(false);
+          openDemoAt(1);
+        }}
+      />
     </>
   );
 };

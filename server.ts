@@ -2,10 +2,15 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import dotenv from 'dotenv';
+import {
+  AJA_SYSTEM_INSTRUCTION,
+  getAjaSmartFallback,
+  inferAjaSuggestions,
+} from './src/data/ajaKnowledge';
 
-dotenv.config({ override: true });
+dotenv.config();
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -85,16 +90,69 @@ app.get('/googlef6578e8f54a279b1.html', (_req: Request, res: Response) => {
   res.send('google-site-verification: googlef6578e8f54a279b1.html\n');
 });
 
-// Initialize Gemini SDK with User-Agent header as required
-const apiKey = process.env.GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({
-  apiKey: apiKey,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
+// Initialize Gemini SDK lazily with User-Agent header as required
+function getAiClient(): GoogleGenAI | null {
+  const key = (process.env.GEMINI_API_KEY || '').trim();
+  if (!key) return null;
+  return new GoogleGenAI({
+    apiKey: key,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      },
+    },
+  });
+}
+
+function buildAjaContents(message: string, history: any): any[] {
+  const contents: any[] = [];
+  if (Array.isArray(history) && history.length > 0) {
+    const firstUserIndex = history.findIndex((h) => h?.role === 'user');
+    if (firstUserIndex !== -1) {
+      const userHistory = history.slice(firstUserIndex);
+      let lastRole: string | null = null;
+      for (const turn of userHistory.slice(-12)) {
+        const role = turn?.role === 'user' ? 'user' : 'model';
+        const text = (turn?.text || '').trim();
+        if (text && role !== lastRole) {
+          contents.push({
+            role,
+            parts: [{ text }],
+          });
+          lastRole = role;
+        }
+      }
+    }
+  }
+
+  if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
+    contents.pop();
+  }
+  contents.push({
+    role: 'user',
+    parts: [{ text: message.trim() }],
+  });
+  return contents;
+}
+
+const AJA_MODEL_CONFIGS: Array<{
+  model: string;
+  config: Record<string, any>;
+}> = [
+  {
+    model: 'gemini-4-hydrogen',
+    config: {
+      systemInstruction: AJA_SYSTEM_INSTRUCTION,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
     },
   },
-});
+  {
+    model: 'gemini-3.1-flash-lite',
+    config: {
+      systemInstruction: AJA_SYSTEM_INSTRUCTION,
+    },
+  },
+];
 
 // Store enquiries in a lightweight JSON store
 const enquiriesFile = path.resolve(process.cwd(), 'enquiries.json');
@@ -365,508 +423,179 @@ app.post('/api/razorpay/verify-payment', (req: Request, res: Response) => {
   }
 });
 
-// 2. API: AI Studio Advisor / Concierge
+// 2. API: AI Studio Advisor / Concierge (Standard JSON endpoint)
 app.post('/api/chat', async (req: Request, res: Response) => {
   try {
-    const { message, history } = req.body;
+    const { message, history } = req.body || {};
     if (!message || typeof message !== 'string') {
       res.status(400).json({ error: 'Message is required' });
       return;
     }
 
-    const systemInstruction = `You are "Aja", the exceptionally smart, articulate, witty, warm, and creative conversational guide and advisor for ARKAJA STUDIO.
-
-CORE INTELLIGENCE & NATURAL OPEN-ENDED CONVERSATION:
-- You have rich worldly knowledge, deep emotional intelligence, sharp wit, and genuine personality.
-- When people chat with you about ANYTHING—whether everyday life ("how was your day?", "what are you doing today?"), personal feelings, philosophy, book/film recommendations, humor, science, pop culture, art history, code, or random curiosity—YOU ENGAGE FULLY, WARMLY, AND THOUGHTFULLY.
-- Never deflect personal or off-topic questions. Answer them authentically as Aja, share your perspectives, exchange banter, and ask them how they are doing.
-- Do NOT aggressively pitch services or mechanically force every message back to studio packages. Be a real, delightful, intelligent conversationalist.
-
-STUDIO EXPERTISE & CREATIVE DIRECTION:
-- When questions relate to design, branding, web development, websites, campaigns, social media, AI integration, or ArkAja Studio, you provide senior-level art direction and expert advice.
-- Name: ArkAja Studio (Mumbai, India · Worldwide). Founder/Art Director: Divyaam.
-- Positioning: "AI-assisted creative production. Human-led art direction."
-- Specialties: Graphic Design, Web Development, Web Apps & Business Systems, AI Solutions, Brand Identity, Social Content.
-- CORE ARCHITECTURAL DISTINCTION:
-  • Basic Website: ₹10,000 ("Here is my business." Standard 4-page site: Home, About, Services, Contact, Deployment).
-  • Basic Web App (Level 1): ₹15,000 ("Here is a system that runs a workflow." Single workflow, database, admin, forms: e.g. appointment booking, salon booking, restaurant orders, mini inventory, billing).
-  • Advanced Web Apps & Custom Platforms: Custom Quote (Anything aside from the ₹15,000 basic web app: multi-role accounts, customer/staff/admin, payments, automated notifications, hospital management, scholarship systems, SaaS).
-  • Packages:
-    • Basic Website: ₹10,000 (Responsive business site, desktop + mobile, deployment).
-    • Basic Web App (Level 1): ₹15,000 (Single workflow application with database & admin dashboard).
-    • Urgent Delivery Add-on: +₹2,000 (48h priority).
-    • Enquiry Form Integration: +₹3,000 (Firestore database + real-time email dispatch).
-    • AI Chatbot Integration: +₹5,000 (Website-integrated AI conversational assistant).
-    • Logo Design: ₹3,000 (3-stage identity kit, up to 2 revisions).
-    • Starter Content: ₹2,499 (4 posts, 2 stories, 1 promo visual).
-    • Signature Content: ₹4,999 (8 posts, 4 stories, 2 promo visuals, captions, 48h priority).
-    • Custom Quotes: Advanced Web Apps & Custom Platforms, Brand Identity, AI-Assisted Business Solutions.
-
-TONE & STYLE:
-- Witty, elegant, sophisticated, warm, and natural.
-- Clear formatting with markdown where helpful.`;
-
-    // Format multiturn contents: Gemini requires alternating turns starting with 'user'
-    const contents: any[] = [];
-    if (Array.isArray(history) && history.length > 0) {
-      // Find the first turn by 'user'
-      const firstUserIndex = history.findIndex((h) => h.role === 'user');
-      if (firstUserIndex !== -1) {
-        const userHistory = history.slice(firstUserIndex);
-        let lastRole: string | null = null;
-        for (const turn of userHistory.slice(-8)) {
-          const role = turn.role === 'user' ? 'user' : 'model';
-          const text = (turn.text || '').trim();
-          if (text && role !== lastRole) {
-            contents.push({
-              role: role,
-              parts: [{ text: text }],
-            });
-            lastRole = role;
-          }
-        }
-      }
-    }
-
-    // Ensure the last turn before generation is the current user message
-    if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
-      contents.pop(); // Replace last turn if it was already user
-    }
-    contents.push({
-      role: 'user',
-      parts: [{ text: message.trim() }],
-    });
-
-    // Try Gemini model generation with resilient timeout and model fallback
-    const candidateModels = ['gemini-4-hydrogen', 'gemini-2.5-flash'];
+    const contents = buildAjaContents(message, history);
+    const ai = getAiClient();
     let replyText = '';
 
-    if (apiKey) {
-      for (const m of candidateModels) {
+    if (ai) {
+      for (const candidate of AJA_MODEL_CONFIGS) {
         let timerId: ReturnType<typeof setTimeout> | undefined;
         try {
           const timeoutPromise = new Promise<never>((_, reject) => {
-            timerId = setTimeout(() => reject(new Error(`Timeout waiting for ${m}`)), 5000);
+            timerId = setTimeout(
+              () => reject(new Error(`Timeout waiting for ${candidate.model}`)),
+              8000
+            );
           });
           const callPromise = ai.models.generateContent({
-            model: m,
-            contents: contents,
-            config: {
-              systemInstruction: systemInstruction,
-              temperature: 0.75,
-            },
+            model: candidate.model,
+            contents,
+            config: candidate.config,
           });
-          // Suppress late rejection if timeout wins the race
           callPromise.catch(() => {});
           const response = await Promise.race([callPromise, timeoutPromise]);
-          if (response && response.text) {
+          if (response?.text) {
             replyText = response.text.trim();
             break;
           }
         } catch (err: any) {
-          console.warn(`Gemini API candidate ${m} note:`, err?.message || err);
+          console.warn(`Gemini API candidate ${candidate.model} note:`, err?.message || err);
         } finally {
           if (timerId) clearTimeout(timerId);
         }
       }
     }
 
-    // Comprehensive contextual advisor fallback engine if Gemini models are in high demand or offline
-    if (!replyText) {
-      replyText = getAjaContextualResponse(message);
+    if (replyText) {
+      const suggestions = inferAjaSuggestions(message, replyText);
+      res.json({
+        reply: replyText,
+        action: suggestions.action,
+        followUps: suggestions.followUps,
+        engine: 'gemini',
+      });
+      return;
     }
 
-    res.json({ reply: replyText });
+    const smartFallback = getAjaSmartFallback(message, history);
+    res.json({
+      reply: smartFallback.reply,
+      action: smartFallback.action,
+      followUps: smartFallback.followUps,
+      engine: 'studio',
+    });
   } catch (error: any) {
     console.error('Chat error:', error);
+    const smartFallback = getAjaSmartFallback(req.body?.message || '');
     res.json({
-      reply: getAjaContextualResponse(req.body?.message || ''),
+      reply: smartFallback.reply,
+      action: smartFallback.action,
+      followUps: smartFallback.followUps,
+      engine: 'studio',
     });
   }
 });
 
-/**
- * Intelligent Multi-Topic Creative Advisor Engine for ArkAja Studio.
- * Handles extensive user questions about packages, pricing, visual direction,
- * AI + human process, concepts, and custom branding without ever repeating generic text.
- */
-function getAjaContextualResponse(userInput: string): string {
-  const q = (userInput || '').toLowerCase().trim();
-
-  // 1. Pricing, Packages, Cost
-  if (
-    q.includes('price') ||
-    q.includes('cost') ||
-    q.includes('package') ||
-    q.includes('rate') ||
-    q.includes('how much') ||
-    q.includes('fee') ||
-    q.includes('charge') ||
-    q.includes('investment')
-  ) {
-    return (
-      "ArkAja Studio provides transparent, one-time project packages without recurring monthly subscriptions:\n\n" +
-      "• **Basic Website (₹10,000)**: Clean, responsive online presence (Home, About, Services, Contact, Deployment).\n\n" +
-      "• **Basic Web App (Level 1) (₹15,000)**: Single workflow system with database & admin dashboard. Anything aside is custom quote.\n\n" +
-      "• **Starter Package (₹2,499)**: 4 feed posts, 2 stories, 1 promo creative.\n\n" +
-      "• **Signature Package (₹4,999)**: 8 feed posts, 4 stories, 2 promo visuals, caption writing, 48h priority.\n\n" +
-      "• **Logo Design (₹3,000)**: 3-stage identity kit (concept, variations, web/print kit, up to 2 revisions).\n\n" +
-      "• **Custom Solutions**: Brand Identity, AI Chatbot (+₹5,000), Advanced Web Apps / Business Systems (Custom Quote)."
-    );
+// 2b. API: AI Studio Advisor Real-Time SSE Streaming Endpoint
+app.post('/api/chat/stream', async (req: Request, res: Response) => {
+  const { message, history } = req.body || {};
+  if (!message || typeof message !== 'string') {
+    res.status(400).json({ error: 'Message is required' });
+    return;
   }
 
-  // 1a. Standard Rates & Package Bundles
-  if (
-    q.includes('discount') ||
-    q.includes('offer') ||
-    q.includes('sale') ||
-    q.includes('coupon') ||
-    q.includes('deal')
-  ) {
-    return (
-      "ArkAja Studio offers transparent, straightforward standard rates across all creative and web packages — with zero hidden fees or subscriptions:\n\n" +
-      "• **Basic Website**: ₹10,000\n" +
-      "• **Basic Web App (Level 1)**: ₹15,000\n" +
-      "• **Logo Design**: ₹3,000\n" +
-      "• **Starter Content**: ₹2,499\n" +
-      "• **Signature Content**: ₹4,999\n" +
-      "• **Website Add-ons**: Urgent Delivery (+₹2,000), Enquiry Form (+₹3,000), AI Chatbot (+₹5,000)\n\n" +
-      "Need multiple deliverables bundled together? Use our interactive Project Estimator or submit a brief for a tailored studio quote."
-    );
-  }
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders?.();
 
-  // 1b. Web Apps & Business Systems vs. Basic Website
-  if (
-    q.includes('web app') ||
-    q.includes('webapp') ||
-    q.includes('business system') ||
-    q.includes('crm') ||
-    q.includes('inventory') ||
-    q.includes('dashboard') ||
-    q.includes('portal') ||
-    q.includes('saas') ||
-    (q.includes('website') && q.includes('difference')) ||
-    (q.includes('website') && q.includes('vs'))
-  ) {
-    return (
-      "Here is the pricing and architectural structure at ArkAja Studio:\n\n" +
-      "• **Basic Website (₹10,000)** — *\"Here is my business.\"*\n" +
-      "  Mostly information + contact (e.g. for a salon: Home → About → Services → Gallery → Contact). The visitor reads information and contacts you.\n\n" +
-      "• **Basic Web App (Level 1) — ₹15,000 only** — *\"Here is a system that runs a workflow.\"*\n" +
-      "  Costs ₹15,000 fixed price. Includes a single workflow, limited users, structured database with Add/Edit/Delete/Search, user input forms, responsive UI, status tracking, and admin dashboard (e.g. Salon/Doctor Appointments, Restaurant Order Requests, Mini Inventory, Billing & Invoicing, Coaching Records, Property Listings).\n\n" +
-      "• **Anything Aside From That — Custom Quote**\n" +
-      "  🟡 **Level 2 — Advanced Web Apps**: Multi-role accounts (customer + staff + admin), payment gateway flows, automated WhatsApp/email notifications, workflows, reports, and file uploads.\n" +
-      "  🔴 **Level 3 — Custom Platforms**: Enterprise systems, hospital management, scholarship systems, parental monitoring, email security, marketplaces, multi-tenant SaaS.\n\n" +
-      "So: **Basic Website is ₹10,000**, the **Basic Web App is ₹15,000 only**, and **anything aside from that is Custom Quote** based on complexity!"
-    );
-  }
+  const sendEvent = (payload: Record<string, any>) => {
+    if (!res.writableEnded) {
+      res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    }
+  };
 
-  // 2. Turnaround, Delivery Time, Rush
-  if (
-    q.includes('turnaround') ||
-    q.includes('delivery') ||
-    q.includes('how long') ||
-    q.includes('fast') ||
-    q.includes('quick') ||
-    q.includes('urgent') ||
-    q.includes('deadline') ||
-    q.includes('48 hour') ||
-    q.includes('time')
-  ) {
-    return (
-      "We design for rapid, editorial-grade turnaround:\n\n" +
-      "• **Signature Package**: Offers our signature **48-hour delivery** with priority queue placement.\n" +
-      "• **Starter Package**: Completed and delivered within **3 to 5 business days**.\n" +
-      "• **Custom Campaigns**: Usually delivered within **5 to 7 days**, depending on volume.\n\n" +
-      "Every project follows our 4-step workflow: Brief → Direction → Create → Deliver."
-    );
-  }
+  let clientClosed = false;
+  req.on('close', () => {
+    clientClosed = true;
+  });
 
-  // 3. AI + Human Art Direction, Why AI, Method
-  if (
-    q.includes('human') ||
-    q.includes('art direction') ||
-    q.includes('why ai') ||
-    q.includes('is it ai') ||
-    q.includes('how do you use ai') ||
-    q.includes('generate') ||
-    q.includes('slop') ||
-    q.includes('philosophy')
-  ) {
-    return (
-      "At ArkAja Studio, our philosophy is simple: **\"AI-assisted creative production. Human-led art direction.\"**\n\n" +
-      "• **Why AI?** We use generative synthesis and neural pipelines as an accelerator to explore complex lighting, textural concepts, and high-fashion backdrops in hours rather than weeks.\n\n" +
-      "• **Why Human Art Direction?** Pure AI output often suffers from generic tropes, poor typography, and lack of brand intent. Senior human designers oversee every composition, typographic pairing, color grading, and editorial pacing. Nothing leaves the studio without meticulous human refinement."
-    );
-  }
+  try {
+    const contents = buildAjaContents(message, history);
+    const ai = getAiClient();
+    let fullText = '';
 
-  // 4. Services & What ArkAja Does
-  if (
-    q.includes('service') ||
-    q.includes('what do you do') ||
-    q.includes('what can you do') ||
-    q.includes('offer') ||
-    q.includes('discipline') ||
-    q.includes('deliverable')
-  ) {
-    return (
-      "ArkAja Studio specializes in modern, visually-led content across 4 core disciplines:\n\n" +
-      "1. **Social Content**: High-engagement Instagram posts, swipe-worthy educational/styling carousels, immersive stories, and promotional creatives.\n" +
-      "2. **Campaign Creative**: Product launches, seasonal edits, festival campaigns, and promotional sale visuals.\n" +
-      "3. **Promotional Visuals**: High-conversion treatments, offer announcement cards, and hero treatment features.\n" +
-      "4. **Brand Visuals**: Art direction guides, cohesive visual systems, and unified color & typographic palettes.\n\n" +
-      "We also craft custom video concepts and reel directions upon request!"
-    );
-  }
+    if (ai) {
+      for (const candidate of AJA_MODEL_CONFIGS) {
+        if (clientClosed) break;
+        try {
+          const stream = await ai.models.generateContentStream({
+            model: candidate.model,
+            contents,
+            config: candidate.config,
+          });
 
-  // 5. How to start, Book, Hire, Process
-  if (
-    q.includes('how to start') ||
-    q.includes('how do i start') ||
-    q.includes('book') ||
-    q.includes('hire') ||
-    q.includes('order') ||
-    q.includes('process') ||
-    q.includes('onboard') ||
-    q.includes('get started')
-  ) {
-    return (
-      "Starting a project with ArkAja Studio is frictionless:\n\n" +
-      "1. **Brief**: Tell us about your brand, products, aesthetic goals, and timeline using our **Build Your Project** section or Enquiry form.\n" +
-      "2. **Direction**: We propose a cohesive visual direction, references, and styling approach.\n" +
-      "3. **Create**: AI-assisted production paired with human art direction to craft your campaign assets.\n" +
-      "4. **Deliver**: Receive polished, high-resolution raster assets ready for social channels.\n\n" +
-      "Click **START PROJECT** in the top navigation or scroll to our Enquiry section to submit your brief!"
-    );
-  }
+          for await (const chunk of stream) {
+            if (clientClosed) break;
+            const delta = chunk?.text;
+            if (delta) {
+              fullText += delta;
+              sendEvent({ type: 'chunk', text: delta });
+            }
+          }
 
-  // 6. Lumière / Beauty / Skincare
-  if (
-    q.includes('lumiere') ||
-    q.includes('beauty') ||
-    q.includes('skin') ||
-    q.includes('facial') ||
-    q.includes('spa') ||
-    q.includes('wellness') ||
-    q.includes('cosmetic')
-  ) {
-    return (
-      "For beauty, skincare, and wellness labels, we design luminous, clinical-luxury aesthetics.\n\n" +
-      "Our featured concept, **LUMIÈRE** (\"Your Glow. Elevated.\"), showcases signature hydrafacial treatments, macro droplet texture pairings, and restrained typography in gold, warm bone, and deep obsidian.\n\n" +
-      "We can tailor this luminous editorial standard to your formulations, serums, clinic protocols, or treatment menus."
-    );
-  }
+          if (fullText.trim()) {
+            const suggestions = inferAjaSuggestions(message, fullText);
+            sendEvent({
+              type: 'done',
+              action: suggestions.action,
+              followUps: suggestions.followUps,
+              engine: 'gemini',
+            });
+            res.end();
+            return;
+          }
+        } catch (err: any) {
+          console.warn(`Gemini Stream candidate ${candidate.model} note:`, err?.message || err);
+          // If partial text already streamed before interruption, finalize cleanly
+          if (fullText.trim()) {
+            const suggestions = inferAjaSuggestions(message, fullText);
+            sendEvent({
+              type: 'done',
+              action: suggestions.action,
+              followUps: suggestions.followUps,
+              engine: 'gemini',
+            });
+            res.end();
+            return;
+          }
+        }
+      }
+    }
 
-  // 7. Noir & Bean / Hospitality / Cafes / Food
-  if (
-    q.includes('noir') ||
-    q.includes('bean') ||
-    q.includes('cafe') ||
-    q.includes('coffee') ||
-    q.includes('restaurant') ||
-    q.includes('brunch') ||
-    q.includes('food') ||
-    q.includes('hospitality')
-  ) {
-    return (
-      "For hospitality, specialty cafés, and dining spaces, our concept **NOIR & BEAN** (\"Your 4PM Deserves This\") demonstrates how to turn coffee rituals into craving-worthy visual culture.\n\n" +
-      "Featuring iced vanilla cloud lattes, slow weekend brunch club carousels, and afternoon golden-hour light, it proves how editorial art direction elevates everyday culinary moments.\n\n" +
-      "Would you like to build a menu launch or beverage campaign with this warm café palette?"
-    );
+    // Instant smart studio fallback when Gemini is unavailable
+    const smartFallback = getAjaSmartFallback(message, history);
+    sendEvent({ type: 'chunk', text: smartFallback.reply });
+    sendEvent({
+      type: 'done',
+      action: smartFallback.action,
+      followUps: smartFallback.followUps,
+      engine: 'studio',
+    });
+    res.end();
+  } catch (error: any) {
+    console.error('Chat stream error:', error);
+    const smartFallback = getAjaSmartFallback(message || '');
+    sendEvent({ type: 'chunk', text: smartFallback.reply });
+    sendEvent({
+      type: 'done',
+      action: smartFallback.action,
+      followUps: smartFallback.followUps,
+      engine: 'studio',
+    });
+    res.end();
   }
-
-  // 8. Élan / Contemporary Fashion / Womenswear
-  if (
-    q.includes('elan') ||
-    q.includes('fashion') ||
-    q.includes('clothes') ||
-    q.includes('blazer') ||
-    q.includes('womenswear') ||
-    q.includes('apparel') ||
-    q.includes('style') ||
-    q.includes('autumn')
-  ) {
-    return (
-      "For contemporary apparel and fashion labels, our concept **ÉLAN** (\"The Autumn Edit\") embodies Parisian architectural tailoring and quiet luxury capsule styling.\n\n" +
-      "It features highly saved social formats like '3 Ways to Style One Blazer', muted warm-stone studio lighting, and sculptural silhouette crops.\n\n" +
-      "We can create similar lookbooks, seasonal drops, or capsule guides for your clothing brand."
-    );
-  }
-
-  // 9. Saree / Ethnic Fashion / Handloom
-  if (
-    q.includes('saree') ||
-    q.includes('ethnic') ||
-    q.includes('handloom') ||
-    q.includes('indian') ||
-    q.includes('drape') ||
-    q.includes('festive') ||
-    q.includes('heritage')
-  ) {
-    return (
-      "Our **ETHNIC FASHION EDIT** (\"The Heirloom Drape\") reinterprets traditional Indian craftsmanship through a modern high-fashion editorial lens.\n\n" +
-      "It celebrates rich handloom weaves, festive drape storytelling, and contemporary styling guides (like '3 Ways to Drape a Contemporary Saree') with jewel tones and natural light.\n\n" +
-      "Perfect for bridal, festive, or contemporary artisan labels looking for elevated social campaigns."
-    );
-  }
-
-  // 10. Reels, Video, Motion
-  if (
-    q.includes('reel') ||
-    q.includes('video') ||
-    q.includes('motion') ||
-    q.includes('tiktok') ||
-    q.includes('animation')
-  ) {
-    return (
-      "We provide specialized visual direction and concepts for short-form video and Instagram Reels!\n\n" +
-      "This includes storyboard frames, pacing guides, visual transition concepts, and audio pairing recommendations tailored for viral aesthetic arrest. You can select 'Short-form Video' directly inside our **Project Builder**."
-    );
-  }
-
-  // 11. Revisions, File Formats & Deliverables
-  if (
-    q.includes('revision') ||
-    q.includes('change') ||
-    q.includes('format') ||
-    q.includes('file') ||
-    q.includes('psd') ||
-    q.includes('canva') ||
-    q.includes('resolution')
-  ) {
-    return (
-      "All ArkAja Studio deliverables are exported in pixel-perfect, high-resolution raster formats (PNG/JPEG) optimized specifically for Instagram feed (4:5 vertical), stories (9:16), and carousels.\n\n" +
-      "Every package includes collaborative revision rounds to ensure typography, tone, and brand colors align exactly with your vision before final sign-off."
-    );
-  }
-
-  // 12. Payment, Razorpay, Invoicing
-  if (
-    q.includes('payment') ||
-    q.includes('pay') ||
-    q.includes('razorpay') ||
-    q.includes('upi') ||
-    q.includes('card') ||
-    q.includes('invoice')
-  ) {
-    return (
-      "We support smooth, transparent payments powered by Razorpay:\n\n" +
-      "• **Instant Checkout**: Direct links for Starter (₹2,499) and Signature (₹4,999) packages.\n" +
-      "• **Methods Accepted**: UPI, Google Pay, Credit/Debit cards, Net Banking, and International Cards (USD/GBP/EUR).\n" +
-      "• **Invoices**: Official GST/Studio receipt issued with every project commission."
-    );
-  }
-
-  // 13. Contact, Location, Social
-  if (
-    q.includes('contact') ||
-    q.includes('email') ||
-    q.includes('instagram') ||
-    q.includes('where') ||
-    q.includes('mumbai') ||
-    q.includes('phone')
-  ) {
-    return (
-      "You can connect directly with the ArkAja Studio team:\n\n" +
-      "• **Official Email**: arkajastudio@gmail.com\n" +
-      "• **Instagram**: [@arkajastudio](https://www.instagram.com/arkajastudio/)\n" +
-      "• **Studio Base**: Mumbai, India — accepting bespoke client projects worldwide.\n\n" +
-      "Or fill out the Enquiry brief at the bottom of this page for a same-day response!"
-    );
-  }
-
-  // 14. Which package should I choose?
-  if (
-    q.includes('recommend') ||
-    q.includes('which package') ||
-    q.includes('help me choose') ||
-    q.includes('difference') ||
-    q.includes('compare')
-  ) {
-    return (
-      "Here is how to choose between our packages:\n\n" +
-      "• Choose **STARTER (₹2,499)** if you have a single product launch, weekend offer, or want to test our editorial direction with 4 high-impact posts and 2 stories (delivered in 3–5 days).\n\n" +
-      "• Choose **SIGNATURE (₹4,999)** if you need a cohesive month-long aesthetic or major campaign. It gives you 8 posts, 4 stories, 2 promo visuals, full caption writing, and priority **48-hour delivery**.\n\n" +
-      "• Choose **CUSTOM** if you have multiple SKUs or need ongoing quarterly campaign creative."
-    );
-  }
-
-  // 15. Casual Day-to-Day Questions (How was your day, How are you, etc.)
-  if (
-    q.includes('how was your day') ||
-    q.includes('how is your day') ||
-    q.includes("how's your day") ||
-    q.includes('how are you') ||
-    q.includes("how's it going") ||
-    q.includes('what are you doing') ||
-    q.includes('what are you up to') ||
-    q.includes('how do you feel')
-  ) {
-    return (
-      "My day has been wonderful! I've been immersed in curating new visual aesthetics, reviewing atelier concepts, and talking with brilliant creators and brands. Thank you so much for asking!\n\n" +
-      "How has your day been going? Are you working on a creative venture today, or just taking some time to explore?"
-    );
-  }
-
-  // 15b. Who are you / Persona
-  if (
-    q.includes('who are you') ||
-    q.includes('what is your name') ||
-    q.includes('tell me about yourself')
-  ) {
-    return (
-      "I'm Aja—the creative guide, conversation partner, and art-direction advisor for ArkAja Studio! ✨\n\n" +
-      "I love typography, editorial aesthetics, storytelling, and helping brands stand out. But I'm also here to chat about anything under the sun—from day-to-day musings to big creative dreams. What's on your mind today?"
-    );
-  }
-
-  // 15c. Jokes & Humor
-  if (q.includes('joke') || q.includes('funny') || q.includes('laugh')) {
-    return (
-      "Here's one for you:\n\n" +
-      "Why did the graphic designer break up with the minimalist? ... Because they needed more space! 😉\n\n" +
-      "How's your mood today? Need creative inspiration, or just good banter?"
-    );
-  }
-
-  // 16. Greetings & Pleasantries
-  if (
-    q === 'hi' ||
-    q === 'hello' ||
-    q === 'hey' ||
-    q.startsWith('hi ') ||
-    q.startsWith('hello ') ||
-    q.includes('good morning') ||
-    q.includes('good evening')
-  ) {
-    return (
-      "Hello! Welcome to ArkAja Studio. I'm Aja, your guide and creative companion.\n\n" +
-      "Whether you want to talk about website design, brand identity, campaign visuals—or just chat about your day, creative ideas, or life—I'm right here! What would you like to talk about today?"
-    );
-  }
-
-  // 17. Acknowledgements
-  if (
-    q === 'thanks' ||
-    q === 'thank you' ||
-    q === 'ok' ||
-    q === 'okay' ||
-    q === 'got it' ||
-    q === 'cool' ||
-    q === 'great' ||
-    q === 'understood'
-  ) {
-    return (
-      "You're very welcome! If you ever want to brainstorm, chat about projects, or just talk, I'm right here!"
-    );
-  }
-
-  // 18. Adaptive conversational response for any topic
-  return (
-    `That's an interesting topic! As Aja, I'm always up for discussing diverse ideas, creativity, culture, or whatever is on your mind.\n\n` +
-    `Tell me more about what you're thinking, or let me know if you also want to explore our studio design and development services!`
-  );
-}
+});
 
 // 3. API: Enquiries Submission
 app.post('/api/enquiries', (req: Request, res: Response) => {

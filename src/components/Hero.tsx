@@ -94,7 +94,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
 
             {/* Specialty Tagline */}
             <div className="text-xs sm:text-[13px] font-mono tracking-widest uppercase font-medium text-[#A58B55] dark:text-[#D8C7A5] mb-6">
-              Graphic Designer | Web Developer | App Developer
+              Web Development · Custom Web Apps · Digital Storefronts · Brand Design
             </div>
 
             {/* Main Headline */}
@@ -103,7 +103,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                 isDark ? 'text-[#FAF8F5]' : 'text-[#14171A]'
               }`}
             >
-              Premium Graphic Designers for Growing Brands
+              Custom Websites &amp; Ordering Web Apps for Growing Brands
             </h1>
 
             {/* Subtitle */}
@@ -112,7 +112,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                 isDark ? 'text-[#B4B7BF]' : 'text-[#4A505C]'
               }`}
             >
-              Welcome to Arkaja Designers, one of the leading designer companies specialized in digital branding, UI design, and creative assets — graphic designers serving clients globally from Mumbai, India.
+              ArkAja Studio builds fast, custom-coded websites, digital storefronts, and WhatsApp ordering web apps for local brands, bakeries, and growing businesses — alongside signature brand design from Mumbai, India.
             </p>
 
             {/* Core Deliverable Badges */}
@@ -123,11 +123,13 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                   : 'text-[#646A77] border-[#E8E2D7]'
               }`}
             >
-              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Social Content</span>
+              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Web Development</span>
               <span className="text-[#D8C7A5]">•</span>
-              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Campaigns</span>
+              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Custom Web Apps</span>
               <span className="text-[#D8C7A5]">•</span>
-              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Promotional Visuals</span>
+              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Digital Storefronts</span>
+              <span className="text-[#D8C7A5]">•</span>
+              <span className="text-[#14171A] dark:text-[#FAF8F5] font-semibold">Brand Design</span>
             </div>
 
             {/* CTA Buttons */}
@@ -212,7 +214,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                         isDark ? 'text-[#D8C7A5]' : 'text-[#A58B55]'
                       }`}
                     >
-                      GRAPHIC DESIGNER | WEB DEVELOPER | APP DEVELOPER
+                      WEB DEVELOPMENT | CUSTOM WEB APPS | BRAND DESIGN
                     </span>
                   </div>
                 </div>
@@ -249,14 +251,14 @@ export const Hero: React.FC<HeroProps> = ({ onExploreWork, onStartProject }) => 
                         isDark ? 'text-[#FAF8F5]' : 'text-[#14171A]'
                       }`}
                     >
-                      Authentic Concept Directions
+                      Custom-Coded Websites &amp; Ordering Apps
                     </span>
                     <span
                       className={`text-[11px] ${
                         isDark ? 'text-[#8E929A]' : 'text-[#5C6370]'
                       }`}
                     >
-                      Lumière, Noir &amp; Bean, Élan, Muse Beauty London, Saree Edit.
+                      Interactive storefronts, WhatsApp ordering flows, booking apps &amp; brand systems.
                     </span>
                   </div>
                 </div>

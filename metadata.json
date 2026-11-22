@@ -1,6 +1,6 @@
 {
   "name": "ArkAja Studio Atelier",
-  "description": "Creative content for brands with something to say. AI-assisted creative production, human-led art direction.",
+  "description": "ArkAja Studio builds fast, custom-coded websites, digital storefronts, WhatsApp ordering web apps, and brand design for local brands and growing businesses.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
