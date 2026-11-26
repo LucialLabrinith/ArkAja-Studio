@@ -495,10 +495,14 @@ export const ProjectBuilder: React.FC<ProjectBuilderProps> = ({
                       pricingCalculation.selectedLabels
                     )
                   }
-                  className="px-5 py-2.5 text-xs tracking-wider uppercase font-medium bg-[#D8C7A5] text-[#0b0c0e] hover:bg-[#FAF8F5] transition-all flex items-center gap-2 shadow-sm whitespace-nowrap active:scale-95"
+                  className={`px-5 py-2.5 text-xs tracking-wider uppercase font-semibold transition-all flex items-center gap-2 shadow-sm whitespace-nowrap active:scale-95 ${
+                    isDark
+                      ? 'bg-[#D8C7A5] text-[#0b0c0e] hover:bg-[#FAF8F5]'
+                      : 'bg-[#14171A] text-[#FAF8F5] hover:bg-[#A58B55]'
+                  }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>PAY {pricingCalculation.formattedSubtotal} (RAZORPAY)</span>
+                  <span>RESERVE &amp; PAY {pricingCalculation.formattedSubtotal}</span>
                 </button>
               )}
             </div>

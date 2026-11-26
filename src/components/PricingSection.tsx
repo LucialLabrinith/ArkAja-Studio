@@ -8,7 +8,7 @@ import {
   ALL_PRICING_PACKAGES,
 } from '../data/pricingData';
 import { PricingPackage } from '../types';
-import { PaymentModal } from './PaymentModal';
+import { PaymentModal, StudioPaymentConfig } from './PaymentModal';
 import { useTheme } from '../context/ThemeContext';
 import { Logo } from './Logo';
 import {
@@ -21,16 +21,7 @@ import {
 } from 'lucide-react';
 
 interface PricingSectionProps {
-  config: {
-    starterUrl?: string;
-    signatureUrl?: string;
-    customUrl?: string;
-    hasStarterPayment?: boolean;
-    hasSignaturePayment?: boolean;
-    hasCustomPayment?: boolean;
-    razorpayKeyId?: string;
-    isRazorpayConfigured?: boolean;
-  };
+  config: StudioPaymentConfig;
   onOpenBuilder: () => void;
   onSelectPackageForEnquiry: (pkgName: string) => void;
 }
@@ -140,7 +131,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
         priceInr: '₹5,000',
         priceInrNumber: 5000,
         priceUsd: '$60',
-        priceEur: '$55',
+        priceEur: '€55',
         priceGbp: '£48',
         category: 'AI',
         subtitle: 'AI-powered assistant integrated directly into your website for 24/7 client response.',
@@ -415,9 +406,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                   {pkg.isCustomQuote ? (
                     <button
                       onClick={() => setSelectedPkgForModal(pkg)}
-                      className="w-full py-1.5 text-[10px] tracking-widest uppercase font-mono opacity-70 hover:opacity-100 hover:text-[#D8C7A5] transition-colors text-center"
+                      className="w-full py-1.5 text-[10px] tracking-widest uppercase font-mono opacity-70 hover:opacity-100 hover:text-[#A58B55] dark:hover:text-[#D8C7A5] transition-colors text-center"
                     >
-                      Already agreed price? Pay custom amount via Razorpay →
+                      Already agreed price? Pay or reserve custom amount →
                     </button>
                   ) : (
                     <button
@@ -761,8 +752,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                 <span>CALCULATED BASE SUBTOTAL</span>
               </div>
               <div className="flex flex-wrap items-baseline gap-3">
-                <span className="font-serif text-3xl sm:text-4xl font-normal text-[#D8C7A5]">
-                  {calculationSummary.fixedTotal > 0
+                <span className="font-serif text-3xl sm:text-4xl font-normal text-[#8C6E33] dark:text-[#D8C7A5]">
+                  {calculationSummary.selectedLabels.length === 0
+                    ? '₹0'
+                    : calculationSummary.fixedTotal > 0
                     ? `₹${calculationSummary.fixedTotal.toLocaleString('en-IN')}`
                     : 'Custom Quote'}
                 </span>
@@ -772,9 +765,13 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                   </span>
                 )}
               </div>
-              {calculationSummary.selectedLabels.length > 0 && (
+              {calculationSummary.selectedLabels.length > 0 ? (
                 <p className="text-xs font-light mt-1.5 opacity-80 max-w-xl">
                   Selected: {calculationSummary.selectedLabels.join(' · ')}
+                </p>
+              ) : (
+                <p className="text-xs font-light mt-1.5 opacity-70 max-w-xl">
+                  Select one or more services above to calculate your instant package total.
                 </p>
               )}
             </div>
@@ -784,23 +781,32 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
                 <button
                   type="button"
                   onClick={handleLaunchCalculatedPayment}
-                  className="px-6 py-3.5 text-xs tracking-[0.2em] font-medium bg-[#D8C7A5] text-[#0b0c0e] hover:bg-[#FAF8F5] transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 whitespace-nowrap"
+                  className={`px-6 py-3.5 text-xs tracking-[0.2em] font-semibold transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 whitespace-nowrap ${
+                    isDark
+                      ? 'bg-[#D8C7A5] text-[#0b0c0e] hover:bg-[#FAF8F5]'
+                      : 'bg-[#14171A] text-[#FAF8F5] hover:bg-[#A58B55]'
+                  }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>PAY ₹{calculationSummary.fixedTotal.toLocaleString('en-IN')} (RAZORPAY)</span>
+                  <span>
+                    {config?.isRazorpayConfigured
+                      ? `PAY ₹${calculationSummary.fixedTotal.toLocaleString('en-IN')} (RAZORPAY)`
+                      : `RESERVE & PAY ₹${calculationSummary.fixedTotal.toLocaleString('en-IN')}`}
+                  </span>
                 </button>
               )}
 
               <button
                 type="button"
+                disabled={calculationSummary.selectedLabels.length === 0}
                 onClick={() =>
                   onSelectPackageForEnquiry(
                     calculationSummary.hasCustomQuoteItems
-                      ? `Custom Scope (Base ₹${calculationSummary.fixedTotal} + Custom: ${calculationSummary.customQuoteItems.join(', ')})`
-                      : `Selected Package Bundle (₹${calculationSummary.fixedTotal})`
+                      ? `Custom Scope (Base ₹${calculationSummary.fixedTotal.toLocaleString('en-IN')} + Custom: ${calculationSummary.customQuoteItems.join(', ')})`
+                      : `Selected Package Bundle (₹${calculationSummary.fixedTotal.toLocaleString('en-IN')}: ${calculationSummary.selectedLabels.join(', ')})`
                   )
                 }
-                className={`px-6 py-3.5 text-xs tracking-[0.2em] font-medium transition-all flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap border ${
+                className={`px-6 py-3.5 text-xs tracking-[0.2em] font-medium transition-all flex items-center justify-center gap-2 active:scale-95 whitespace-nowrap border disabled:opacity-40 disabled:cursor-not-allowed ${
                   isDark
                     ? 'border-[#D8C7A5] text-[#D8C7A5] hover:bg-[#D8C7A5] hover:text-[#0b0c0e]'
                     : 'border-[#14171A] text-[#14171A] hover:bg-[#14171A] hover:text-[#FAF8F5]'

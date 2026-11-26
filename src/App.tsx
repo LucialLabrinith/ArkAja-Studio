@@ -11,7 +11,7 @@ import { ProjectModal } from './components/ProjectModal';
 import { ServicesSection } from './components/ServicesSection';
 import { ProjectBuilder } from './components/ProjectBuilder';
 import { PricingSection } from './components/PricingSection';
-import { PaymentModal } from './components/PaymentModal';
+import { PaymentModal, StudioPaymentConfig } from './components/PaymentModal';
 import { ProcessSection } from './components/ProcessSection';
 // TODO: Hook up real client testimonials and Google reviews API here later
 // import { TestimonialsSection } from './components/TestimonialsSection';
@@ -33,7 +33,7 @@ function StudioApp() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [uploadedAssets, setUploadedAssets] = useState<Record<string, string[]>>({});
   const [assetRefreshKey, setAssetRefreshKey] = useState(0);
-  const [studioConfig, setStudioConfig] = useState<any>({});
+  const [studioConfig, setStudioConfig] = useState<StudioPaymentConfig>({});
   const [builderPrefill, setBuilderPrefill] = useState<CustomBuilderState | null>(null);
   const [packagePrefill, setPackagePrefill] = useState<string | null>(null);
   const [customProjects, setCustomProjects] = useState<Project[]>([]);

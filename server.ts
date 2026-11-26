@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import dotenv from 'dotenv';
 import {
@@ -10,7 +11,7 @@ import {
   inferAjaSuggestions,
 } from './src/data/ajaKnowledge';
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -20,10 +21,16 @@ const isServerless = Boolean(
 );
 
 // Razorpay Credentials (configured securely via environment variables)
-const rawKeyId = process.env.RAZORPAY_KEY_ID?.trim() || '';
-const rawSecret = process.env.RAZORPAY_KEY_SECRET?.trim() || '';
-const RAZORPAY_KEY_ID = (rawKeyId === 'rzp_test_TiiOtZsH2caVyE' || rawKeyId === '') ? '' : rawKeyId;
-const RAZORPAY_KEY_SECRET = (rawSecret === 'QEpE8oQyIybTOJryn3opRdMN' || rawSecret === '') ? '' : rawSecret;
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID?.trim() || '';
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET?.trim() || '';
+
+const razorpayClient =
+  RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET
+    ? new Razorpay({
+        key_id: RAZORPAY_KEY_ID,
+        key_secret: RAZORPAY_KEY_SECRET,
+      })
+    : null;
 
 // Ensure public upload directories exist (safe on read-only serverless FS like Vercel)
 const uploadDir = isServerless
@@ -240,33 +247,75 @@ function removeCustomProject(projectId: string) {
 function sanitizePaymentUrl(url?: string): string {
   if (!url) return '';
   const trimmed = url.trim();
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return trimmed;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'https:') {
+      return parsed.toString();
+    }
+  } catch {
+    return '';
   }
   return '';
 }
+
+// Authoritative server-side fixed package pricing in paise (1 INR = 100 paise)
+const FIXED_PACKAGE_PRICES_PAISE: Record<string, number> = {
+  'starter': 249900,
+  'signature': 499900,
+  'basic-website': 1000000,
+  'urgent-website': 1200000,
+  'logo-design': 300000,
+  'ai-chatbot': 500000,
+  'ai-chatbot-pkg': 500000,
+  'basic-web-app': 1500000,
+};
+
+// Custom-quoted or calculator-bundle packages allowed to supply a validated custom INR amount
+const CUSTOM_PACKAGE_DEFAULTS_PAISE: Record<string, number> = {
+  'custom': 1000000,
+  'web-apps': 2500000,
+  'web-app': 2500000,
+  'brand-identity': 1500000,
+  'ai-business': 2000000,
+  'business-launch': 3000000,
+  'custom-website-features': 1000000,
+};
+
+function isAllowedCustomScopeId(packageId: string): boolean {
+  return (
+    Object.prototype.hasOwnProperty.call(CUSTOM_PACKAGE_DEFAULTS_PAISE, packageId) ||
+    packageId.startsWith('bundle-') ||
+    packageId.startsWith('builder-bundle-')
+  );
+}
+
+const DEFAULT_RAZORPAY_ME_URL = 'https://razorpay.me/@divyamithileshmishra';
 
 // 1. API: Studio Config & Razorpay Integration
 app.get('/api/config', (_req: Request, res: Response) => {
   const starterUrl = sanitizePaymentUrl(process.env.RAZORPAY_STARTER_PAYMENT_URL);
   const signatureUrl = sanitizePaymentUrl(process.env.RAZORPAY_SIGNATURE_PAYMENT_URL);
-  const customUrl = sanitizePaymentUrl(process.env.RAZORPAY_CUSTOM_PAYMENT_URL);
+  const customUrl = sanitizePaymentUrl(process.env.RAZORPAY_CUSTOM_PAYMENT_URL) || DEFAULT_RAZORPAY_ME_URL;
   const basicWebsiteUrl = sanitizePaymentUrl(process.env.RAZORPAY_BASIC_WEBSITE_PAYMENT_URL);
   const urgentWebsiteUrl = sanitizePaymentUrl(process.env.RAZORPAY_URGENT_WEBSITE_PAYMENT_URL);
   const logoDesignUrl = sanitizePaymentUrl(process.env.RAZORPAY_LOGO_DESIGN_PAYMENT_URL);
   const aiChatbotUrl = sanitizePaymentUrl(process.env.RAZORPAY_AI_CHATBOT_PAYMENT_URL);
+  const basicWebAppUrl = sanitizePaymentUrl(process.env.RAZORPAY_BASIC_WEB_APP_PAYMENT_URL);
   const webAppUrl = sanitizePaymentUrl(process.env.RAZORPAY_WEB_APP_PAYMENT_URL);
   const brandIdentityUrl = sanitizePaymentUrl(process.env.RAZORPAY_BRAND_IDENTITY_PAYMENT_URL);
   const aiBusinessUrl = sanitizePaymentUrl(process.env.RAZORPAY_AI_BUSINESS_PAYMENT_URL);
   const businessLaunchUrl = sanitizePaymentUrl(process.env.RAZORPAY_BUSINESS_LAUNCH_PAYMENT_URL);
+  const isGatewayReady = Boolean(RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET);
+  const isLiveKey = Boolean(isGatewayReady && RAZORPAY_KEY_ID.startsWith('rzp_live_'));
 
   res.json({
     email: 'arkajastudio@gmail.com',
     instagram: '@arkajastudio',
     instagramUrl: 'https://www.instagram.com/arkajastudio/',
     location: 'Mumbai, India (Working Worldwide)',
-    razorpayKeyId: RAZORPAY_KEY_ID,
-    isRazorpayConfigured: Boolean(RAZORPAY_KEY_ID),
+    razorpayKeyId: isGatewayReady ? RAZORPAY_KEY_ID : '',
+    isRazorpayConfigured: isGatewayReady,
+    isRazorpayLiveKey: isLiveKey,
     starterUrl,
     signatureUrl,
     customUrl,
@@ -274,6 +323,7 @@ app.get('/api/config', (_req: Request, res: Response) => {
     urgentWebsiteUrl,
     logoDesignUrl,
     aiChatbotUrl,
+    basicWebAppUrl,
     webAppUrl,
     brandIdentityUrl,
     aiBusinessUrl,
@@ -284,96 +334,138 @@ app.get('/api/config', (_req: Request, res: Response) => {
   });
 });
 
-// 1b. API: Razorpay Create Order Endpoint
-app.post('/api/razorpay/create-order', async (req: Request, res: Response) => {
+// 1b. API: Razorpay Create Order Handler (Standard + Studio Package Checkout)
+async function handleCreateOrder(req: Request, res: Response) {
   try {
-    const { packageId, packageName, clientName, clientEmail, clientPhone, customAmount } = req.body || {};
+    const {
+      amount,
+      currency,
+      receipt: customReceipt,
+      packageId,
+      packageName,
+      clientName,
+      clientEmail,
+      clientPhone,
+      customAmount,
+    } = req.body || {};
 
-    const packagePrices: Record<string, number> = {
-      'starter': 249900,
-      'signature': 499900,
-      'basic-website': 1000000,
-      'urgent-website': 1200000,
-      'logo-design': 300000,
-      'ai-chatbot': 500000,
-      'ai-chatbot-pkg': 500000,
-      'basic-web-app': 1500000,
-      'web-apps': 1500000,
-      'brand-identity': 1500000,
-      'ai-business': 2000000,
-      'business-launch': 3000000,
-    };
-
-    let amountPaise = packagePrices[packageId] || 249900;
-    if (customAmount && Number(customAmount) > 0) {
-      const parsedAmount = Math.max(100, Math.round(Number(customAmount)));
-      amountPaise = parsedAmount * 100;
-    }
-
-    if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-      res.status(400).json({
-        error: 'Razorpay credentials are currently being configured. Please use Bookings or email arkajastudio@gmail.com directly.',
+    if (!razorpayClient || !RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+      res.status(401).json({
+        code: 'GATEWAY_NOT_CONFIGURED',
+        error: 'Razorpay credentials are not configured on the server.',
       });
       return;
     }
 
-    const receipt = `rcpt_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
-    const authHeader = 'Basic ' + Buffer.from(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`).toString('base64');
+    const safeCurrency =
+      typeof currency === 'string' && /^[A-Z]{3}$/.test(currency.trim().toUpperCase())
+        ? currency.trim().toUpperCase()
+        : 'INR';
 
-    const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
-      method: 'POST',
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json',
+    const normalizedPkgId = typeof packageId === 'string' ? packageId.trim() : '';
+    const safeName = typeof clientName === 'string' ? clientName.trim().slice(0, 120) : '';
+    const safeEmail = typeof clientEmail === 'string' ? clientEmail.trim().slice(0, 160) : '';
+    const safePhone = typeof clientPhone === 'string' ? clientPhone.trim().slice(0, 32) : '';
+    const safePkgName = typeof packageName === 'string' ? packageName.trim().slice(0, 120) : normalizedPkgId || 'ArkAja Studio Order';
+
+    let amountPaise: number;
+
+    if (normalizedPkgId) {
+      if (normalizedPkgId.length > 80) {
+        res.status(400).json({ error: 'Invalid package identifier.' });
+        return;
+      }
+      if (Object.prototype.hasOwnProperty.call(FIXED_PACKAGE_PRICES_PAISE, normalizedPkgId)) {
+        // Authoritative server-side price for fixed packages (prevents client-side price tampering)
+        amountPaise = FIXED_PACKAGE_PRICES_PAISE[normalizedPkgId];
+      } else if (isAllowedCustomScopeId(normalizedPkgId)) {
+        const parsedInr = Number(customAmount);
+        if (!Number.isFinite(parsedInr) || parsedInr < 1 || parsedInr > 5000000) {
+          res.status(400).json({ error: 'Custom project amount must be at least ₹1 (100 paise) and within valid bounds.' });
+          return;
+        }
+        amountPaise = Math.round(parsedInr * 100);
+      } else {
+        res.status(400).json({ error: 'Unrecognized package selection.' });
+        return;
+      }
+    } else {
+      // Standard Razorpay order creation with amount in paise
+      const parsedPaise = Math.round(Number(amount));
+      if (!Number.isFinite(parsedPaise) || parsedPaise < 100 || parsedPaise > 500000000) {
+        res.status(400).json({ error: 'Invalid amount. Minimum order amount is 100 paise (₹1).' });
+        return;
+      }
+      amountPaise = parsedPaise;
+    }
+
+    if (amountPaise < 100) {
+      res.status(400).json({ error: 'Minimum order amount is 100 paise.' });
+      return;
+    }
+
+    const receipt =
+      typeof customReceipt === 'string' && customReceipt.trim()
+        ? customReceipt.trim().slice(0, 40)
+        : `rcpt_${Date.now().toString(36)}_${crypto.randomBytes(3).toString('hex')}`;
+
+    const orderData = await razorpayClient.orders.create({
+      amount: amountPaise,
+      currency: safeCurrency,
+      receipt,
+      notes: {
+        packageId: normalizedPkgId || 'standard',
+        packageName: safePkgName,
+        clientName: safeName,
+        clientEmail: safeEmail,
+        clientPhone: safePhone,
+        studio: 'ArkAja Studio',
       },
-      body: JSON.stringify({
-        amount: amountPaise,
-        currency: 'INR',
-        receipt: receipt,
-        notes: {
-          packageId: packageId || 'starter',
-          packageName: packageName || 'Starter Package',
-          clientName: clientName || 'Guest Client',
-          clientEmail: clientEmail || '',
-          clientPhone: clientPhone || '',
-          studio: 'ArkAja Studio',
-        },
-      }),
     });
 
-    if (!razorpayResponse.ok) {
-      const errText = await razorpayResponse.text();
-      console.error('[Razorpay] Order creation failed:', razorpayResponse.status, errText);
-      res.status(razorpayResponse.status).json({
-        error: 'Failed to create Razorpay order',
-        details: errText,
-      });
-      return;
-    }
-
-    const orderData = await razorpayResponse.json();
-    console.log(`[Razorpay] Order created: ${orderData.id} for ₹${amountPaise / 100}`);
+    console.log(`[Razorpay] Order created: ${orderData.id} for ${amountPaise} paise (${safeCurrency})`);
 
     res.json({
       success: true,
-      keyId: RAZORPAY_KEY_ID,
+      order_id: orderData.id,
       orderId: orderData.id,
       amount: orderData.amount,
       currency: orderData.currency,
       receipt: orderData.receipt,
+      keyId: RAZORPAY_KEY_ID,
     });
   } catch (error: any) {
-    console.error('[Razorpay] Error creating order:', error);
+    const statusCode = error?.statusCode || error?.status;
+    console.error('[Razorpay] Error creating order:', statusCode || '', error?.error || error?.message || error);
+
+    if (statusCode === 401 || error?.error?.code === 'BAD_REQUEST_ERROR' && /auth/i.test(error?.error?.description || '')) {
+      res.status(401).json({
+        error: 'Razorpay authentication failed. Please verify RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.',
+      });
+      return;
+    }
+
     res.status(500).json({
-      error: 'Internal server error while creating Razorpay order',
-      message: error?.message || 'Unknown error',
+      error: error?.error?.description || 'Failed to create Razorpay order.',
     });
   }
-});
+}
 
-// 1c. API: Razorpay Verify Payment Signature Endpoint
-app.post('/api/razorpay/verify-payment', (req: Request, res: Response) => {
+app.post('/api/create-order', handleCreateOrder);
+app.post('/api/razorpay/create-order', handleCreateOrder);
+
+// 1c. API: Razorpay Verify Payment Signature Handler
+function handleVerifyPayment(req: Request, res: Response) {
   try {
+    if (!RAZORPAY_KEY_SECRET) {
+      res.status(401).json({
+        success: false,
+        verified: false,
+        error: 'Payment gateway verification secret is not configured on the server.',
+      });
+      return;
+    }
+
     const {
       razorpay_order_id,
       razorpay_payment_id,
@@ -386,74 +478,106 @@ app.post('/api/razorpay/verify-payment', (req: Request, res: Response) => {
       amount,
     } = req.body || {};
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      res.status(400).json({ error: 'Missing required Razorpay payment verification fields' });
+    if (
+      typeof razorpay_order_id !== 'string' ||
+      !razorpay_order_id.trim() ||
+      typeof razorpay_payment_id !== 'string' ||
+      !razorpay_payment_id.trim() ||
+      typeof razorpay_signature !== 'string' ||
+      !razorpay_signature.trim()
+    ) {
+      res.status(400).json({
+        success: false,
+        verified: false,
+        error: 'Missing required Razorpay payment verification fields',
+      });
       return;
     }
 
-    // Verify HMAC-SHA256 signature using secret
-    const hmac = crypto.createHmac('sha256', RAZORPAY_KEY_SECRET);
-    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-    const expectedSignature = hmac.digest('hex');
+    // Verify HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET) using constant-time comparison
+    const expectedSignature = crypto
+      .createHmac('sha256', RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id.trim()}|${razorpay_payment_id.trim()}`)
+      .digest('hex');
 
-    const isValid = expectedSignature === razorpay_signature;
+    const expectedBuf = Buffer.from(expectedSignature, 'utf8');
+    const receivedBuf = Buffer.from(razorpay_signature.trim(), 'utf8');
+    const isValid =
+      expectedBuf.length === receivedBuf.length &&
+      crypto.timingSafeEqual(expectedBuf, receivedBuf);
 
     if (!isValid) {
-      console.warn('[Razorpay] Signature mismatch:', {
-        expected: expectedSignature,
-        received: razorpay_signature,
+      console.warn('[Razorpay] Signature mismatch for order:', razorpay_order_id);
+      res.status(400).json({
+        success: false,
+        verified: false,
+        error: 'Payment signature verification failed',
       });
-      res.status(400).json({ success: false, error: 'Payment signature verification failed' });
       return;
     }
 
-    // Record verified transaction in payments store
+    const normalizedPkgId = typeof packageId === 'string' ? packageId.trim() : 'standard';
+    const authoritativeAmountInr = Object.prototype.hasOwnProperty.call(FIXED_PACKAGE_PRICES_PAISE, normalizedPkgId)
+      ? FIXED_PACKAGE_PRICES_PAISE[normalizedPkgId] / 100
+      : Math.max(1, Math.round(Number(amount) || 0));
+
+    // Record verified transaction in payments store (serverless-safe path)
     const paymentRecord = {
-      orderId: razorpay_order_id,
-      paymentId: razorpay_payment_id,
-      signature: razorpay_signature,
-      packageId: packageId || 'starter',
-      packageName: packageName || 'Starter Package',
-      clientName: clientName || 'Guest Client',
-      clientEmail: clientEmail || '',
-      clientPhone: clientPhone || '',
-      amount: amount || (packageId === 'signature' ? 4999 : 2499),
+      orderId: razorpay_order_id.trim(),
+      paymentId: razorpay_payment_id.trim(),
+      packageId: normalizedPkgId,
+      packageName: typeof packageName === 'string' && packageName.trim() ? packageName.trim() : 'Studio Package',
+      clientName: typeof clientName === 'string' && clientName.trim() ? clientName.trim() : 'Guest Client',
+      clientEmail: typeof clientEmail === 'string' ? clientEmail.trim() : '',
+      clientPhone: typeof clientPhone === 'string' ? clientPhone.trim() : '',
+      amount: authoritativeAmountInr,
       currency: 'INR',
       status: 'captured',
       timestamp: new Date().toISOString(),
     };
 
-    const paymentsFile = path.resolve(process.cwd(), 'payments.json');
-    let existingPayments: any[] = [];
-    if (fs.existsSync(paymentsFile)) {
-      try {
-        existingPayments = JSON.parse(fs.readFileSync(paymentsFile, 'utf-8'));
-      } catch (e) {
-        existingPayments = [];
+    const paymentsFile = isServerless
+      ? path.join('/tmp', 'payments.json')
+      : path.resolve(process.cwd(), 'payments.json');
+    try {
+      let existingPayments: any[] = [];
+      if (fs.existsSync(paymentsFile)) {
+        try {
+          existingPayments = JSON.parse(fs.readFileSync(paymentsFile, 'utf-8'));
+          if (!Array.isArray(existingPayments)) existingPayments = [];
+        } catch {
+          existingPayments = [];
+        }
       }
+      existingPayments.unshift(paymentRecord);
+      fs.writeFileSync(paymentsFile, JSON.stringify(existingPayments, null, 2));
+    } catch (fsErr) {
+      console.warn('[Razorpay] Could not persist payment log to disk:', fsErr);
     }
-    existingPayments.unshift(paymentRecord);
-    fs.writeFileSync(paymentsFile, JSON.stringify(existingPayments, null, 2));
 
-    console.log(`[Razorpay] Payment ${razorpay_payment_id} successfully verified for ${packageName}`);
+    console.log(`[Razorpay] Payment ${paymentRecord.paymentId} successfully verified for ${paymentRecord.packageName}`);
 
     res.json({
       success: true,
       verified: true,
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
-      packageName: packageName || 'Starter Package',
+      paymentId: paymentRecord.paymentId,
+      orderId: paymentRecord.orderId,
+      packageName: paymentRecord.packageName,
       amount: paymentRecord.amount,
       message: 'Payment verified and studio production slot secured.',
     });
   } catch (error: any) {
     console.error('[Razorpay] Verification error:', error);
     res.status(500).json({
+      success: false,
+      verified: false,
       error: 'Error verifying payment',
-      message: error?.message || 'Unknown error',
     });
   }
-});
+}
+
+app.post('/api/verify-payment', handleVerifyPayment);
+app.post('/api/razorpay/verify-payment', handleVerifyPayment);
 
 // 2. API: AI Studio Advisor / Concierge (Standard JSON endpoint)
 app.post('/api/chat', async (req: Request, res: Response) => {
